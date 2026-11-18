@@ -363,7 +363,7 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 </div>
 </main>
 
-<footer>بوابة الذكاء © 2026 — ألعاب تعليمية عربية<br><small style="opacity:.6">الإصدار 2026.11.18-23</small></footer>
+<footer>بوابة الذكاء © 2026 — ألعاب تعليمية عربية<br><small style="opacity:.6">الإصدار 2026.11.18-24</small></footer>
 
 <!-- Admin -->
 <div class="game" id="adm">
@@ -575,6 +575,7 @@ const LocalBackend={
   async markApplied(id){const a=LS.get('bw_requests',[]),r=a.find(x=>x.id===id);if(r)r.applied=true;LS.set('bw_requests',a)},
   async listRequests(){const a=LS.get('bw_requests',[]);return {pending:a.filter(r=>r.status==='pending'),done:a.filter(r=>r.status!=='pending').slice(-40)}},
   async decide(id,status){const a=LS.get('bw_requests',[]),r=a.find(x=>x.id===id);if(r){r.status=status;r.decidedAt=Date.now()}LS.set('bw_requests',a)},
+  async removeRequest(id){LS.set('bw_requests',LS.get('bw_requests',[]).filter(r=>r.id!==id))},
   isVerified(){return true},async sendVerify(){},async refreshUser(){return true}
 };
 const FirebaseBackend={
@@ -598,6 +599,7 @@ const FirebaseBackend={
   async listRequests(){const c=this.F.collection(this.db,'requests'),m=x=>x.docs.map(d=>({id:d.id,...d.data()}));
     const [a,b]=await Promise.all([this.F.getDocs(this.F.query(c,this.F.where('status','==','pending'))),this.F.getDocs(this.F.query(c,this.F.where('status','in',['approved','rejected']),this.F.limit(60)))]);return {pending:m(a),done:m(b)}},
   async decide(id,status){await this.F.updateDoc(this.F.doc(this.db,'requests',id),{status,decidedAt:this.F.serverTimestamp()})},
+  async removeRequest(id){await this.F.deleteDoc(this.F.doc(this.db,'requests',id))},
   isVerified(){return !!(this.auth.currentUser&&this.auth.currentUser.emailVerified)},
   async sendVerify(){await this.A.sendEmailVerification(this.auth.currentUser)},
   async refreshUser(){await this.auth.currentUser.reload();await this.auth.currentUser.getIdToken(true);return this.isVerified()}
@@ -1447,7 +1449,9 @@ let myReqs=[],unwatch=null;
 const tsOf=r=>r&&r.created?(r.created.toMillis?r.created.toMillis():r.created):0;
 const fmtD=t=>t?new Date(t).toLocaleString('ar-SA',{dateStyle:'medium',timeStyle:'short'}):'';
 function startWatch(){startWatch.sig='';if(unwatch){try{unwatch()}catch(e){}unwatch=null}if(!user)return;
-  try{unwatch=B.watchMine(user.uid,reqs=>{const sig=JSON.stringify(reqs.map(r=>[r.id,r.status,r.applied]));if(sig===startWatch.sig)return;startWatch.sig=sig;myReqs=reqs;applyApproved(reqs);if($('#dash').classList.contains('show')&&!$('#kidOv').classList.contains('show'))openDash()})}catch(e){console.warn(e)}}
+  try{unwatch=B.watchMine(user.uid,reqs=>{const sig=JSON.stringify(reqs.map(r=>[r.id,r.status,r.applied]));if(sig===startWatch.sig)return;startWatch.sig=sig;
+    {const ids=new Set(reqs.map(r=>r.id));myReqs.filter(r=>r.status==='pending'&&!ids.has(r.id)).forEach(r=>{toast(`❌ لم يتم تأكيد طلبك ${r.ref}، تأكد من التحويل وأعد المحاولة`);SFX.no()})}
+    myReqs=reqs;applyApproved(reqs);if($('#dash').classList.contains('show')&&!$('#kidOv').classList.contains('show'))openDash()})}catch(e){console.warn(e)}}
 let applying=false;
 async function applyApproved(reqs){if(applying||!profile)return;applying=true;
   try{for(const r of reqs){if(r.status!=='approved'||r.applied)continue;
@@ -1472,25 +1476,26 @@ async function openAdmin(){
     $('#admChk').onclick=async()=>{try{if(await B.refreshUser())openAdmin();else toast('لم يتم التأكيد بعد')}catch(e){toast(errMsg(e))}};return}
   body.innerHTML='<div class="meta" style="text-align:center;padding:30px">⏳ جارٍ تحميل الطلبات...</div>';
   let data;try{data=await B.listRequests()}catch(e){console.warn(e);body.innerHTML=`<div class="dcard"><h3>⚠️ تعذّر تحميل الطلبات</h3><div class="meta">تأكد من نشر قواعد Firestore الجديدة، ثم حدّث الصفحة.</div></div>`;return}
-  const pend=data.pending.sort((a,b)=>tsOf(a)-tsOf(b)),done=data.done.sort((a,b)=>tsOf(b)-tsOf(a));
+  data.done.filter(r=>r.status==='rejected').forEach(r=>B.removeRequest(r.id).catch(()=>{}));
+  const pend=data.pending.sort((a,b)=>tsOf(a)-tsOf(b)),done=data.done.filter(r=>r.status==='approved').sort((a,b)=>tsOf(b)-tsOf(a));
   const sum=done.filter(r=>r.status==='approved').reduce((a,r)=>a+(+r.price||0),0);
   const card=r=>{const g=r.game?GAMES.find(x=>x.id===r.game):null;return `<div class="dcard req ${r.status}">
     <div class="rq1"><b>${esc(r.name||'—')}</b><span class="mode">${r.kind==='game'?'🎮 '+(g?g.name:''):`⭐ ${r.stars} نجمة`}</span></div>
     <div class="meta" dir="ltr" style="text-align:right">${esc(r.email||'')}</div>
     <div class="rref" dir="ltr">${esc(r.ref||'')}</div>
     <div class="meta">💰 <b>${r.price} ريال</b> · ${fmtD(tsOf(r))}${g&&r.kind!=='game'?` · لفتح «${g.name}»`:''}</div>
-    ${r.status==='pending'?`<div class="kact"><button class="sbtn pri" data-ok="${r.id}">✅ وصل التحويل، موافقة</button><button class="sbtn del" data-no="${r.id}">❌ رفض</button></div>`:`<b class="rst ${r.status}">${r.status==='approved'?'✅ موافق عليه':'❌ مرفوض'}</b>`}</div>`};
-  body.innerHTML=`<div class="dcard"><h3>📊 ملخص</h3><div class="meta">طلبات معلّقة: <b>${pend.length}</b> · المبالغ الموافق عليها (آخر ${done.length} قرار): <b>${sum} ريال</b></div>
+    ${r.status==='pending'?`<div class="kact"><button class="sbtn pri" data-ok="${r.id}">✅ وصل التحويل، موافقة</button><button class="sbtn del" data-no="${r.id}">❌ رفض وحذف</button></div>`:`<b class="rst ${r.status}">${r.status==='approved'?'✅ موافق عليه':'❌ مرفوض'}</b>`}</div>`};
+  body.innerHTML=`<div class="dcard"><h3>📊 ملخص</h3><div class="meta">طلبات معلّقة: <b>${pend.length}</b> · المبالغ الموافق عليها (آخر ${done.length} طلب): <b>${sum} ريال</b></div>
      <div class="meta" style="margin-top:6px">قارن <b>الرمز المرجعي</b> بملاحظة التحويل في تطبيق STC Bank قبل الموافقة.</div></div>
     <h3 style="margin:16px 4px 8px">⏳ بانتظار التأكيد (${pend.length})</h3>${pend.length?pend.map(card).join(''):'<div class="meta" style="padding:0 6px">لا توجد طلبات معلّقة 👍</div>'}
-    <h3 style="margin:18px 4px 8px">🗂️ آخر القرارات</h3>${done.slice(0,20).map(card).join('')||'<div class="meta" style="padding:0 6px">لا يوجد بعد</div>'}`;
+    <h3 style="margin:18px 4px 8px">🗂️ آخر الطلبات الموافق عليها</h3>${done.slice(0,20).map(card).join('')||'<div class="meta" style="padding:0 6px">لا يوجد بعد</div>'}`;
   body.querySelectorAll('[data-ok],[data-no]').forEach(b=>b.onclick=async()=>{const id=b.dataset.ok||b.dataset.no,st=b.dataset.ok?'approved':'rejected';
-    b.disabled=true;try{await B.decide(id,st);toast(st==='approved'?'✅ تمت الموافقة، ستصل النجوم للطفل':'❌ تم الرفض');openAdmin()}catch(e){console.warn(e);toast('⚠️ تعذّر الحفظ');b.disabled=false}});
+    b.disabled=true;try{if(st==='approved')await B.decide(id,st);else await B.removeRequest(id);toast(st==='approved'?'✅ تمت الموافقة، ستصل النجوم للطفل':'🗑️ تم رفض الطلب وحذفه');openAdmin()}catch(e){console.warn(e);toast('⚠️ تعذّر الحفظ');b.disabled=false}});
 }
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.18-23';
+const APP_VERSION='2026.11.18-24';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 $('#sndBtn').textContent=SFX.on?'🔊':'🔇';
