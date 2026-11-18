@@ -1,0 +1,9 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // كل ولي أمر يقرأ ويعدّل ملفه فقط (بياناته وأطفاله ومشترياته)
+    match /parents/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}
