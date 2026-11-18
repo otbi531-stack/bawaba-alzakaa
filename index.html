@@ -220,6 +220,9 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .mcard .mt{display:flex;flex-direction:column;min-width:0}.mcard b{font-size:15px}.mcard small{color:var(--muted)}
 .mcard.done{background:#E9FBEF;border-color:#9BE3B3}
 @media(max-width:760px){.mlist{grid-template-columns:1fr}.owlw{width:68px}.streak{min-width:62px;padding:6px 8px}.bubble2{padding:8px 10px;font-size:14px}}
+.lockp{display:flex;flex-direction:column;gap:4px;width:52%}
+.lockp small{font-weight:800;color:var(--muted)}
+.lockp i{display:block;height:8px;border-radius:9px;background:linear-gradient(90deg,var(--sun) var(--p),#EEF2F7 var(--p))}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -239,14 +242,14 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
   <div class="hero">
     <div>
       <h1>العب، تعلّم،<br><span>واجمع</span> <em>النجوم!</em> ⭐</h1>
-      <p>ألعاب تعليمية عربية ممتعة للأطفال من 6 إلى 14 سنة. جولات قصيرة من دقيقتين إلى ثلاث، تشتري كل لعبة مرة واحدة فقط وتبقى لك للأبد.</p>
+      <p>ألعاب تعليمية عربية ممتعة للأطفال من 6 إلى 14 سنة. جولات قصيرة من دقيقتين إلى ثلاث، كل الألعاب تُفتح مجانًا بالنجوم، أو بـ 3 ريال فقط لمن لا يريد الانتظار 🔓</p>
       <div class="cta">
         <button class="btn pri" data-scroll="games">🎮 العب مجانًا الآن</button>
         <button class="btn ghost" data-scroll="how">كيف يعمل؟</button>
       </div>
       <div class="badges">
         <span class="chip">🚫 بلا إعلانات</span><span class="chip">🔁 بلا اشتراك</span>
-        <span class="chip">♾️ للأبد</span><span class="chip">🛡️ آمن للأطفال</span>
+        <span class="chip">🎁 تُفتح بالنجوم</span><span class="chip">🛡️ آمن للأطفال</span>
       </div>
     </div>
     <div class="hero-wrap"><div class="hero-img"><img src="hero.jpg" alt="طفلان يلعبان ويتعلمان"></div><img class="deco d1" src="img/rocket.png" alt=""><img class="deco d2" src="img/palette.png" alt=""><img class="deco d3" src="img/train.png" alt=""></div>
@@ -282,8 +285,8 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
   <section id="how">
     <div class="sec-head"><h2>كيف يعمل؟</h2></div>
     <div class="steps">
-      <div class="step"><div class="n" style="background:#DDF7E6">🎁</div><h3>جرّب مجانًا</h3><p>ثلاث ألعاب مجانية بالكامل، يلعبها طفلك قبل أن تدفع أي شيء.</p></div>
-      <div class="step"><div class="n" style="background:#FFF3C4">🔓</div><h3>افتح ما يناسب طفلك</h3><p>كل لعبة لها سعر من 7 إلى 17 ريالًا، تدفعه مرة واحدة عبر STC Pay أو برق.</p></div>
+      <div class="step"><div class="n" style="background:#DDF7E6">🎁</div><h3>ابدأ بثلاث ألعاب</h3><p>ثلاث ألعاب مفتوحة من أول يوم، والبومة نبيه ترشدك لمهمة اليوم.</p></div>
+      <div class="step"><div class="n" style="background:#FFF3C4">🔓</div><h3>اجمع النجوم وافتح</h3><p>كل لعبة تنجح فيها تعطيك نجومًا، ومهمة اليوم تعطيك 5 نجوم إضافية، والنجوم تفتح ألعابًا جديدة. أو افتح أي لعبة فورًا بـ 3 ريال.</p></div>
       <div class="step"><div class="n" style="background:#FFE1EE">🆕</div><h3>ألعاب جديدة باستمرار</h3><p>نضيف ألعابًا بين الحين والآخر، وتظهر عليها شارة «جديد».</p></div>
     </div>
   </section>
@@ -291,15 +294,23 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 </div>
 </main>
 
-<footer>بوابة الذكاء © 2026 — نموذج أولي تجريبي، والدفع فيه غير حقيقي</footer>
+<footer>بوابة الذكاء © 2026 — ألعاب تعليمية عربية</footer>
+
+<!-- Locked game -->
+<div class="ov" id="lockOv"><div class="modal" style="text-align:center">
+  <button class="x" data-close="lockOv">✕</button>
+  <div id="lkBody"></div>
+  <button class="btn pri full" id="lkGo" style="margin-top:14px">🎯 إلى مهمة اليوم</button>
+  <button class="btn ghost full" id="lkBuy" style="margin-top:10px"></button>
+</div></div>
 
 <!-- Auth -->
 <div class="ov" id="authOv"><div class="modal">
   <button class="x" data-close="authOv">✕</button>
-  <h3>حساب ولي الأمر 👨‍👩‍👧</h3>
-  <div class="meta" id="aMsg">احفظ مشتريات أطفالك ونجومهم على كل أجهزتك</div>
+  <h3>حسابي 🎮</h3>
+  <div class="meta" id="aMsg">احفظ نجومك وألعابك على كل أجهزتك</div>
   <div class="tabs atabs"><button data-at="in" class="on">تسجيل الدخول</button><button data-at="up">حساب جديد</button></div>
-  <label class="fl" id="aNameL">اسم ولي الأمر<input id="aName" maxlength="30" autocomplete="name"></label>
+  <label class="fl" id="aNameL">اسمك<input id="aName" maxlength="30" autocomplete="name"></label>
   <label class="fl">البريد الإلكتروني<input id="aEmail" type="email" dir="ltr" autocomplete="email"></label>
   <label class="fl">كلمة المرور<input id="aPass" type="password" dir="ltr" autocomplete="current-password" placeholder="6 أحرف على الأقل"></label>
   <div class="err" id="aErr"></div>
@@ -311,11 +322,11 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 <!-- Add / edit child -->
 <div class="ov" id="kidOv"><div class="modal">
   <button class="x" data-close="kidOv">✕</button>
-  <h3 id="kTitle">أضف طفلك</h3>
-  <div class="meta">لكل طفل نجومه وتقدمه الخاص، والألعاب المشتراة تعمل لكل الأطفال</div>
-  <label class="fl">اسم الطفل<input id="kName" maxlength="20"></label>
+  <h3 id="kTitle">اختر شخصيتك 🎮</h3>
+  <div class="meta">اختر اسمك وعمرك وشخصيتك</div>
+  <label class="fl">اسمك<input id="kName" maxlength="20"></label>
   <label class="fl">العمر<select id="kAge"></select></label>
-  <div class="fl">اختر شخصيته</div><div class="avs" id="kAv"></div>
+  <div class="fl">اختر شخصيتك</div><div class="avs" id="kAv"></div>
   <div class="err" id="kErr"></div>
   <button class="btn blue full" id="kSave">حفظ</button>
 </div></div>
@@ -329,7 +340,7 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 
 <!-- Parent dashboard -->
 <div class="game" id="dash">
-  <div class="gbar"><button class="back" id="dBack">→ رجوع</button><b>👨‍👩‍👧 حساب ولي الأمر</b><span style="width:60px"></span></div>
+  <div class="gbar"><button class="back" id="dBack">→ رجوع</button><b>👤 ملفي</b><span style="width:60px"></span></div>
   <div class="dwrap" id="dashBody"></div>
 </div>
 
@@ -426,12 +437,13 @@ const GAMES=[
  {id:'animals',name:'هيا نتعلم الحيوانات',emoji:'🦁',svg:'lion',age:'6-9',skill:'المفردات والأصوات',price:0,color:'linear-gradient(135deg,#FFE7A3,#FFC872)',ready:true},
  {id:'letters',name:'مغامرة الحروف',emoji:'🔤',age:'6-9',skill:'القراءة والحروف',price:0,color:'linear-gradient(135deg,#C9F2D6,#8FE3AE)',ready:true},
  {id:'memory',name:'ذاكرة الحيوانات',emoji:'🐼',svg:'panda',age:'6-9',skill:'التركيز والذاكرة',price:0,color:'linear-gradient(135deg,#FFD6E8,#FFA8CB)',ready:true},
- {id:'math',name:'تحدي الرياضيات',emoji:'🚀',img:'img/abacus.png',age:'all',skill:'الحساب الذهني',price:7,color:'linear-gradient(135deg,#D6E4FF,#9DBBFF)',ready:true},
- {id:'flags',name:'رحلة حول العالم',emoji:'🌍',age:'10-14',skill:'الجغرافيا والأعلام',price:9,color:'linear-gradient(135deg,#CDEBFF,#86CCFF)',ready:true,isNew:true},
- {id:'logic',name:'ألغاز المنطق',emoji:'🧩',img:'img/puzzle.png',age:'10-14',skill:'التفكير المنطقي',price:12,color:'linear-gradient(135deg,#EADCFF,#C6A8FF)',ready:true},
- {id:'science',name:'مختبر العلوم',emoji:'🔬',img:'img/magnifier.png',age:'all',skill:'العلوم والطبيعة',price:15,color:'linear-gradient(135deg,#D3F7F2,#8EE6DA)',ready:true},
- {id:'code',name:'روبوت المتاهة',emoji:'🤖',img:'img/robot.png',age:'10-14',skill:'مبادئ البرمجة',price:17,color:'linear-gradient(135deg,#FFE0D1,#FFB38F)',ready:true,isNew:true},
+ {id:'math',name:'تحدي الرياضيات',emoji:'🚀',img:'img/abacus.png',age:'all',skill:'الحساب الذهني',price:3,color:'linear-gradient(135deg,#D6E4FF,#9DBBFF)',ready:true},
+ {id:'flags',name:'رحلة حول العالم',emoji:'🌍',age:'10-14',skill:'الجغرافيا والأعلام',price:3,color:'linear-gradient(135deg,#CDEBFF,#86CCFF)',ready:true,isNew:true},
+ {id:'logic',name:'ألغاز المنطق',emoji:'🧩',img:'img/puzzle.png',age:'10-14',skill:'التفكير المنطقي',price:3,color:'linear-gradient(135deg,#EADCFF,#C6A8FF)',ready:true},
+ {id:'science',name:'مختبر العلوم',emoji:'🔬',img:'img/magnifier.png',age:'all',skill:'العلوم والطبيعة',price:3,color:'linear-gradient(135deg,#D3F7F2,#8EE6DA)',ready:true},
+ {id:'code',name:'روبوت المتاهة',emoji:'🤖',img:'img/robot.png',age:'10-14',skill:'مبادئ البرمجة',price:3,color:'linear-gradient(135deg,#FFE0D1,#FFB38F)',ready:true,isNew:true},
 ];
+const NEED={animals:0,letters:0,memory:0,math:10,flags:20,logic:35,science:50,code:70};
 const TROPHIES=[{n:5,i:'🥉',t:'نجم صاعد'},{n:15,i:'🥈',t:'بطل صغير'},{n:30,i:'🥇',t:'عبقري'},{n:60,i:'👑',t:'ملك الذكاء'}];
 
 // =====================================================================
@@ -500,17 +512,18 @@ function activeKid(){return profile&&profile.kids.find(k=>k.id===kidId)||null}
 function sync(){owned=new Set(profile?profile.owned||[]:[]);const k=activeKid();stars=k?k.stars:guestStars;renderHeader();render();renderDaily()}
 async function persist(){if(user&&profile){try{await B.save(user.uid,profile)}catch(e){console.warn(e);toast('⚠️ تعذر الحفظ، تحقق من الاتصال')}}}
 function recordPlay(gid,s){
-  const k=activeKid();
+  const before=stars;const k=activeKid();
   if(k){k.stars+=s;k.stats=k.stats||{};const st=k.stats[gid]||{plays:0,best:0};st.plays++;st.best=Math.max(st.best,s);k.stats[gid]=st;persist()}
   else{guestStars+=s;LS.set('bw_guest',guestStars)}
   lastMission=dailyMark(gid,s);
   if(lastMission&&lastMission.finished){if(k){k.stars+=5;persist()}else{guestStars+=5;LS.set('bw_guest',guestStars)}}
   sync();
+  lastUnlocked=GAMES.filter(g=>!owned.has(g.id)&&(NEED[g.id]||0)>before&&(NEED[g.id]||0)<=stars);
 }
 function renderHeader(){
   const k=activeKid();
   $('#kidChip').innerHTML=k?`<span class="av">${A(k.avatar)}</span><b>${esc(k.name)}</b> ⭐ ${k.stars}`:`⭐ ${stars} <span class="t">نجمة</span>`;
-  $('#acctBtn').innerHTML=user?'👨‍👩‍👧 حسابي':'👤 دخول';
+  $('#acctBtn').innerHTML=user?'👤 ملفي':'👤 دخول';
 }
 function setKid(id){
   kidId=id;LS.set('bw_kid',id);const k=activeKid();
@@ -567,9 +580,22 @@ function renderDaily(){
      return `<button class="mcard ${d?'done':''}" data-play="${id}"><span class="mi">${g.img?`<img src="${g.img}" alt="">`:g.svg?A(g.svg):g.emoji}</span><span class="mt"><b>${i+1}. ${g.name}</b><small>${d?'✅ تم':'🎯 '+g.skill}</small></span></button>`}).join('')}</div>`;
 }
 
+// ---- Unlock by stars, or buy for 3 SAR
+let lastUnlocked=[];
+function openLock(id){
+  const g=GAMES.find(x=>x.id===id),need=NEED[id]||0,left=Math.max(0,need-stars),pct=Math.min(100,Math.round(stars/need*100));
+  $('#lkBody').innerHTML=`<div style="width:90px;margin:0 auto">${OWL()}</div><h3>${g.emoji} ${g.name}</h3>
+   <div class="meta" style="font-size:15px;margin:6px 0 10px">تُفتح هذه اللعبة مجانًا عندما تجمع <b>${need} ⭐</b></div>
+   <div class="dprog" style="margin:0"><i style="width:${pct}%"></i></div>
+   <div class="meta" style="margin:8px 0 4px">معك ${stars} ⭐ · باقي <b>${left} ⭐</b></div>
+   <div class="meta">💡 أسرع طريقة: أنجز مهمة اليوم واربح 5 نجوم إضافية!</div>`;
+  $('#lkBuy').textContent=`🔓 افتحها الآن بـ ${g.price} ريال`;$('#lkBuy').dataset.id=id;
+  show('lockOv');
+}
+
 // ---- auth modal
 let aTab='in';
-function openAuth(tab='in',msg){aTab=tab;$('#aMsg').textContent=msg||'احفظ مشتريات أطفالك ونجومهم على كل أجهزتك';$('#aErr').textContent='';$('#aPass').value='';updAuth();show('authOv')}
+function openAuth(tab='in',msg){aTab=tab;$('#aMsg').textContent=msg||'احفظ نجومك وألعابك على كل أجهزتك';$('#aErr').textContent='';$('#aPass').value='';updAuth();show('authOv')}
 function updAuth(){
   document.querySelectorAll('[data-at]').forEach(b=>b.classList.toggle('on',b.dataset.at===aTab));
   $('#aNameL').style.display=aTab==='up'?'block':'none';$('#aForgot').style.display=aTab==='in'?'block':'none';
@@ -604,8 +630,8 @@ let editKid=null,kAv='lion';
 $('#kAge').innerHTML=[6,7,8,9,10,11,12,13,14].map(a=>`<option value="${a}">${a} سنوات</option>`).join('');
 function openKid(id){
   editKid=id?profile.kids.find(k=>k.id===id):null;
-  $('#kTitle').textContent=editKid?'تعديل بيانات الطفل':'أضف طفلك 🧒';
-  $('#kName').value=editKid?editKid.name:'';$('#kAge').value=editKid?editKid.age:8;
+  $('#kTitle').textContent=editKid?'تعديل ملفي':'اختر شخصيتك 🎮';
+  $('#kName').value=editKid?editKid.name:((user&&user.name)||'');$('#kAge').value=editKid?editKid.age:8;
   kAv=editKid?editKid.avatar:AVATARS[profile.kids.length%AVATARS.length];$('#kErr').textContent='';
   $('#kAv').innerHTML=AVATARS.map(a=>`<button class="avo ${a===kAv?'on':''}" data-av="${a}">${A(a)}</button>`).join('');
   $('#kAv').querySelectorAll('.avo').forEach(b=>b.onclick=()=>{kAv=b.dataset.av;$('#kAv').querySelectorAll('.avo').forEach(x=>x.classList.toggle('on',x===b))});
@@ -613,9 +639,9 @@ function openKid(id){
 }
 $('#kSave').onclick=async()=>{
   const name=$('#kName').value.trim(),age=+$('#kAge').value;
-  if(!name)return $('#kErr').textContent='اكتب اسم الطفل';
+  if(!name)return $('#kErr').textContent='اكتب اسمك';
   if(editKid)Object.assign(editKid,{name,age,avatar:kAv});
-  else{const k={id:'k'+Date.now().toString(36),name,age,avatar:kAv,stars:0,stats:{}};profile.kids.push(k);kidId=k.id}
+  else{const first=!profile.kids.length;const k={id:'k'+Date.now().toString(36),name,age,avatar:kAv,stars:first?guestStars:0,stats:{}};if(first){const gd=LS.get('bw_guest_daily',null);if(gd)k.daily=gd}profile.kids.push(k);kidId=k.id}
   hide('kidOv');await persist();setKid(kidId);
   if($('#dash').classList.contains('show'))openDash();
   toast(editKid?'✅ تم الحفظ':`🎉 مرحبًا ${name}! جاهز للعب`);
@@ -630,7 +656,7 @@ function openPick(){
   const ad=$('#pickAdd');if(ad)ad.onclick=()=>openKid();
   show('pickOv');
 }
-$('#kidChip').onclick=()=>{if(!user)return openAuth('up','أنشئ حسابًا لتحفظ نجوم طفلك');profile.kids.length?openPick():openKid()};
+$('#kidChip').onclick=()=>{if(!user)return openAuth('up','أنشئ حسابًا لتحفظ نجومك وألعابك');profile.kids.length?openDash():openKid()};
 $('#acctBtn').onclick=()=>user?openDash():openAuth('in');
 
 // ---- parent dashboard
@@ -638,17 +664,16 @@ let delArm=null;
 function openDash(){
   const ownedG=GAMES.filter(g=>owned.has(g.id)),spent=ownedG.reduce((a,g)=>a+g.price,0);
   $('#dashBody').innerHTML=`
-   <div class="dcard"><h3>${esc(user.name||'ولي الأمر')}</h3><div class="meta" dir="ltr" style="text-align:right">${esc(user.email)}</div>
+   <div class="dcard"><h3>${esc(user.name||'حسابي')}</h3><div class="meta" dir="ltr" style="text-align:right">${esc(user.email)}</div>
      <div style="margin-top:8px"><span class="mode ${B.mode==='firebase'?'live':''}">${B.mode==='firebase'?'☁️ متصل بالسحابة':'🧪 وضع تجريبي (هذا المتصفح فقط)'}</span></div></div>
-   <div class="dcard"><h3>🎮 الألعاب المشتراة (${ownedG.length})</h3>
-     ${ownedG.length?`<div class="ownl">${ownedG.map(g=>`<span>${g.emoji} ${g.name}</span>`).join('')}</div><div class="meta" style="margin-top:8px">إجمالي المشتريات: ${spent} ر.س · تعمل لكل أطفالك</div>`:'<div class="meta">لم تشترِ أي لعبة بعد. الألعاب المجانية متاحة للجميع.</div>'}</div>
-   <h3 style="margin:18px 4px 10px;font-size:22px">👧👦 أطفالي (${profile.kids.length}/5)</h3>
+   <div class="dcard"><h3>🎮 ألعابي (${GAMES.filter(isOpen).length}/${GAMES.length})</h3><div class="ownl">${GAMES.filter(isOpen).map(g=>`<span>${g.emoji} ${g.name}</span>`).join('')}</div></div>
+   
    ${profile.kids.map(k=>{const rows=GAMES.filter(g=>k.stats&&k.stats[g.id]).map(g=>{const st=k.stats[g.id];return `<tr><td>${g.emoji} ${g.name}</td><td>${st.plays}</td><td>${'⭐'.repeat(st.best)}${'☆'.repeat(3-st.best)}</td></tr>`}).join('');
      const tr=[...TROPHIES].reverse().find(t=>k.stars>=t.n);
-     return `<div class="dcard"><div class="khead"><span class="av">${A(k.avatar)}</span><div class="grow"><h3 style="margin:0">${esc(k.name)}</h3><div class="meta">${k.age} سنوات · ⭐ ${k.stars} نجمة${tr?` · ${tr.i} ${tr.t}`:''}</div></div>${k.id===kidId?'<span class="mode live">يلعب الآن</span>':''}</div>
-       ${rows?`<table class="gtable"><tr><th>اللعبة</th><th>مرات اللعب</th><th>أفضل نتيجة</th></tr>${rows}</table>`:'<div class="meta" style="margin-top:8px">لم يلعب بعد.</div>'}
-       <div class="kact">${k.id!==kidId?`<button class="sbtn pri" data-dk="play" data-id="${k.id}">▶ اجعله يلعب الآن</button>`:''}<button class="sbtn" data-dk="edit" data-id="${k.id}">✏️ تعديل</button><button class="sbtn del" data-dk="del" data-id="${k.id}">${delArm===k.id?'⚠️ اضغط للتأكيد':'🗑 حذف'}</button></div></div>`}).join('')}
-   ${profile.kids.length<5?'<button class="btn ghost full" id="dAdd">➕ إضافة طفل</button>':''}
+     return `<div class="dcard"><div class="khead"><span class="av">${A(k.avatar)}</span><div class="grow"><h3 style="margin:0">${esc(k.name)}</h3><div class="meta">${k.age} سنوات · ⭐ ${k.stars} نجمة${tr?` · ${tr.i} ${tr.t}`:''}</div></div></div>
+       ${rows?`<table class="gtable"><tr><th>اللعبة</th><th>مرات اللعب</th><th>أفضل نتيجة</th></tr>${rows}</table>`:'<div class="meta" style="margin-top:8px">لم تلعب بعد.</div>'}
+       <div class="kact"><button class="sbtn" data-dk="edit" data-id="${k.id}">✏️ تعديل</button></div></div>`}).join('')}
+   
    <button class="btn full" style="margin-top:14px;background:#FFE3E3;color:#C0392B" id="dOut">تسجيل الخروج</button>`;
   $('#dashBody').querySelectorAll('[data-dk]').forEach(b=>b.onclick=async()=>{
     const id=b.dataset.id,act=b.dataset.dk;
@@ -660,8 +685,10 @@ function openDash(){
   $('#dOut').onclick=async()=>{await B.signOut();user=null;profile=null;kidId=null;LS.del('bw_kid');hide('dash');sync();toast('👋 تم تسجيل الخروج')};
   show('dash');
 }
+$('#lkGo').onclick=()=>{hide('lockOv');document.getElementById('daily').scrollIntoView({behavior:'smooth'})};
+$('#lkBuy').onclick=()=>{hide('lockOv');openBuy($('#lkBuy').dataset.id)};
 $('#dBack').onclick=()=>{delArm=null;hide('dash')};
-const isOpen=g=>g.price===0||owned.has(g.id);
+const isOpen=g=>stars>=(NEED[g.id]||0)||owned.has(g.id);
 
 // ---- Sounds & encouragement (generated in the browser, no files)
 const SFX=(()=>{
@@ -724,10 +751,10 @@ function render(){
   const list=GAMES.filter(g=>ageFilter==='all'||g.age===ageFilter||g.age==='all');
   $('#grid').innerHTML=list.map(g=>{
     const open=isOpen(g);
-    const tagR=g.price===0?'<span class="tag r free">مجانية</span>':owned.has(g.id)?'<span class="tag r own">✓ مملوكة</span>':'';
+    const need=NEED[g.id]||0;const tagR=open?'<span class="tag r free">مفتوحة</span>':'';
     const tagL=g.isNew?'<span class="tag l new">🆕 جديد</span>':!g.ready?'<span class="tag l">⏳ قريبًا</span>':'';
-    const btn=!g.ready?'<button class="cbtn soon">قريبًا</button>':open?`<button class="cbtn play" data-play="${g.id}">▶ العب</button>`:`<button class="cbtn buy" data-buy="${g.id}">🔓 افتح</button>`;
-    const price=g.price===0?'<span class="price" style="color:var(--green)">مجانًا</span>':owned.has(g.id)?'<span class="price" style="color:var(--green)">مفتوحة</span>':`<span class="price">${g.price} <small>ر.س · مرة واحدة</small></span>`;
+    const btn=!g.ready?'<button class="cbtn soon">قريبًا</button>':open?`<button class="cbtn play" data-play="${g.id}">▶ العب</button>`:`<button class="cbtn buy" data-lock="${g.id}">🔒 ${need} ⭐</button>`;
+    const price=open?'<span class="price" style="color:var(--green)">✓ جاهزة</span>':`<span class="lockp"><small>باقي ${need-stars} ⭐ أو ${g.price} ريال</small><i style="--p:${Math.round(stars/need*100)}%"></i></span>`;
     return `<div class="card">
       <div class="thumb" style="background:${g.color}">${g.img?`<img class="em ti" src="${g.img}" alt="">`:g.svg?`<span class="em ti">${A(g.svg)}</span>`:`<span class="em">${g.emoji}</span>`}${open?'':'<div class="lock">🔒</div>'}${tagR}${tagL}</div>
       <div class="cbody"><h3>${g.name}</h3>
@@ -737,9 +764,10 @@ function render(){
 }
 
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-play],[data-buy],[data-scroll],[data-close],[data-age]');
+  const t=e.target.closest('[data-play],[data-lock],[data-buy],[data-scroll],[data-close],[data-age]');
   if(!t)return;
   if(t.dataset.play)openGame(t.dataset.play);
+  else if(t.dataset.lock)openLock(t.dataset.lock);
   else if(t.dataset.buy)openBuy(t.dataset.buy);
   else if(t.dataset.scroll)document.getElementById(t.dataset.scroll).scrollIntoView({behavior:'smooth'});
   else if(t.dataset.close)$('#'+t.dataset.close).classList.remove('show');
@@ -750,7 +778,7 @@ document.addEventListener('click',e=>{
 let buying=null,method='stc';
 const MN={stc:'STC Pay',barq:'برق'};
 function openBuy(id){
-  if(!user){pendingBuy=id;return openAuth('up','أنشئ حسابًا مجانيًا حتى تُحفظ اللعبة التي تشتريها لأطفالك على كل أجهزتك')}
+  if(!user){pendingBuy=id;return openAuth('up','أنشئ حسابًا مجانيًا حتى تُحفظ اللعبة التي تشتريها على كل أجهزتك')}
   if(!profile.kids.length){pendingBuy=id;return openKid()}
   buying=GAMES.find(g=>g.id===id);method='stc';
   $('#bEmoji').innerHTML=buying.img?`<img src="${buying.img}" style="width:54px;height:54px" alt="">`:buying.emoji;$('#bEmoji').style.background=buying.color;
@@ -774,7 +802,7 @@ const later=(f,ms)=>timers.push(setTimeout(f,ms));
 function clearAll(){timers.forEach(t=>{clearTimeout(t);clearInterval(t)});timers=[];busy=false}
 function stat(prog,score){$('#gProg').textContent=prog;$('#gScore').textContent='⭐ '+score}
 function openGame(id){
-  const g=GAMES.find(x=>x.id===id);if(!isOpen(g))return openBuy(id);
+  const g=GAMES.find(x=>x.id===id);if(!isOpen(g))return openLock(id);
   clearAll();curId=id;$('#gTitle').textContent=g.emoji+' '+g.name;$('#game').classList.add('show');
   ({animals,letters,memory,math,flags,logic,science,code})[id]();
 }
@@ -784,9 +812,10 @@ function result(score,total,msg){
   recordPlay(curId,s);if(s>=2){confetti();SFX.fanfare();setTimeout(()=>SFX.applause(),350);setTimeout(()=>SFX.say(s===3?'ممتاز! أنت بطل':'أحسنت! عمل رائع'),1200)}else if(s===1){SFX.ok();SFX.say('جيد! حاول مرة ثانية لتجمع نجوما أكثر')}else{SFX.sad();popEmoji('😢',true);setTimeout(()=>SFX.say('لا بأس، حاول مرة ثانية'),2300)}
   area.innerHTML=`${s===3?'<img src="img/trophy.png" alt="" style="width:120px;height:120px">':`<div class="resemo">${s===2?'🥳':s===1?'🙂':'😢'}</div>`}<div class="stars">${'⭐'.repeat(s)}${'☆'.repeat(3-s)}</div>
    <h2 style="margin:6px 0">${s===3?'ممتاز! 🏆':s===2?'أحسنت! 👏':s===1?'جيد، حاول مرة أخرى 💪':'لا بأس، جرّب مرة ثانية 🌱'}</h2>
-   <div class="q">${msg}<br><small style="color:var(--muted)">ربحت ${s} نجوم · مجموع نجومك ${stars}</small>${lastMission?`<br><b style="color:var(--green-d)">✅ مهمة اليوم ${lastMission.n}/${lastMission.total}${lastMission.finished?` · أنجزت كل المهام! +5 ⭐ · 🔥 ${lastMission.streak}`:''}</b>`:''}</div>
+   <div class="q">${msg}<br><small style="color:var(--muted)">ربحت ${s} نجوم · مجموع نجومك ${stars}</small>${lastMission?`<br><b style="color:var(--green-d)">✅ مهمة اليوم ${lastMission.n}/${lastMission.total}${lastMission.finished?` · أنجزت كل المهام! +5 ⭐ · 🔥 ${lastMission.streak}`:''}</b>`:''}${lastUnlocked.length?`<br><b style="color:var(--purple)">🎁 فتحت لعبة جديدة: ${lastUnlocked.map(g=>g.emoji+' '+g.name).join('، ')}!</b>`:''}</div>
    <div class="levels"><button class="btn pri" id="again">🔁 العب مرة أخرى</button><button class="btn ghost" id="home">🏠 كل الألعاب</button></div>`;
   if(lastMission&&lastMission.finished)setTimeout(()=>{confetti();SFX.fanfare();SFX.say('رائع! أنجزت مهام اليوم كلها')},2600);
+  if(lastUnlocked.length)setTimeout(()=>{confetti();SFX.fanfare();SFX.say('مبروك! فتحت لعبة جديدة')},lastMission&&lastMission.finished?5400:2600);
   $('#again').onclick=()=>openGame(curId);$('#home').onclick=()=>$('#gBack').click();
 }
 function quiz(items,{prompt,show,answer,pool,txt,reveal}){
