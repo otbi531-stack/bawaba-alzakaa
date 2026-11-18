@@ -333,6 +333,7 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
   <button class="x" data-close="lockOv">✕</button>
   <div id="lkBody"></div>
   <button class="btn pri full" id="lkGo" style="margin-top:14px">🎯 إلى مهمة اليوم</button>
+  <button class="btn blue full" id="lkStars" style="margin-top:10px;display:none"></button>
   <button class="btn ghost full" id="lkBuy" style="margin-top:10px"></button>
 </div></div>
 
@@ -486,7 +487,7 @@ const GAMES=[
  {id:'clock',name:'قراءة الساعة',emoji:'⏰',age:'all',skill:'الوقت والساعة',price:3,color:'linear-gradient(135deg,#D6E4FF,#A9C4FF)',ready:true,isNew:true},
  {id:'code',name:'روبوت المتاهة',emoji:'🤖',img:'img/robot.png',age:'10-14',skill:'مبادئ البرمجة',price:3,color:'linear-gradient(135deg,#FFE0D1,#FFB38F)',ready:true},
 ];
-const NEED={animals:0,letters:0,memory:0,xo:0,islamic:0,simon:0,puzzle:5,spelling:10,capitals:15,clock:25,math:10,flags:20,logic:35,science:50,code:70};
+const NEED={animals:0,letters:0,memory:0,xo:0,islamic:0,simon:10,puzzle:15,math:25,spelling:30,flags:40,capitals:50,logic:60,clock:70,science:85,code:100};
 const TROPHIES=[{n:5,i:'🥉',t:'نجم صاعد'},{n:15,i:'🥈',t:'بطل صغير'},{n:30,i:'🥇',t:'عبقري'},{n:60,i:'👑',t:'ملك الذكاء'}];
 
 // =====================================================================
@@ -670,6 +671,7 @@ function openLock(id){
    <div class="meta" style="margin:8px 0 4px">معك ${stars} ⭐ · باقي <b>${left} ⭐</b></div>
    <div class="meta">💡 أسرع طريقة: أنجز مهمة اليوم واربح 5 نجوم إضافية!</div>`;
   $('#lkBuy').textContent=`🔓 افتحها الآن بـ ${g.price} ريال`;$('#lkBuy').dataset.id=id;
+  const ls=$('#lkStars');if(left>0&&left<g.price){ls.style.display='block';ls.dataset.id=id;ls.dataset.n=left;ls.textContent=left===1?'⭐ اشترِ النجمة الناقصة بريال واحد':'⭐ اشترِ النجمتين الناقصتين بريالين'}else ls.style.display='none';
   show('lockOv');
 }
 
@@ -768,6 +770,7 @@ function openDash(){
 }
 $('#lkGo').onclick=()=>{hide('lockOv');document.getElementById('daily').scrollIntoView({behavior:'smooth'})};
 $('#lkBuy').onclick=()=>{hide('lockOv');openBuy($('#lkBuy').dataset.id)};
+$('#lkStars').onclick=()=>{hide('lockOv');openBuy($('#lkStars').dataset.id,+$('#lkStars').dataset.n)};
 $('#dBack').onclick=()=>{delArm=null;hide('dash')};
 const isOpen=g=>stars>=(NEED[g.id]||0)||owned.has(g.id);
 
@@ -870,25 +873,32 @@ document.addEventListener('click',e=>{
 
 // ---- purchase (STC Bank transfer, trust-based)
 const PAY_NUMBER='0505550531';
-let buying=null,buyRef='';
-function openBuy(id){
-  if(!user){pendingBuy=id;return openAuth('up','أنشئ حسابًا مجانيًا حتى تُحفظ اللعبة التي تشتريها على كل أجهزتك')}
-  if(!profile.kids.length){pendingBuy=id;return openKid()}
-  buying=GAMES.find(g=>g.id===id);
+let buying=null,buyRef='',pendingStars=0;
+function openBuy(id,starsN){
+  const op=document.getElementById('owlPop');if(op)op.classList.remove('show','talking');
+  starsN=starsN||pendingStars||0;pendingStars=0;
+  if(!user){pendingBuy=id;pendingStars=starsN;return openAuth('up','أنشئ حسابًا مجانيًا حتى تُحفظ مشترياتك على كل أجهزتك')}
+  if(!profile.kids.length){pendingBuy=id;pendingStars=starsN;return openKid()}
+  const g=GAMES.find(x=>x.id===id);
+  if(starsN){const left=Math.max(0,(NEED[id]||0)-stars);if(!left)return openGame(id);starsN=Math.min(starsN,left)}
+  buying=starsN?{...g,price:starsN,stars:starsN}:g;
   buyRef='BZ-'+(hashStr(user.uid+id+Date.now())%9000+1000);
-  $('#bEmoji').innerHTML=buying.img?`<img src="${buying.img}" style="width:54px;height:54px" alt="">`:buying.emoji;$('#bEmoji').style.background=buying.color;
-  $('#bName').textContent=buying.name;$('#bMeta').textContent=`🎯 ${buying.skill}`;
-  $('#bPrice').textContent=buying.price+' ريال';$('#bNum').textContent=PAY_NUMBER;$('#bRef').textContent=buyRef;
+  $('#bEmoji').innerHTML=starsN?'⭐':g.img?`<img src="${g.img}" style="width:54px;height:54px" alt="">`:g.emoji;$('#bEmoji').style.background=starsN?'#FFF3C4':g.color;
+  $('#bName').textContent=starsN?`${starsN===1?'نجمة واحدة':'نجمتان'} ⭐`:g.name;
+  $('#bMeta').textContent=starsN?`لتكمل نجومك وتفتح «${g.name}»`:`🎯 ${g.skill}`;
+  $('#bPrice').textContent=starsN?(starsN===1?'ريالًا واحدًا':'ريالين'):g.price+' ريال';$('#bNum').textContent=PAY_NUMBER;$('#bRef').textContent=buyRef;
   $('#buyOv').classList.add('show');
 }
 async function copyTxt(t){try{await navigator.clipboard.writeText(t);toast('📋 تم النسخ')}catch(e){toast('انسخ الرقم يدويًا: '+t)}}
 $('#bCopy').onclick=()=>copyTxt(PAY_NUMBER);
 $('#bCopyRef').onclick=()=>copyTxt(buyRef);
 $('#bPay').onclick=()=>{
-  profile.owned=[...new Set([...(profile.owned||[]),buying.id])];
-  profile.payments=[...(profile.payments||[]),{game:buying.id,ref:buyRef,price:buying.price,date:new Date().toISOString()}];
+  const b=buying,k=activeKid();
+  if(b.stars){if(k)k.stars+=b.stars}else profile.owned=[...new Set([...(profile.owned||[]),b.id])];
+  profile.payments=[...(profile.payments||[]),{game:b.id,ref:buyRef,price:b.price,...(b.stars?{stars:b.stars}:{}),date:new Date().toISOString()}];
   persist();sync();$('#buyOv').classList.remove('show');
-  SFX.fanfare();confetti();toast(`🎉 شكرًا لك! تم فتح «${buying.name}»`);setTimeout(()=>openGame(buying.id),700);
+  SFX.fanfare();confetti();toast(b.stars?`⭐ شكرًا لك! أضفنا ${b.stars===1?'نجمة':'نجمتين'} لرصيدك`:`🎉 شكرًا لك! تم فتح «${b.name}»`);
+  setTimeout(()=>{const g=GAMES.find(x=>x.id===b.id);if(isOpen(g))openGame(b.id)},700);
 };
 
 // ---- game engine
