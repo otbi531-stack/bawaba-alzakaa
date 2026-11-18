@@ -27,5 +27,42 @@ service cloud.firestore {
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['applied']));
       allow delete: if isAdmin();
     }
+
+    function pid(a, b) { return a < b ? a + '_' + b : b + '_' + a; }
+    function isFriend(other) {
+      return exists(/databases/$(database)/documents/friendships/$(pid(request.auth.uid, other)));
+    }
+
+    // أكواد الدعوة: كل كود يُحجز مرة واحدة لصاحبه
+    match /codes/{code} {
+      allow get: if signedIn();
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+    }
+
+    // بطاقة اللاعب (الاسم والصورة والنجوم): يراها صاحبها وأصدقاؤه فقط
+    match /players/{uid} {
+      allow get: if signedIn() && (request.auth.uid == uid || isFriend(uid));
+      allow write: if signedIn() && request.auth.uid == uid;
+    }
+
+    // الصداقات: يراها ويحذفها طرفاها فقط
+    match /friendships/{fid} {
+      allow create: if signedIn()
+        && request.auth.uid in request.resource.data.users
+        && request.resource.data.users.size() == 2
+        && fid == pid(request.resource.data.users[0], request.resource.data.users[1]);
+      allow read, delete: if signedIn() && request.auth.uid in resource.data.users;
+    }
+
+    // الرسائل الجاهزة والتحديات: بين الأصدقاء فقط
+    match /messages/{mid} {
+      allow create: if signedIn()
+        && request.resource.data.from == request.auth.uid
+        && isFriend(request.resource.data.to);
+      allow read: if signedIn() && (resource.data.to == request.auth.uid || resource.data.from == request.auth.uid);
+      allow update: if signedIn() && resource.data.to == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read', 'done']);
+      allow delete: if signedIn() && (resource.data.to == request.auth.uid || resource.data.from == request.auth.uid);
+    }
   }
 }

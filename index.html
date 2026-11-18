@@ -290,6 +290,19 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .rst{font-size:13px;border-radius:999px;padding:2px 10px;background:#FFF3C4;color:#8A6500;white-space:nowrap}.rst.approved{background:#DDF7E6;color:#1E7A41}.rst.rejected{background:#FFE3E3;color:#C0392B}
 .rqm{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line);font-weight:700;font-size:14px}
 .rref2{color:var(--muted);font-family:monospace}
+.nbadge{display:inline-grid;place-items:center;min-width:20px;height:20px;border-radius:10px;background:var(--coral);color:#fff;font-size:12px;padding:0 5px}
+.viewtg button{font-size:14px;padding:10px 6px}
+.frcode{text-align:center}.codebig{font-family:'Baloo Bhaijaan 2',monospace;font-size:40px;font-weight:800;letter-spacing:6px;color:var(--pri);margin:4px 0 8px}
+.fradd{display:flex;gap:8px}.fradd input{flex:1;border:2px solid var(--line);border-radius:14px;padding:10px 12px;font-size:20px;font-weight:800;letter-spacing:3px;text-transform:uppercase;text-align:center;font-family:inherit}
+.frrow,.frcard,.frmsg{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.frrow.me{background:#FFF7DA;border-radius:12px;padding:8px}.frrow .rk{width:28px;text-align:center}
+.fav svg{width:36px;height:36px;display:block;border-radius:50%}.fav.big svg{width:48px;height:48px}
+.frcard .grow,.frmsg .grow{flex:1;min-width:0}.frcard small,.frmsg small{display:block;color:var(--muted);font-size:12px}
+.frmsg.unread{background:#EEF5FF;border-radius:12px;padding:8px}
+.frcard .kact{flex-wrap:nowrap}.frcard .sbtn{padding:7px 9px}
+.vgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px;max-height:60vh;overflow:auto}
+.vbtn{border:2px solid var(--line);background:#fff;border-radius:16px;padding:10px;font-weight:800;font-size:15px;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--ink)}
+.vbtn span{font-size:30px}.vbtn small{color:var(--muted);font-weight:500}
 .toast{position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -329,8 +342,9 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
   <section id="daily" style="padding-bottom:0"><div class="daily" id="dailyBox"></div></section>
 
   <section id="games">
-    <div class="viewtg" id="viewtg"><button data-view="map" class="on">🗺️ خريطة المغامرة</button><button data-view="list">📋 كل الألعاب</button></div>
+    <div class="viewtg" id="viewtg"><button data-view="map" class="on">🗺️ الخريطة</button><button data-view="list">📋 كل الألعاب</button><button data-view="friends">👫 أصدقائي</button></div>
     <div id="mapView"></div>
+    <div id="friendsView" style="display:none"></div>
     <div class="sec-head" id="listHead">
       <div><h2>🎮 كل الألعاب</h2><p>ألعاب جديدة تُضاف باستمرار</p></div>
       <div class="tabs" id="tabs">
@@ -364,6 +378,13 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 </main>
 
 <footer>بوابة الذكاء © 2026 — ألعاب تعليمية عربية<br><small style="opacity:.6">الإصدار 2026.11.18-24</small></footer>
+
+<!-- Friends picker -->
+<div class="ov" id="vOv"><div class="modal">
+  <button class="x" id="vClose">✕</button>
+  <h3 id="vTitle"></h3>
+  <div class="vgrid" id="vGrid"></div>
+</div></div>
 
 <!-- Admin -->
 <div class="game" id="adm">
@@ -575,6 +596,17 @@ const LocalBackend={
   async markApplied(id){const a=LS.get('bw_requests',[]),r=a.find(x=>x.id===id);if(r)r.applied=true;LS.set('bw_requests',a)},
   async listRequests(){const a=LS.get('bw_requests',[]);return {pending:a.filter(r=>r.status==='pending'),done:a.filter(r=>r.status!=='pending').slice(-40)}},
   async decide(id,status){const a=LS.get('bw_requests',[]),r=a.find(x=>x.id===id);if(r){r.status=status;r.decidedAt=Date.now()}LS.set('bw_requests',a)},
+  async claimCode(c,uid){const m=LS.get('bw_codes',{});if(m[c])return false;m[c]=uid;LS.set('bw_codes',m);return true},
+  async findCode(c){return LS.get('bw_codes',{})[c]||null},
+  async savePlayer(uid,d){const m=LS.get('bw_players',{});m[uid]=d;LS.set('bw_players',m)},
+  async getPlayer(uid){return LS.get('bw_players',{})[uid]||null},
+  async listFriendships(uid){return LS.get('bw_friendships',[]).filter(f=>f.users.includes(uid))},
+  async addFriendship(id,users){const a=LS.get('bw_friendships',[]);if(!a.find(f=>f.id===id))a.push({id,users,created:Date.now()});LS.set('bw_friendships',a)},
+  async removeFriendship(id){LS.set('bw_friendships',LS.get('bw_friendships',[]).filter(f=>f.id!==id))},
+  async sendMsg(m){const a=LS.get('bw_msgs',[]);a.push({id:'m'+Date.now().toString(36)+rnd(0,999),...m,created:Date.now()});LS.set('bw_msgs',a)},
+  watchInbox(uid,cb){const f=()=>cb(LS.get('bw_msgs',[]).filter(m=>m.to===uid));f();const t=setInterval(f,2000);return ()=>clearInterval(t)},
+  async markMsg(id,f){const a=LS.get('bw_msgs',[]),m=a.find(x=>x.id===id);if(m)Object.assign(m,f);LS.set('bw_msgs',a)},
+  async deleteMsg(id){LS.set('bw_msgs',LS.get('bw_msgs',[]).filter(m=>m.id!==id))},
   async removeRequest(id){LS.set('bw_requests',LS.get('bw_requests',[]).filter(r=>r.id!==id))},
   isVerified(){return true},async sendVerify(){},async refreshUser(){return true}
 };
@@ -599,6 +631,17 @@ const FirebaseBackend={
   async listRequests(){const c=this.F.collection(this.db,'requests'),m=x=>x.docs.map(d=>({id:d.id,...d.data()}));
     const [a,b]=await Promise.all([this.F.getDocs(this.F.query(c,this.F.where('status','==','pending'))),this.F.getDocs(this.F.query(c,this.F.where('status','in',['approved','rejected']),this.F.limit(60)))]);return {pending:m(a),done:m(b)}},
   async decide(id,status){await this.F.updateDoc(this.F.doc(this.db,'requests',id),{status,decidedAt:this.F.serverTimestamp()})},
+  async claimCode(c,uid){const r=this.F.doc(this.db,'codes',c),d=await this.F.getDoc(r);if(d.exists())return false;await this.F.setDoc(r,{uid});return true},
+  async findCode(c){const d=await this.F.getDoc(this.F.doc(this.db,'codes',c));return d.exists()?d.data().uid:null},
+  async savePlayer(uid,d){await this.F.setDoc(this.F.doc(this.db,'players',uid),d)},
+  async getPlayer(uid){const d=await this.F.getDoc(this.F.doc(this.db,'players',uid));return d.exists()?d.data():null},
+  async listFriendships(uid){const s=await this.F.getDocs(this.F.query(this.F.collection(this.db,'friendships'),this.F.where('users','array-contains',uid)));return s.docs.map(d=>({id:d.id,...d.data()}))},
+  async addFriendship(id,users){await this.F.setDoc(this.F.doc(this.db,'friendships',id),{users,created:this.F.serverTimestamp()})},
+  async removeFriendship(id){await this.F.deleteDoc(this.F.doc(this.db,'friendships',id))},
+  async sendMsg(m){await this.F.addDoc(this.F.collection(this.db,'messages'),{...m,created:this.F.serverTimestamp()})},
+  watchInbox(uid,cb){return this.F.onSnapshot(this.F.query(this.F.collection(this.db,'messages'),this.F.where('to','==',uid)),s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))),e=>console.warn(e))},
+  async markMsg(id,f){await this.F.updateDoc(this.F.doc(this.db,'messages',id),f)},
+  async deleteMsg(id){await this.F.deleteDoc(this.F.doc(this.db,'messages',id))},
   async removeRequest(id){await this.F.deleteDoc(this.F.doc(this.db,'requests',id))},
   isVerified(){return !!(this.auth.currentUser&&this.auth.currentUser.emailVerified)},
   async sendVerify(){await this.A.sendEmailVerification(this.auth.currentUser)},
@@ -655,7 +698,7 @@ const AV=k=>KID(KIDS[k]?k:'b1');
 
 const AVATARS=['b1','b2','b3','b4','b5','g1','g2','g3','g4','g5'];
 function activeKid(){return profile&&profile.kids.find(k=>k.id===kidId)||null}
-function sync(){owned=new Set(profile?profile.owned||[]:LS.get('bw_guest_owned',[]));const k=activeKid();stars=k?k.stars:guestStars;earned=k?(k.earned??k.stars):LS.get('bw_guest_earned',guestStars);renderHeader();render();renderDaily();if(typeof renderMap==='function')renderMap()}
+function sync(){owned=new Set(profile?profile.owned||[]:LS.get('bw_guest_owned',[]));const k=activeKid();stars=k?k.stars:guestStars;earned=k?(k.earned??k.stars):LS.get('bw_guest_earned',guestStars);renderHeader();render();renderDaily();if(typeof renderMap==='function')renderMap();if(typeof publishPlayer==='function')publishPlayer()}
 async function persist(){if(user&&profile){try{await B.save(user.uid,profile)}catch(e){console.warn(e);toast('⚠️ تعذر الحفظ، تحقق من الاتصال')}}}
 function recordPlay(gid,s){
   const before=stars;const k=activeKid();
@@ -772,7 +815,7 @@ $('#aGo').onclick=async()=>{
     if(!activeKid())kidId=profile.kids[0]?profile.kids[0].id:null;
     hide('authOv');setKid(kidId);
     toast(aTab==='up'?`🎉 أهلًا ${user.name}! حسابك جاهز`:`👋 أهلًا بعودتك ${user.name||''}`);
-    startWatch();
+    startWatch();ensureSocial();
     if(isAdmin()&&!profile.kids.length){openAdmin()}else if(!profile.kids.length)openKid();else if(pendingBuy){const b=pendingBuy;pendingBuy=null;openBuy(b)}else greet(true);
   }catch(e){console.warn(e);$('#aErr').textContent=errMsg(e)}
   g.disabled=false;g.textContent=old;
@@ -803,6 +846,7 @@ $('#kSave').onclick=async()=>{
   if($('#dash').classList.contains('show'))openDash();
   toast(editKid?'✅ تم الحفظ':`🎉 مرحبًا ${name}! جاهز للعب`);
   if(!editKid&&!pendingBuy)setTimeout(()=>greet(true),400);
+  ensureSocial();
   if(pendingBuy){const b=pendingBuy;pendingBuy=null;openBuy(b)}
 };
 
@@ -844,7 +888,7 @@ function openDash(){
   });
   const da=$('#dAdd');if(da)da.onclick=()=>openKid();
   $('#dashBody').querySelectorAll('[data-shop]').forEach(b=>b.onclick=()=>{hide('dash');openBuy(null,+b.dataset.shop)});
-  $('#dOut').onclick=async()=>{if(unwatch){try{unwatch()}catch(e){}unwatch=null}myReqs=[];await B.signOut();user=null;profile=null;kidId=null;LS.del('bw_kid');hide('dash');sync();toast('👋 تم تسجيل الخروج')};
+  $('#dOut').onclick=async()=>{if(unwatch){try{unwatch()}catch(e){}unwatch=null}if(unwatchInbox){try{unwatchInbox()}catch(e){}unwatchInbox=null}myReqs=[];friends=[];inbox=[];pubSig='';await B.signOut();user=null;profile=null;kidId=null;LS.del('bw_kid');hide('dash');sync();toast('👋 تم تسجيل الخروج')};
   show('dash');
 }
 $('#lkGo').onclick=()=>{hide('lockOv');const u=$('#lkGo').dataset.unlock;if(u)return unlockWithStars(u);document.getElementById(owned.size?'games':'daily').scrollIntoView({behavior:'smooth'})};
@@ -994,10 +1038,10 @@ function openGame(id){
 $('#gBack').onclick=()=>{clearAll();$('#game').classList.remove('show')};
 function result(score,total,msg){
   clearAll();const r=score/total,s=r>=.9?3:r>=.6?2:r>=.3?1:0;
-  recordPlay(curId,s);if(s>=2){confetti();SFX.fanfare();setTimeout(()=>SFX.applause(),350);setTimeout(()=>SFX.sayP(s===3?'win3':'win2'),1200)}else if(s===1){SFX.ok();SFX.sayP('one')}else{SFX.sad();popEmoji('😢',true);setTimeout(()=>SFX.sayP('lose'),2300)}
+  recordPlay(curId,s);const chLine=challengeResult(s);if(s>=2){confetti();SFX.fanfare();setTimeout(()=>SFX.applause(),350);setTimeout(()=>SFX.sayP(s===3?'win3':'win2'),1200)}else if(s===1){SFX.ok();SFX.sayP('one')}else{SFX.sad();popEmoji('😢',true);setTimeout(()=>SFX.sayP('lose'),2300)}
   area.innerHTML=`${s===3?'<img src="img/trophy.png" alt="" style="width:120px;height:120px">':`<div class="resemo">${s===2?'🥳':s===1?'🙂':'😢'}</div>`}<div class="stars">${'⭐'.repeat(s)}${'☆'.repeat(3-s)}</div>
    <h2 style="margin:6px 0">${s===3?'ممتاز! 🏆':s===2?'أحسنت! 👏':s===1?'جيد، حاول مرة أخرى 💪':'لا بأس، جرّب مرة ثانية 🌱'}</h2>
-   <div class="q">${msg}<br><small style="color:var(--muted)">ربحت ${s} نجوم · مجموع نجومك ${stars}</small>${lastMission?`<br><b style="color:var(--green-d)">✅ مهمة اليوم ${lastMission.n}/${lastMission.total}${lastMission.finished?` · أنجزت كل المهام! +5 ⭐ · 🔥 ${lastMission.streak}`:''}</b>`:''}${lastUnlocked.length?`<br><b style="color:var(--purple)">🎁 فتحت لعبة جديدة: ${lastUnlocked.map(g=>g.emoji+' '+g.name).join('، ')}!</b>`:''}</div>
+   <div class="q">${msg}<br><small style="color:var(--muted)">ربحت ${s} نجوم · مجموع نجومك ${stars}</small>${lastMission?`<br><b style="color:var(--green-d)">✅ مهمة اليوم ${lastMission.n}/${lastMission.total}${lastMission.finished?` · أنجزت كل المهام! +5 ⭐ · 🔥 ${lastMission.streak}`:''}</b>`:''}${lastUnlocked.length?`<br><b style="color:var(--purple)">🎁 فتحت لعبة جديدة: ${lastUnlocked.map(g=>g.emoji+' '+g.name).join('، ')}!</b>`:''}${chLine}</div>
    <div class="levels"><button class="btn pri" id="again">🔁 العب مرة أخرى</button><button class="btn ghost" id="home">🏠 كل الألعاب</button></div>`;
   if(lastMission&&lastMission.finished)setTimeout(()=>{confetti();SFX.fanfare();SFX.sayP('daily')},2600);
   if(lastUnlocked.length)setTimeout(()=>{confetti();SFX.fanfare();SFX.sayP('unlock')},lastMission&&lastMission.finished?5400:2600);
@@ -1415,7 +1459,7 @@ const ZONES=[
  {min:70,max:1e9,name:'🚀 مدينة الفضاء',sub:'آخر محطة للأبطال!',bg:'linear-gradient(180deg,#E4DBFF,#F2EDFF)',path:'#8B5CF6',deco:['🪐','⭐','🛸','🌙']}];
 let view=LS.get('bw_view','map');
 function setView(v){view=v;LS.set('bw_view',v);document.querySelectorAll('#viewtg button').forEach(b=>b.classList.toggle('on',b.dataset.view===v));
-  $('#mapView').style.display=v==='map'?'block':'none';$('#listHead').style.display=$('#grid').style.display=v==='list'?'':'none';if(v==='map')renderMap()}
+  $('#mapView').style.display=v==='map'?'block':'none';$('#friendsView').style.display=v==='friends'?'block':'none';$('#listHead').style.display=$('#grid').style.display=v==='list'?'':'none';if(v==='map')renderMap();if(v==='friends'){renderFriends();if(user)loadFriends()}updFrBadge()}
 document.querySelectorAll('#viewtg button').forEach(b=>b.onclick=()=>setView(b.dataset.view));
 function renderMap(){
   const box=$('#mapView');if(!box||view!=='map')return;
@@ -1495,9 +1539,110 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.18-24';
-(async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
+const APP_VERSION='2026.11.18-25';
+(async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='2026.11.18-25']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
+// ---- Friends: invite codes, preset voice messages, challenges, leaderboard
+const VOICES=[['hi','👋','مرحبًا!','مَرْحَبًا!'],['bravo','👏','أحسنت يا بطل!','أَحْسَنْتَ يا بَطَل!'],['play','🎮','تعال نلعب!','تَعالَ نَلْعَب!'],['dare','🔥','تحدّاني إن استطعت!','تَحَدّاني إِنِ اسْتَطَعْت!'],
+ ['thanks','🙏','شكرًا لك!','شُكْرًا لَك!'],['friend','💛','أنت صديق رائع!','أَنْتَ صَديقٌ رائِع!'],['laugh','😂','هههههه!','هاهاهاها!'],['star','⭐','أنت نجم!','أَنْتَ نَجْم!'],['morning','☀️','صباح الخير!','صَباحَ الخَيْر!'],['night','🌙','تصبح على خير!','تُصْبِحُ عَلى خَيْر!']];
+const VMAP=Object.fromEntries(VOICES.map(v=>[v[0],v]));
+const CODE_CH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const pairId=(a,b)=>a<b?a+'_'+b:b+'_'+a;
+let friends=[],inbox=[],unwatchInbox=null,seenMsg=new Set(),activeChallenge=null,frTarget=null,delFr=null,pubSig='';
+async function ensureSocial(){
+  if(!user||!profile||!activeKid())return;
+  if(!profile.code){for(let t=0;t<5;t++){const c=[...Array(6)].map(()=>CODE_CH[rnd(0,CODE_CH.length-1)]).join('');try{if(await B.claimCode(c,user.uid)){profile.code=c;await persist();break}}catch(e){console.warn(e);break}}}
+  publishPlayer();loadFriends();startInbox();
+}
+function publishPlayer(){if(!user||!profile)return;const k=activeKid();if(!k)return;
+  const d={name:k.name,avatar:k.avatar,earned:k.earned??k.stars,code:profile.code||'',best:Object.fromEntries(Object.entries(k.stats||{}).map(([g,v])=>[g,v.best||0]))};
+  const sig=JSON.stringify(d);if(sig===pubSig)return;pubSig=sig;B.savePlayer(user.uid,d).catch(e=>console.warn(e))}
+async function loadFriends(){
+  if(!user){friends=[];return renderFriends()}
+  try{const fs=await B.listFriendships(user.uid);
+    friends=await Promise.all(fs.map(async f=>{const uid=f.users.find(u=>u!==user.uid);let p=null;try{p=await B.getPlayer(uid)}catch(e){}return {fid:f.id,uid,name:'صديق',avatar:'b1',earned:0,best:{},...(p||{})}}))}catch(e){console.warn(e)}
+  renderFriends();
+}
+function startInbox(){if(unwatchInbox){try{unwatchInbox()}catch(e){}unwatchInbox=null}if(!user)return;let first=true;
+  try{unwatchInbox=B.watchInbox(user.uid,msgs=>{
+    const fresh=msgs.filter(m=>!m.read&&!seenMsg.has(m.id));msgs.forEach(m=>seenMsg.add(m.id));
+    const sig=JSON.stringify(msgs.map(m=>[m.id,m.read,m.done]));const changed=sig!==startInbox.sig;startInbox.sig=sig;inbox=msgs;
+    if(first){first=false;if(fresh.length)toast(`📬 لديك ${fresh.length} ${fresh.length===1?'رسالة جديدة':'رسائل جديدة'} من أصدقائك`)}
+    else fresh.forEach(m=>{const t=msgText(m);toast(`📬 ${m.fromName}: ${t.short}`);SFX.ok();setTimeout(()=>SFX.say(t.say),500);if(m.type==='added')loadFriends()});
+    const old=Date.now()-7*864e5;msgs.filter(m=>m.read&&tsOf(m)&&tsOf(m)<old).forEach(m=>B.deleteMsg(m.id).catch(()=>{}));
+    if(changed){renderFriends();updFrBadge()}
+  })}catch(e){console.warn(e)}}
+function updFrBadge(){const n=inbox.filter(m=>!m.read).length,b=document.querySelector('#viewtg [data-view=friends]');if(b)b.innerHTML=`👫 أصدقائي${n?` <span class="nbadge">${n}</span>`:''}`}
+function msgText(m){const g=m.game?GAMES.find(x=>x.id===m.game):null,gn=g?g.name:'';
+  if(m.type==='voice'){const v=VMAP[m.key]||VOICES[0];return {icon:v[1],short:v[2],say:`${m.fromName} يَقول: ${v[3]}`}}
+  if(m.type==='challenge')return {icon:'🏆',short:`تحدّاك في «${gn}» (${'⭐'.repeat(m.score)})`,say:`${m.fromName} يَتَحَدّاك!`};
+  if(m.type==='result')return {icon:m.outcome==='win'?'🥇':m.outcome==='lose'?'💪':'🤝',short:m.outcome==='win'?`فاز عليك في «${gn}»!`:m.outcome==='lose'?`خسر أمامك في «${gn}»، أنت البطل!`:`تعادل معك في «${gn}»`,say:m.outcome==='lose'?`مَبْروك! فُزْتَ عَلى ${m.fromName}`:`${m.fromName} لَعِبَ تَحَدّيك`};
+  if(m.type==='added')return {icon:'👫',short:'أضافك صديقًا!',say:`${m.fromName} أَضافَكَ صَديقًا`};
+  return {icon:'💬',short:'',say:''};
+}
+function sendTo(f,data){const k=activeKid();return B.sendMsg({from:user.uid,to:f.uid,fromName:k?k.name:(user.name||''),fromAvatar:k?k.avatar:'b1',read:false,done:false,...data})}
+function renderFriends(){
+  const box=$('#friendsView');if(!box||view!=='friends')return;
+  if(!user||!profile||!activeKid()){box.innerHTML=`<div class="dcard" style="text-align:center"><div style="font-size:56px">👫</div><h3>العب مع أصدقائك!</h3><div class="meta" style="margin:6px 0 14px">أضف أصدقاءك بكود خاص، وأرسل لهم رسائل صوتية وتحديات.</div><button class="btn blue" id="frLogin">👤 سجّل حسابك أولًا</button></div>`;
+    $('#frLogin').onclick=()=>openAuth('up','أنشئ حسابًا لتضيف أصدقاءك');return}
+  const k=activeKid(),me={uid:user.uid,name:k.name,avatar:k.avatar,earned:k.earned??k.stars,me:true};
+  const board=[me,...friends].sort((a,b)=>(b.earned||0)-(a.earned||0));const medal=i=>['🥇','🥈','🥉'][i]||`${i+1}`;
+  const msgs=[...inbox].sort((a,b)=>tsOf(b)-tsOf(a)).slice(0,15);
+  box.innerHTML=`
+   <div class="dcard frcode"><div class="meta">كودي الخاص</div><div class="codebig" dir="ltr">${profile.code||'...'}</div>
+     <button class="sbtn pri" id="frCopy">📋 انسخ الكود</button><div class="meta" style="margin-top:8px">🔒 أعطِ كودك فقط لأصدقائك الذين تعرفهم في الواقع، مثل زملاء المدرسة والأقارب.</div></div>
+   <div class="dcard"><h3>➕ أضف صديقًا</h3><div class="fradd"><input id="frIn" maxlength="6" dir="ltr" placeholder="اكتب كود صديقك" autocomplete="off"><button class="btn blue" id="frAdd">أضف</button></div><div class="err" id="frErr"></div></div>
+   ${msgs.length?`<div class="dcard"><h3>📬 رسائلي</h3>${msgs.map(m=>{const t=msgText(m);return `<div class="frmsg ${m.read?'':'unread'}"><span class="fav">${AV(m.fromAvatar||'b1')}</span><div class="grow"><b>${esc(m.fromName||'')}</b> <span>${t.icon} ${t.short}</span><small>${fmtD(tsOf(m))}</small></div>
+      <div class="kact" style="margin:0">${m.type==='voice'||m.type==='added'||m.type==='result'?`<button class="sbtn" data-play-msg="${m.id}">🔊</button>`:''}${m.type==='challenge'&&!m.done?`<button class="sbtn pri" data-acc="${m.id}">▶ اقبل</button>`:''}<button class="sbtn" data-del-msg="${m.id}">✕</button></div></div>`}).join('')}</div>`:''}
+   <div class="dcard"><h3>🏆 لوحة الأبطال</h3>${board.map((p,i)=>`<div class="frrow ${p.me?'me':''}"><b class="rk">${medal(i)}</b><span class="fav">${AV(p.avatar||'b1')}</span><b class="grow">${esc(p.name)}${p.me?' (أنت)':''}</b><span>⭐ ${p.earned||0}</span></div>`).join('')}
+     ${friends.length?'':'<div class="meta" style="margin-top:8px">أضف أصدقاءك ليظهروا هنا وتتنافسوا!</div>'}</div>
+   ${friends.length?`<div class="dcard"><h3>👫 أصدقائي (${friends.length})</h3>${friends.map(f=>`<div class="frcard"><span class="fav big">${AV(f.avatar||'b1')}</span><div class="grow"><b>${esc(f.name)}</b><small>⭐ ${f.earned||0} نجمة</small></div>
+      <div class="kact" style="margin:0"><button class="sbtn pri" data-voice="${f.uid}">🎙️ رسالة</button><button class="sbtn" data-dare="${f.uid}">🏆 تحدَّ</button><button class="sbtn del" data-unf="${f.uid}">${delFr===f.uid?'⚠️ تأكيد':'🗑'}</button></div></div>`).join('')}</div>`:''}
+   <div class="note" style="margin-bottom:10px">🛡️ الرسائل جاهزة فقط بدون كتابة أو كلام حر، حفاظًا على سلامتك. إذا أزعجك أحد احذفه من أصدقائك وأخبر أهلك.</div>`;
+  $('#frCopy').onclick=()=>copyTxt(profile.code||'');
+  $('#frAdd').onclick=addFriendByCode;$('#frIn').onkeydown=e=>{if(e.key==='Enter')addFriendByCode()};
+  box.querySelectorAll('[data-voice]').forEach(b=>b.onclick=()=>openVoice(b.dataset.voice));
+  box.querySelectorAll('[data-dare]').forEach(b=>b.onclick=()=>openDare(b.dataset.dare));
+  box.querySelectorAll('[data-unf]').forEach(b=>b.onclick=async()=>{const uid=b.dataset.unf;if(delFr!==uid){delFr=uid;return renderFriends()}delFr=null;const f=friends.find(x=>x.uid===uid);try{await B.removeFriendship(f.fid);toast('تم حذف الصديق')}catch(e){toast('⚠️ تعذّر الحذف')}loadFriends()});
+  box.querySelectorAll('[data-play-msg]').forEach(b=>b.onclick=()=>{const m=inbox.find(x=>x.id===b.dataset.playMsg);if(!m)return;SFX.say(msgText(m).say);popEmoji(msgText(m).icon);if(!m.read)B.markMsg(m.id,{read:true}).catch(()=>{})});
+  box.querySelectorAll('[data-del-msg]').forEach(b=>b.onclick=()=>B.deleteMsg(b.dataset.delMsg).then(()=>{inbox=inbox.filter(m=>m.id!==b.dataset.delMsg);renderFriends();updFrBadge()}).catch(()=>{}));
+  box.querySelectorAll('[data-acc]').forEach(b=>b.onclick=()=>acceptDare(b.dataset.acc));
+  msgs.filter(m=>!m.read&&m.type!=='challenge').forEach(m=>B.markMsg(m.id,{read:true}).catch(()=>{}));
+}
+async function addFriendByCode(){
+  const c=($('#frIn').value||'').trim().toUpperCase(),err=$('#frErr');err.textContent='';
+  if(c.length!==6)return err.textContent='الكود 6 حروف وأرقام';
+  if(c===profile.code)return err.textContent='هذا كودك أنت 😄';
+  try{const uid=await B.findCode(c);if(!uid)return err.textContent='لم نجد هذا الكود، تأكد منه';
+    if(friends.some(f=>f.uid===uid))return err.textContent='هذا صديقك بالفعل 👍';
+    await B.addFriendship(pairId(user.uid,uid),[user.uid,uid]);await loadFriends();const f=friends.find(x=>x.uid===uid);
+    if(f){sendTo(f,{type:'added'}).catch(()=>{});toast(`🎉 أصبح ${f.name} صديقك!`);SFX.fanfare();confetti()}
+  }catch(e){console.warn(e);err.textContent='تعذّر الإضافة، حاول مرة أخرى'}
+}
+function openVoice(uid){frTarget=friends.find(f=>f.uid===uid);if(!frTarget)return;
+  $('#vTitle').textContent=`🎙️ رسالة إلى ${frTarget.name}`;
+  $('#vGrid').innerHTML=VOICES.map(v=>`<button class="vbtn" data-k="${v[0]}"><span>${v[1]}</span>${v[2]}</button>`).join('');
+  $('#vGrid').querySelectorAll('.vbtn').forEach(b=>b.onclick=async()=>{const v=VMAP[b.dataset.k];SFX.say(v[3]);try{await sendTo(frTarget,{type:'voice',key:v[0]});hide('vOv');toast(`📨 أرسلت «${v[2]}» إلى ${frTarget.name}`)}catch(e){toast('⚠️ تعذّر الإرسال')}});
+  show('vOv')}
+function openDare(uid){frTarget=friends.find(f=>f.uid===uid);if(!frTarget)return;const k=activeKid(),st=k.stats||{};
+  const list=GAMES.filter(g=>isOpen(g));
+  $('#vTitle').textContent=`🏆 تحدَّ ${frTarget.name}`;
+  $('#vGrid').innerHTML=list.length?list.map(g=>{const b=(st[g.id]||{}).best||0;return `<button class="vbtn" data-g="${g.id}"><span>${g.emoji}</span>${g.name}<small>${b?'⭐'.repeat(b):'العب أولًا'}</small></button>`}).join(''):'<div class="meta">افتح لعبة أولًا لتتحدى أصدقاءك</div>';
+  $('#vGrid').querySelectorAll('.vbtn').forEach(b=>b.onclick=async()=>{const g=b.dataset.g,best=(st[g]||{}).best||0;if(!best){hide('vOv');toast('العب هذه اللعبة أولًا لتسجّل نتيجتك');return openGame(g)}
+    try{await sendTo(frTarget,{type:'challenge',game:g,score:best});hide('vOv');toast(`🏆 أرسلت التحدي إلى ${frTarget.name}`);SFX.ok()}catch(e){toast('⚠️ تعذّر الإرسال')}});
+  show('vOv')}
+function acceptDare(id){const m=inbox.find(x=>x.id===id);if(!m)return;const g=GAMES.find(x=>x.id===m.game);if(!g)return;
+  B.markMsg(m.id,{read:true}).catch(()=>{});
+  if(!isOpen(g)){toast(`افتح «${g.name}» أولًا لتقبل التحدي`);return openLock(g.id)}
+  activeChallenge={id:m.id,from:m.from,fromName:m.fromName,game:m.game,score:m.score};openGame(g.id)}
+function challengeResult(s){
+  if(!activeChallenge||activeChallenge.game!==curId)return '';const c=activeChallenge;activeChallenge=null;
+  const out=s>c.score?'lose':s<c.score?'win':'draw';// outcome from the challenger's point of view
+  const f=friends.find(x=>x.uid===c.from);if(f)sendTo(f,{type:'result',game:c.game,score:s,outcome:out}).catch(()=>{});
+  B.markMsg(c.id,{done:true,read:true}).catch(()=>{});
+  return `<br><b style="color:var(--pink)">${out==='lose'?`🏆 فزت على ${esc(c.fromName)}!`:out==='win'?`💪 ${esc(c.fromName)} فاز هذه المرة`:`🤝 تعادلت مع ${esc(c.fromName)}`} (${s}⭐ مقابل ${c.score}⭐)</b>`;
+}
+$('#vClose').onclick=()=>hide('vOv');
 $('#sndBtn').textContent=SFX.on?'🔊':'🔇';
 $('#sndBtn').onclick=()=>{const v=SFX.toggle();$('#sndBtn').textContent=v?'🔊':'🔇';toast(v?'🔊 الصوت مفعّل':'🔇 تم كتم الصوت');if(v)SFX.ok()};
 render();
@@ -1506,7 +1651,7 @@ render();
   user=B.current();
   if(user){try{profile=await B.load(user.uid);profile.kids=profile.kids||[];profile.owned=profile.owned||[]}catch(e){profile={owned:[],kids:[]}}
     if(!activeKid())kidId=profile.kids[0]?profile.kids[0].id:null}
-  setKid(kidId);setView(view);giveWelcome();startWatch();if(location.hash==='#admin'&&isAdmin())openAdmin();
+  setKid(kidId);setView(view);giveWelcome();startWatch();ensureSocial();if(location.hash==='#admin'&&isAdmin())openAdmin();
   setTimeout(()=>{if(!greeted)greet(false)},900);
 })();
 </script>
