@@ -198,6 +198,28 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .hear{border:0;background:#fff;border-radius:999px;padding:8px 20px;font-weight:800;font-size:17px;box-shadow:0 4px 0 var(--line);margin:-6px 0 16px;color:var(--pri)}
 .hear:active{transform:translateY(2px)}
 .hbtn.snd{padding:8px 11px;font-size:16px}
+.daily{background:linear-gradient(135deg,#FFF7DA,#FFE8F2);border:2px solid #FFE3A3;border-radius:26px;padding:16px}
+.dhead{display:flex;align-items:center;gap:12px}
+.owlw{width:86px;flex:none;animation:float 3s ease-in-out infinite}.owlw svg{width:100%;height:auto;display:block}
+.blink{transform-box:fill-box;transform-origin:center;animation:blink 4s infinite}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+.bubble2{flex:1;min-width:0;background:#fff;border-radius:18px;padding:10px 14px;position:relative;font-weight:700;box-shadow:0 4px 0 rgba(0,0,0,.05)}
+.bubble2:before{content:'';position:absolute;right:-14px;top:22px;border:8px solid transparent;border-left-color:#fff}
+.bubble2 b{color:var(--purple);font-size:14px}
+.streak{flex:none;text-align:center;background:#fff;border-radius:18px;padding:8px 12px;min-width:76px}
+.streak .fl{font-size:30px;display:block;filter:grayscale(1);opacity:.4}
+.streak.on .fl{filter:none;opacity:1;animation:flick 1s ease-in-out infinite}
+@keyframes flick{50%{transform:scale(1.12) rotate(-4deg)}}
+.streak b{font-size:22px;display:block;line-height:1.1}.streak small{font-size:11px;color:var(--muted)}
+.dprog{height:12px;background:#fff;border-radius:99px;overflow:hidden;margin-top:14px}
+.dprog i{display:block;height:100%;background:linear-gradient(90deg,var(--sun),var(--pink));transition:width .5s}
+.mlist{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.mcard{border:2px solid var(--line);background:#fff;border-radius:18px;padding:10px;display:flex;align-items:center;gap:10px;text-align:right;color:var(--ink)}
+.mcard .mi{width:46px;height:46px;flex:none;font-size:34px;display:grid;place-items:center}
+.mcard .mi img,.mcard .mi svg{width:46px;height:46px;display:block}
+.mcard .mt{display:flex;flex-direction:column;min-width:0}.mcard b{font-size:15px}.mcard small{color:var(--muted)}
+.mcard.done{background:#E9FBEF;border-color:#9BE3B3}
+@media(max-width:760px){.mlist{grid-template-columns:1fr}.owlw{width:68px}.streak{min-width:62px;padding:6px 8px}.bubble2{padding:8px 10px;font-size:14px}}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -234,6 +256,8 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 
 <div class="white">
 <div class="wrap">
+  <section id="daily" style="padding-bottom:0"><div class="daily" id="dailyBox"></div></section>
+
   <section id="games">
     <div class="sec-head">
       <div><h2>🎮 الألعاب</h2><p>ألعاب جديدة تُضاف باستمرار</p></div>
@@ -473,12 +497,14 @@ let B=FIREBASE_CONFIG?FirebaseBackend:LocalBackend,user=null,profile=null,kidId=
 let owned=new Set(),stars=0,ageFilter='all';
 const AVATARS=['lion','cat','panda','rabbit','frog','bee','dog','sheep','horse','dove'];
 function activeKid(){return profile&&profile.kids.find(k=>k.id===kidId)||null}
-function sync(){owned=new Set(profile?profile.owned||[]:[]);const k=activeKid();stars=k?k.stars:guestStars;renderHeader();render()}
+function sync(){owned=new Set(profile?profile.owned||[]:[]);const k=activeKid();stars=k?k.stars:guestStars;renderHeader();render();renderDaily()}
 async function persist(){if(user&&profile){try{await B.save(user.uid,profile)}catch(e){console.warn(e);toast('⚠️ تعذر الحفظ، تحقق من الاتصال')}}}
 function recordPlay(gid,s){
   const k=activeKid();
   if(k){k.stars+=s;k.stats=k.stats||{};const st=k.stats[gid]||{plays:0,best:0};st.plays++;st.best=Math.max(st.best,s);k.stats[gid]=st;persist()}
   else{guestStars+=s;LS.set('bw_guest',guestStars)}
+  lastMission=dailyMark(gid,s);
+  if(lastMission&&lastMission.finished){if(k){k.stars+=5;persist()}else{guestStars+=5;LS.set('bw_guest',guestStars)}}
   sync();
 }
 function renderHeader(){
@@ -492,6 +518,54 @@ function setKid(id){
   sync();
 }
 const show=id=>$('#'+id).classList.add('show'),hide=id=>$('#'+id).classList.remove('show');
+
+// ---- Daily mission, streak & mascot (نبيه)
+let lastMission=null;
+const today=()=>new Date().toLocaleDateString('en-CA');
+const dayOff=(d,n)=>{const x=new Date(d+'T12:00:00');x.setDate(x.getDate()+n);return x.toLocaleDateString('en-CA')};
+function hashStr(s){let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0}
+function dState(){const k=activeKid();if(k)return k.daily||{};return LS.get('bw_guest_daily',{})}
+function dSave(st){const k=activeKid();if(k){k.daily=st;persist()}else LS.set('bw_guest_daily',st)}
+function missionGames(){
+  const k=activeKid(),open=GAMES.filter(g=>g.ready&&isOpen(g));
+  let pool=k?open.filter(g=>g.age==='all'||(k.age<=9?g.age==='6-9':g.age==='10-14')):open;
+  if(pool.length<3)pool=open;
+  const seed=today()+(k?k.id:'guest');
+  return pool.map(g=>g.id).sort((a,b)=>hashStr(a+seed)-hashStr(b+seed)).slice(0,3);
+}
+function daily(){let st=dState();if(st.date!==today()){st={date:today(),list:missionGames(),done:[],bonus:false,streak:st.streak||0,last:st.last||null};dSave(st)}return st}
+function streakNow(st){return (st.last===today()||st.last===dayOff(today(),-1))?(st.streak||0):0}
+function dailyMark(gid,s){
+  const st=daily();if(s<1||!st.list.includes(gid)||st.done.includes(gid))return null;
+  st.done.push(gid);let finished=false;
+  if(st.done.length>=st.list.length&&!st.bonus){st.bonus=true;finished=true;st.streak=st.last===dayOff(today(),-1)?(st.streak||0)+1:(st.last===today()?(st.streak||1):1);st.last=today()}
+  dSave(st);return {n:st.done.length,total:st.list.length,finished,streak:st.streak};
+}
+function OWL(){return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+ <path d="M28 44 L33 16 L50 34Z" fill="#6D3FD8"/><path d="M92 44 L87 16 L70 34Z" fill="#6D3FD8"/>
+ <ellipse cx="22" cy="80" rx="10" ry="22" fill="#6D3FD8" transform="rotate(15 22 80)"/><ellipse cx="98" cy="80" rx="10" ry="22" fill="#6D3FD8" transform="rotate(-15 98 80)"/>
+ <ellipse cx="60" cy="72" rx="40" ry="42" fill="#8B5CF6" stroke="#2B2340" stroke-width="2.5"/>
+ <ellipse cx="60" cy="86" rx="25" ry="24" fill="#E4D8FF"/><path d="M48 80 q4 4 8 0 M64 80 q4 4 8 0 M56 92 q4 4 8 0" stroke="#B9A3F5" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+ <g class="blink"><circle cx="44" cy="56" r="15" fill="#fff" stroke="#2B2340" stroke-width="2.5"/><circle cx="76" cy="56" r="15" fill="#fff" stroke="#2B2340" stroke-width="2.5"/>
+ <circle cx="46" cy="57" r="7" fill="#2B2340"/><circle cx="74" cy="57" r="7" fill="#2B2340"/><circle cx="48.5" cy="54" r="2.5" fill="#fff"/><circle cx="76.5" cy="54" r="2.5" fill="#fff"/></g>
+ <path d="M54 68 L66 68 L60 78Z" fill="#FFB020" stroke="#2B2340" stroke-width="2" stroke-linejoin="round"/>
+ <ellipse cx="31" cy="70" rx="6" ry="4" fill="#FF7F9E" opacity=".55"/><ellipse cx="89" cy="70" rx="6" ry="4" fill="#FF7F9E" opacity=".55"/>
+ <ellipse cx="48" cy="113" rx="7" ry="4" fill="#FFB020"/><ellipse cx="72" cy="113" rx="7" ry="4" fill="#FFB020"/>
+ <path d="M34 28 L60 15 L86 28 L60 41Z" fill="#13285C"/><path d="M45 33 v8 q15 7 30 0 v-8" fill="#13285C"/><path d="M86 28 v14" stroke="#FFC72C" stroke-width="2.5"/><circle cx="86" cy="44" r="3.5" fill="#FFC72C"/>
+</svg>`}
+function renderDaily(){
+  const box=$('#dailyBox');if(!box)return;
+  const st=daily(),k=activeKid(),sk=streakNow(st),n=st.done.length,T=st.list.length;
+  const name=k?esc(k.name):'يا بطل',greet=new Date().getHours()<12?'صباح الخير':'مساء الخير';
+  const who=k?` يا ${name}`:'';
+  const msg=n>=T?`أحسنت${who}! أنجزت مهام اليوم كلها 🎉 ارجع غدًا لتكبر شعلتك 🔥`:n?`ممتاز${who}! بقي ${T-n===1?'مهمة واحدة':T-n+' مهام'} 💪`:`${greet}${who}! أنا نبيه، وهذه مهامك لليوم`;
+  box.innerHTML=`<div class="dhead"><div class="owlw">${OWL()}</div><div class="bubble2"><b>نبيه 🦉</b><div>${msg}</div></div>
+    <div class="streak ${sk?'on':''}"><span class="fl">🔥</span><b>${sk}</b><small>${sk===1?'يوم':'أيام متتالية'}</small></div></div>
+   <div class="dprog"><i style="width:${T?n/T*100:0}%"></i></div>
+   <div class="meta" style="margin:6px 2px 12px">مهمة اليوم ${n}/${T} · أنجزها كلها واربح 5 نجوم إضافية ⭐</div>
+   <div class="mlist">${st.list.map((id,i)=>{const g=GAMES.find(x=>x.id===id);if(!g)return '';const d=st.done.includes(id);
+     return `<button class="mcard ${d?'done':''}" data-play="${id}"><span class="mi">${g.img?`<img src="${g.img}" alt="">`:g.svg?A(g.svg):g.emoji}</span><span class="mt"><b>${i+1}. ${g.name}</b><small>${d?'✅ تم':'🎯 '+g.skill}</small></span></button>`}).join('')}</div>`;
+}
 
 // ---- auth modal
 let aTab='in';
@@ -710,8 +784,9 @@ function result(score,total,msg){
   recordPlay(curId,s);if(s>=2){confetti();SFX.fanfare();setTimeout(()=>SFX.applause(),350);setTimeout(()=>SFX.say(s===3?'ممتاز! أنت بطل':'أحسنت! عمل رائع'),1200)}else if(s===1){SFX.ok();SFX.say('جيد! حاول مرة ثانية لتجمع نجوما أكثر')}else{SFX.sad();popEmoji('😢',true);setTimeout(()=>SFX.say('لا بأس، حاول مرة ثانية'),2300)}
   area.innerHTML=`${s===3?'<img src="img/trophy.png" alt="" style="width:120px;height:120px">':`<div class="resemo">${s===2?'🥳':s===1?'🙂':'😢'}</div>`}<div class="stars">${'⭐'.repeat(s)}${'☆'.repeat(3-s)}</div>
    <h2 style="margin:6px 0">${s===3?'ممتاز! 🏆':s===2?'أحسنت! 👏':s===1?'جيد، حاول مرة أخرى 💪':'لا بأس، جرّب مرة ثانية 🌱'}</h2>
-   <div class="q">${msg}<br><small style="color:var(--muted)">ربحت ${s} نجوم · مجموع نجومك ${stars}</small></div>
+   <div class="q">${msg}<br><small style="color:var(--muted)">ربحت ${s} نجوم · مجموع نجومك ${stars}</small>${lastMission?`<br><b style="color:var(--green-d)">✅ مهمة اليوم ${lastMission.n}/${lastMission.total}${lastMission.finished?` · أنجزت كل المهام! +5 ⭐ · 🔥 ${lastMission.streak}`:''}</b>`:''}</div>
    <div class="levels"><button class="btn pri" id="again">🔁 العب مرة أخرى</button><button class="btn ghost" id="home">🏠 كل الألعاب</button></div>`;
+  if(lastMission&&lastMission.finished)setTimeout(()=>{confetti();SFX.fanfare();SFX.say('رائع! أنجزت مهام اليوم كلها')},2600);
   $('#again').onclick=()=>openGame(curId);$('#home').onclick=()=>$('#gBack').click();
 }
 function quiz(items,{prompt,show,answer,pool,txt,reveal}){
