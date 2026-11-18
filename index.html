@@ -231,6 +231,16 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .xo{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:min(320px,84vw);direction:ltr}
 .xc{aspect-ratio:1;border:0;background:#fff;border-radius:18px;font-size:clamp(34px,11vw,56px);box-shadow:0 5px 0 var(--line);display:grid;place-items:center}
 .xc.win{background:#FFF3C4}
+.clockw svg{width:min(220px,58vw);height:auto;display:block;filter:drop-shadow(0 6px 0 rgba(31,91,214,.15))}
+.clockw{margin-bottom:6px}
+.spell{font-size:44px;font-weight:800;min-height:64px;color:var(--pri);margin:-6px 0 12px;font-family:'Baloo Bhaijaan 2',Tajawal}
+.ltrs{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:360px}
+.ltr{border:0;background:#fff;border-radius:16px;width:62px;height:62px;font-size:30px;font-weight:800;box-shadow:0 5px 0 var(--line);color:var(--ink)}
+.ltr.used{opacity:.2}
+.shake{animation:shk .3s}@keyframes shk{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.simon{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:min(300px,78vw);direction:ltr}
+.sp{aspect-ratio:1;border:0;border-radius:30px;opacity:.45;transition:opacity .1s,transform .1s;box-shadow:0 6px 0 rgba(0,0,0,.15)}
+.sp.lit{opacity:1;transform:scale(1.06)}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -449,12 +459,16 @@ const GAMES=[
  {id:'flags',name:'رحلة حول العالم',emoji:'🌍',age:'10-14',skill:'الجغرافيا والأعلام',price:3,color:'linear-gradient(135deg,#CDEBFF,#86CCFF)',ready:true},
  {id:'logic',name:'ألغاز المنطق',emoji:'🧩',img:'img/puzzle.png',age:'10-14',skill:'التفكير المنطقي',price:3,color:'linear-gradient(135deg,#EADCFF,#C6A8FF)',ready:true},
  {id:'science',name:'مختبر العلوم',emoji:'🔬',img:'img/magnifier.png',age:'all',skill:'العلوم والطبيعة',price:3,color:'linear-gradient(135deg,#D3F7F2,#8EE6DA)',ready:true},
- {id:'xo',name:'إكس أو مع نبيه',emoji:'❌',age:'all',skill:'التخطيط والتفكير',price:3,color:'linear-gradient(135deg,#FFE0EE,#FFB3D1)',ready:true,isNew:true},
- {id:'puzzle',name:'رتّب الصورة',emoji:'🖼️',age:'all',skill:'التركيز والملاحظة',price:3,color:'linear-gradient(135deg,#FFF1C2,#FFD36B)',ready:true,isNew:true},
- {id:'capitals',name:'عواصم العالم',emoji:'🏙️',age:'all',skill:'الجغرافيا والعواصم',price:3,color:'linear-gradient(135deg,#D7ECFF,#9FD0FF)',ready:true,isNew:true},
+ {id:'xo',name:'إكس أو مع نبيه',emoji:'❌',age:'all',skill:'التخطيط والتفكير',price:3,color:'linear-gradient(135deg,#FFE0EE,#FFB3D1)',ready:true},
+ {id:'puzzle',name:'رتّب الصورة',emoji:'🖼️',age:'all',skill:'التركيز والملاحظة',price:3,color:'linear-gradient(135deg,#FFF1C2,#FFD36B)',ready:true},
+ {id:'capitals',name:'عواصم العالم',emoji:'🏙️',age:'all',skill:'الجغرافيا والعواصم',price:3,color:'linear-gradient(135deg,#D7ECFF,#9FD0FF)',ready:true},
+ {id:'islamic',name:'معلومات إسلامية',emoji:'🕌',age:'all',skill:'الثقافة الإسلامية',price:3,color:'linear-gradient(135deg,#D6F5E1,#8FE3AE)',ready:true,isNew:true},
+ {id:'simon',name:'تذكّر الألوان',emoji:'🎵',age:'all',skill:'الذاكرة والانتباه',price:3,color:'linear-gradient(135deg,#FFE0D1,#FFB38F)',ready:true,isNew:true},
+ {id:'spelling',name:'تهجئة الكلمات',emoji:'✍️',age:'6-9',skill:'الإملاء والقراءة',price:3,color:'linear-gradient(135deg,#FFF1C2,#FFE08A)',ready:true,isNew:true},
+ {id:'clock',name:'قراءة الساعة',emoji:'⏰',age:'all',skill:'الوقت والساعة',price:3,color:'linear-gradient(135deg,#D6E4FF,#A9C4FF)',ready:true,isNew:true},
  {id:'code',name:'روبوت المتاهة',emoji:'🤖',img:'img/robot.png',age:'10-14',skill:'مبادئ البرمجة',price:3,color:'linear-gradient(135deg,#FFE0D1,#FFB38F)',ready:true},
 ];
-const NEED={animals:0,letters:0,memory:0,xo:0,puzzle:5,capitals:15,math:10,flags:20,logic:35,science:50,code:70};
+const NEED={animals:0,letters:0,memory:0,xo:0,islamic:0,simon:0,puzzle:5,spelling:10,capitals:15,clock:25,math:10,flags:20,logic:35,science:50,code:70};
 const TROPHIES=[{n:5,i:'🥉',t:'نجم صاعد'},{n:15,i:'🥈',t:'بطل صغير'},{n:30,i:'🥇',t:'عبقري'},{n:60,i:'👑',t:'ملك الذكاء'}];
 
 // =====================================================================
@@ -778,6 +792,7 @@ const SFX=(()=>{
     rabbit:()=>[0,.12,.24].forEach(k=>syn({t:k,type:'triangle',f:[[0,1500],[.06,1850]],d:.08,v:.15})),
   };
   return {
+    note(f){if(!on||!ensure())return;tone(f,ctx.currentTime,.38,'triangle',.25)},
     animal(k){if(!on||!ensure()||!ANIMAL_SND[k])return;try{ANIMAL_SND[k]()}catch(e){console.warn(e)}},
     get on(){return on},
     toggle(){on=!on;LS.set('bw_sound',on);if(on)ensure();else{try{speechSynthesis.cancel()}catch(e){}}return on},
@@ -852,7 +867,7 @@ function stat(prog,score){$('#gProg').textContent=prog;$('#gScore').textContent=
 function openGame(id){
   const g=GAMES.find(x=>x.id===id);if(!isOpen(g))return openLock(id);
   clearAll();curId=id;$('#gTitle').textContent=g.emoji+' '+g.name;$('#game').classList.add('show');
-  ({animals,letters,memory,math,flags,logic,science,code,capitals,puzzle,xo})[id]();
+  ({animals,letters,memory,math,flags,logic,science,code,capitals,puzzle,xo,clock,spelling,simon,islamic})[id]();
 }
 $('#gBack').onclick=()=>{clearAll();$('#game').classList.remove('show')};
 function result(score,total,msg){
@@ -1126,6 +1141,72 @@ function xo(){
     };next();
   }
 }
+
+// ---- More games: clock, spelling, simon, islamic quiz
+function clockSVG(h,m){const ha=((h%12)+m/60)*30,ma=m*6,n=[...Array(12)].map((_,i)=>{const a=(i+1)*30*Math.PI/180;return `<text x="${60+40*Math.sin(a)}" y="${60-40*Math.cos(a)+5}" text-anchor="middle" font-size="13" font-weight="800" fill="#13285C" font-family="Tajawal,sans-serif">${i+1}</text>`}).join('');
+  const ticks=[...Array(60)].map((_,i)=>{const a=i*6*Math.PI/180,r1=i%5?52:49;return `<line x1="${60+r1*Math.sin(a)}" y1="${60-r1*Math.cos(a)}" x2="${60+54*Math.sin(a)}" y2="${60-54*Math.cos(a)}" stroke="#9DBBFF" stroke-width="${i%5?1:2}"/>`}).join('');
+  return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="60" r="57" fill="#fff" stroke="#1F5BD6" stroke-width="5"/>${ticks}${n}
+  <line x1="60" y1="60" x2="${60+26*Math.sin(ha*Math.PI/180)}" y2="${60-26*Math.cos(ha*Math.PI/180)}" stroke="#13285C" stroke-width="5" stroke-linecap="round"/>
+  <line x1="60" y1="60" x2="${60+40*Math.sin(ma*Math.PI/180)}" y2="${60-40*Math.cos(ma*Math.PI/180)}" stroke="#FF5FA2" stroke-width="3.5" stroke-linecap="round"/><circle cx="60" cy="60" r="4" fill="#FFC72C" stroke="#13285C" stroke-width="2"/></svg>`}
+const fmtT=(h,m)=>`${h}:${String(m).padStart(2,'0')}`;
+const tWord=(h,m)=>m===0?`الساعة ${h} تمامًا`:m===15?`${h} وربع`:m===30?`${h} ونصف`:`${h%12+1} إلا ربع`;
+function clock(){
+  const items=[...Array(8)].map(()=>{const h=rnd(1,12),m=[0,15,30,45][rnd(0,3)],ans=fmtT(h,m),set=new Set([ans]);
+    const alt=[fmtT(m===0?12:(m/5)||12,h*5%60),fmtT(h%12+1,m),fmtT(h,(m+30)%60),fmtT(h===1?12:h-1,m),fmtT(h,(m+15)%60)];
+    for(const a of shuffle(alt)){if(set.size>=4)break;set.add(a)}
+    return {show:clockSVG(h,m),showCls:'clockw',prompt:'كم الساعة؟ ⏰',ans,opts:[...set],txt:true,reveal:`${ans} (${tWord(h,m)})`}});
+  quiz2(items);
+}
+
+const SPELL=[['🐱','قطة'],['🌙','قمر'],['☀️','شمس'],['🏠','بيت'],['🍌','موز'],['🐪','جمل'],['🌳','شجرة'],['📖','كتاب'],['🔑','مفتاح'],['🍎','تفاحة'],['🦁','أسد'],['🐟','سمكة'],['🌹','وردة'],['🚗','سيارة'],['🐘','فيل'],['⭐','نجمة'],['🍇','عنب'],['🥛','حليب']];
+function spelling(){
+  const words=shuffle(SPELL).slice(0,6);let i=0,score=0;
+  const next=()=>{
+    if(i>=words.length)return result(score,words.length,`كتبت ${score} كلمات بدون أخطاء من ${words.length}`);
+    const [e,w]=words[i],L=[...w],extra=shuffle(ALPH.filter(x=>!L.includes(x))).slice(0,2);
+    const tiles=shuffle([...L,...extra]);let pos=0,miss=false;
+    stat(`${i+1}/${words.length}`,score);
+    area.innerHTML=`<div class="big">${e}</div><div class="q">رتّب الحروف لتكتب اسم الصورة ✍️</div><div class="spell" id="sp">${'＿ '.repeat(L.length)}</div>
+      <div class="ltrs">${tiles.map((t,k)=>`<button class="ltr" data-k="${k}">${t}</button>`).join('')}</div><div class="reveal" id="rv"></div>`;
+    const upd=()=>{$('#sp').textContent=L.slice(0,pos).join('')+(pos<L.length?' '+'＿ '.repeat(L.length-pos):'')};
+    area.querySelectorAll('.ltr').forEach(b=>b.onclick=()=>{
+      if(busy||b.classList.contains('used'))return;
+      if(tiles[+b.dataset.k]===L[pos]){b.classList.add('used');pos++;upd();SFX.ok(false);
+        if(pos===L.length){busy=true;if(!miss){score++;popEmoji(HAPPY[rnd(0,HAPPY.length-1)])}$('#rv').textContent=(miss?'':'✔ ')+w;SFX.ok(true);later(()=>{busy=false;i++;next()},1500)}}
+      else{miss=true;b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');SFX.no()}
+    });
+  };next();
+}
+
+function simon(){
+  const PADS=[['#FF5A5F','أحمر',262],['#3D8BFF','أزرق',330],['#3CCB6E','أخضر',392],['#FFC72C','أصفر',523]];
+  let seq=[],step=0,level=0,showing=false;
+  stat('مستوى 0',0);
+  area.innerHTML=`<div class="q" id="smsg">شاهد الألوان وهي تضيء، ثم اضغطها بنفس الترتيب 🎵</div>
+    <div class="simon">${PADS.map((p,k)=>`<button class="sp" data-k="${k}" style="background:${p[0]}"></button>`).join('')}</div>
+    <button class="btn pri" id="sgo" style="margin-top:20px">▶ ابدأ</button><div class="reveal" id="rv"></div>`;
+  const pads=[...area.querySelectorAll('.sp')];
+  const flash=(k,d=420)=>{pads[k].classList.add('lit');SFX.note(PADS[k][2]);later(()=>pads[k].classList.remove('lit'),d)};
+  const play=()=>{showing=true;step=0;$('#smsg').textContent='👀 انتبه...';seq.forEach((k,i)=>later(()=>flash(k),600+i*650));later(()=>{showing=false;$('#smsg').textContent='دورك! 👆'},600+seq.length*650)};
+  const nextLevel=()=>{level=seq.length;stat(`مستوى ${level}`,level);seq.push(rnd(0,3));later(play,500)};
+  $('#sgo').onclick=()=>{$('#sgo').remove();nextLevel()};
+  pads.forEach(p=>p.onclick=()=>{
+    if(showing||!seq.length)return;const k=+p.dataset.k;flash(k,250);
+    if(k!==seq[step]){showing=true;SFX.no();popEmoji('😢');$('#rv').textContent=`وصلت إلى المستوى ${level}`;later(()=>result(Math.min(level,7),7,`تذكّرت ${level} ${level===1?'لون':'ألوان'} متتالية 🎵`),1300);return}
+    step++;if(step===seq.length){showing=true;$('#smsg').textContent='✔ ممتاز!';later(nextLevel,500)}
+  });
+}
+
+const ISL=[['🕌','كم عدد أركان الإسلام؟','5',['3','4','6']],['💛','كم عدد أركان الإيمان؟','6',['5','4','7']],['🕋','كم عدد الصلوات المفروضة في اليوم والليلة؟','5',['3','4','6']],
+ ['🕋','إلى أين نتجه في الصلاة؟','الكعبة',['المسجد الأقصى','جبل عرفات','المسجد النبوي']],['📖','كم عدد سور القرآن الكريم؟','114',['100','120','99']],
+ ['📖','ما أطول سورة في القرآن الكريم؟','البقرة',['آل عمران','النساء','يس']],['📖','ما أقصر سورة في القرآن الكريم؟','الكوثر',['الإخلاص','الفاتحة','الناس']],
+ ['📖','ما أول سورة في المصحف؟','الفاتحة',['البقرة','الناس','الإخلاص']],['🌙','في أي شهر نصوم؟','رمضان',['شعبان','رجب','شوال']],
+ ['🌅','كم عدد ركعات صلاة الفجر؟','2',['3','4','1']],['🌇','كم عدد ركعات صلاة المغرب؟','3',['2','4','5']],['☀️','كم عدد ركعات صلاة الظهر؟','4',['2','3','5']],
+ ['✨','من هو خاتم الأنبياء والمرسلين؟','محمد ﷺ',['موسى عليه السلام','عيسى عليه السلام','إبراهيم عليه السلام']],
+ ['🕋','في أي مدينة تقع الكعبة المشرفة؟','مكة المكرمة',['المدينة المنورة','القدس','الطائف']],['🕌','في أي مدينة يقع المسجد النبوي؟','المدينة المنورة',['مكة المكرمة','القدس','جدة']],
+ ['🤲','ماذا نقول قبل الأكل؟','بسم الله',['الحمد لله','سبحان الله','الله أكبر']],['🤲','ماذا نقول بعد الأكل؟','الحمد لله',['بسم الله','أستغفر الله','ما شاء الله']],
+ ['🎉','كم عدد الأعياد عند المسلمين؟','2',['1','3','4']],['💧','ماذا نفعل قبل الصلاة لنكون على طهارة؟','الوضوء',['الأذان','الدعاء','الصيام']]];
+function islamic(){quiz2(shuffle(ISL).slice(0,8).map(([e,q,a,w])=>({show:e,prompt:q,ans:a,opts:[a,...w],txt:true,reveal:a})))}
 
 $('#sndBtn').textContent=SFX.on?'🔊':'🔇';
 $('#sndBtn').onclick=()=>{const v=SFX.toggle();$('#sndBtn').textContent=v?'🔊':'🔇';toast(v?'🔊 الصوت مفعّل':'🔇 تم كتم الصوت');if(v)SFX.ok()};
