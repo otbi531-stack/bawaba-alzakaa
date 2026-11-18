@@ -304,14 +304,14 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
   <div class="hero">
     <div>
       <h1>العب، تعلّم،<br><span>واجمع</span> <em>النجوم!</em> ⭐</h1>
-      <p>ألعاب تعليمية عربية ممتعة للأطفال من 6 إلى 14 سنة. جولات قصيرة من دقيقتين إلى ثلاث، كل الألعاب تُفتح مجانًا بالنجوم، أو بـ 3 ريال فقط لمن لا يريد الانتظار 🔓</p>
+      <p>ألعاب تعليمية عربية ممتعة للأطفال من 6 إلى 14 سنة. جولات قصيرة من دقيقتين إلى ثلاث، اجمع النجوم وافتح بها الألعاب 🔓 كل لعبة بـ 30 ⭐، تكسبها باللعب أو تشتريها (10 ⭐ بريال)</p>
       <div class="cta">
         <button class="btn pri" data-scroll="games">🎮 العب مجانًا الآن</button>
         <button class="btn ghost" data-scroll="how">كيف يعمل؟</button>
       </div>
       <div class="badges">
         <span class="chip">🚫 بلا إعلانات</span><span class="chip">🔁 بلا اشتراك</span>
-        <span class="chip">🎁 تُفتح بالنجوم</span><span class="chip">🛡️ آمن للأطفال</span>
+        <span class="chip">🎁 هدية 30 ⭐</span><span class="chip">🛡️ آمن للأطفال</span>
       </div>
     </div>
     <div class="hero-wrap"><div class="hero-img"><img src="hero.jpg" alt="طفلان يلعبان ويتعلمان"></div><img class="deco d1" src="img/rocket.png" alt=""><img class="deco d2" src="img/palette.png" alt=""><img class="deco d3" src="img/train.png" alt=""></div>
@@ -349,8 +349,8 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
   <section id="how">
     <div class="sec-head"><h2>كيف يعمل؟</h2></div>
     <div class="steps">
-      <div class="step"><div class="n" style="background:#DDF7E6">🎁</div><h3>ابدأ بثلاث ألعاب</h3><p>ثلاث ألعاب مفتوحة من أول يوم، والبومة نبيه ترشدك لمهمة اليوم.</p></div>
-      <div class="step"><div class="n" style="background:#FFF3C4">🔓</div><h3>اجمع النجوم وافتح</h3><p>كل لعبة تنجح فيها تعطيك نجومًا، ومهمة اليوم تعطيك 5 نجوم إضافية، والنجوم تفتح ألعابًا جديدة. أو افتح أي لعبة فورًا بـ 3 ريال.</p></div>
+      <div class="step"><div class="n" style="background:#DDF7E6">🎁</div><h3>هدية 30 ⭐</h3><p>تبدأ بهدية 30 نجمة تفتح بها أول لعبة تختارها من الخريطة، والبومة نبيه ترشدك.</p></div>
+      <div class="step"><div class="n" style="background:#FFF3C4">🔓</div><h3>اجمع النجوم وافتح</h3><p>كل لعبة تنجح فيها تعطيك نجومًا، ومهمة اليوم تعطيك 5 نجوم إضافية، وكل 30 ⭐ تفتح لعبة جديدة. ويمكنك شراء النجوم: 10 ⭐ بريال.</p></div>
       <div class="step"><div class="n" style="background:#FFE1EE">🆕</div><h3>ألعاب جديدة باستمرار</h3><p>نضيف ألعابًا بين الحين والآخر، وتظهر عليها شارة «جديد».</p></div>
     </div>
   </section>
@@ -587,7 +587,7 @@ function errMsg(e){const c=(e&&e.code)||'';
   return 'حدث خطأ، حاول مرة أخرى';}
 
 let B=FIREBASE_CONFIG?FirebaseBackend:LocalBackend,user=null,profile=null,kidId=LS.get('bw_kid',null),guestStars=LS.get('bw_guest',0),pendingBuy=null;
-let owned=new Set(),stars=0,ageFilter='all';
+let owned=new Set(),stars=0,earned=0,ageFilter='all';
 // ---- Kid avatars (original SVG)
 const KIDS={
  b1:{bg:'#CFE3FF',skin:'#F9D3B4',hair:'#4A2C1A',style:'short',shirt:'#1F5BD6'},
@@ -627,16 +627,16 @@ const AV=k=>KID(KIDS[k]?k:'b1');
 
 const AVATARS=['b1','b2','b3','b4','b5','g1','g2','g3','g4','g5'];
 function activeKid(){return profile&&profile.kids.find(k=>k.id===kidId)||null}
-function sync(){owned=new Set(profile?profile.owned||[]:[]);const k=activeKid();stars=k?k.stars:guestStars;renderHeader();render();renderDaily();if(typeof renderMap==='function')renderMap()}
+function sync(){owned=new Set(profile?profile.owned||[]:LS.get('bw_guest_owned',[]));const k=activeKid();stars=k?k.stars:guestStars;earned=k?(k.earned??k.stars):LS.get('bw_guest_earned',guestStars);renderHeader();render();renderDaily();if(typeof renderMap==='function')renderMap()}
 async function persist(){if(user&&profile){try{await B.save(user.uid,profile)}catch(e){console.warn(e);toast('⚠️ تعذر الحفظ، تحقق من الاتصال')}}}
 function recordPlay(gid,s){
   const before=stars;const k=activeKid();
-  if(k){k.stars+=s;k.stats=k.stats||{};const st=k.stats[gid]||{plays:0,best:0};st.plays++;st.best=Math.max(st.best,s);k.stats[gid]=st;persist()}
-  else{guestStars+=s;LS.set('bw_guest',guestStars)}
+  if(k){k.stars+=s;k.earned=(k.earned??(k.stars-s))+s;k.stats=k.stats||{};const st=k.stats[gid]||{plays:0,best:0};st.plays++;st.best=Math.max(st.best,s);k.stats[gid]=st;persist()}
+  else{guestStars+=s;LS.set('bw_guest',guestStars);LS.set('bw_guest_earned',LS.get('bw_guest_earned',guestStars-s)+s)}
   lastMission=dailyMark(gid,s);
-  if(lastMission&&lastMission.finished){if(k){k.stars+=5;persist()}else{guestStars+=5;LS.set('bw_guest',guestStars)}}
+  if(lastMission&&lastMission.finished){if(k){k.stars+=5;k.earned=(k.earned||0)+5;persist()}else{guestStars+=5;LS.set('bw_guest',guestStars);LS.set('bw_guest_earned',LS.get('bw_guest_earned',0)+5)}}
   sync();
-  lastUnlocked=GAMES.filter(g=>!owned.has(g.id)&&(NEED[g.id]||0)>before&&(NEED[g.id]||0)<=stars);
+  lastUnlocked=[];
 }
 function renderHeader(){
   const k=activeKid();
@@ -664,7 +664,8 @@ function missionGames(){
   const seed=today()+(k?k.id:'guest');
   return pool.map(g=>g.id).sort((a,b)=>hashStr(a+seed)-hashStr(b+seed)).slice(0,3);
 }
-function daily(){let st=dState();if(st.date!==today()){st={date:today(),list:missionGames(),done:[],bonus:false,streak:st.streak||0,last:st.last||null};dSave(st)}return st}
+function daily(){let st=dState();if(st.date!==today()){st={date:today(),list:missionGames(),done:[],bonus:false,streak:st.streak||0,last:st.last||null};dSave(st)}
+  else if(st.list.length<3&&!st.bonus){const add=missionGames().filter(x=>!st.list.includes(x));if(add.length){st.list=[...st.list,...add].slice(0,3);dSave(st)}}return st}
 function streakNow(st){return (st.last===today()||st.last===dayOff(today(),-1))?(st.streak||0):0}
 function dailyMark(gid,s){
   const st=daily();if(s<1||!st.list.includes(gid)||st.done.includes(gid))return null;
@@ -689,7 +690,7 @@ function renderDaily(){
   const st=daily(),k=activeKid(),sk=streakNow(st),n=st.done.length,T=st.list.length;
   const name=k?esc(k.name):'يا بطل',greet=new Date().getHours()<12?'صباح الخير':'مساء الخير';
   const who=k?` يا ${name}`:'';
-  const msg=n>=T?`أحسنت${who}! أنجزت مهام اليوم كلها 🎉 ارجع غدًا لتكبر شعلتك 🔥`:n?`ممتاز${who}! بقي ${T-n===1?'مهمة واحدة':T-n+' مهام'} 💪`:`${greet}${who}! أنا نبيه، وهذه مهامك لليوم`;
+  const msg=!T?`مرحبًا${who}! 🎁 افتح أول لعبة من الخريطة بنجومك، وستظهر مهامك هنا`:n>=T?`أحسنت${who}! أنجزت مهام اليوم كلها 🎉 ارجع غدًا لتكبر شعلتك 🔥`:n?`ممتاز${who}! بقي ${T-n===1?'مهمة واحدة':T-n+' مهام'} 💪`:`${greet}${who}! أنا نبيه، وهذه مهامك لليوم`;
   box.innerHTML=`<div class="dhead"><div class="owlw">${OWL()}</div><div class="bubble2"><b>نبيه 🦉</b><div>${msg}</div></div>
     <div class="streak ${sk?'on':''}"><span class="fl">🔥</span><b>${sk}</b><small>${sk===1?'يوم':'أيام متتالية'}</small></div></div>
    <div class="dprog"><i style="width:${T?n/T*100:0}%"></i></div>
@@ -701,15 +702,23 @@ function renderDaily(){
 // ---- Unlock by stars, or buy for 3 SAR
 let lastUnlocked=[];
 function openLock(id){
-  const g=GAMES.find(x=>x.id===id),need=NEED[id]||0,left=Math.max(0,need-stars),pct=Math.min(100,Math.round(stars/need*100));
+  const g=GAMES.find(x=>x.id===id),left=Math.max(0,COST-stars),pct=Math.min(100,Math.round(stars/COST*100)),buyN=Math.ceil(left/10)*10;
   $('#lkBody').innerHTML=`<div style="width:90px;margin:0 auto">${OWL()}</div><h3>${g.emoji} ${g.name}</h3>
-   <div class="meta" style="font-size:15px;margin:6px 0 10px">تُفتح هذه اللعبة مجانًا عندما تجمع <b>${need} ⭐</b></div>
+   <div class="meta" style="font-size:15px;margin:6px 0 10px">افتح هذه اللعبة بـ <b>${COST} ⭐</b> من نجومك</div>
    <div class="dprog" style="margin:0"><i style="width:${pct}%"></i></div>
-   <div class="meta" style="margin:8px 0 4px">معك ${stars} ⭐ · باقي <b>${left} ⭐</b></div>
-   <div class="meta">💡 أسرع طريقة: أنجز مهمة اليوم واربح 5 نجوم إضافية!</div>`;
-  $('#lkBuy').textContent=`🔓 افتحها الآن بـ ${g.price} ريال`;$('#lkBuy').dataset.id=id;
-  const ls=$('#lkStars');if(left>0&&left<g.price){ls.style.display='block';ls.dataset.id=id;ls.dataset.n=left;ls.textContent=left===1?'⭐ اشترِ النجمة الناقصة بريال واحد':'⭐ اشترِ النجمتين الناقصتين بريالين'}else ls.style.display='none';
+   <div class="meta" style="margin:8px 0 4px">معك <b>${stars} ⭐</b>${left?` · ينقصك <b>${left} ⭐</b>`:' · تكفي لفتحها! ✨'}</div>
+   ${left?`<div class="meta">💡 العب الألعاب المفتوحة وأنجز مهمة اليوم لتجمع النجوم، أو اشترِ نجومًا (10 ⭐ بريال)</div>`:''}`;
+  const go=$('#lkGo'),sb=$('#lkStars');
+  if(!left){go.textContent=`🔓 افتحها الآن بـ ${COST} ⭐`;go.dataset.unlock=id}else{go.textContent=owned.size?'🎯 العب لتجمع النجوم':'🎯 إلى مهمة اليوم';delete go.dataset.unlock}
+  if(left){sb.style.display='block';sb.dataset.id=id;sb.dataset.n=buyN;sb.textContent=`⭐ اشترِ ${buyN} نجمة بـ ${buyN/10} ${buyN/10===1?'ريال':buyN/10===2?'ريالين':'ريالات'}`}else sb.style.display='none';
+  $('#lkBuy').style.display='none';
   show('lockOv');
+}
+function unlockWithStars(id){
+  const g=GAMES.find(x=>x.id===id),k=activeKid();if(stars<COST||owned.has(id))return false;
+  if(k){k.stars-=COST;profile.owned=[...new Set([...(profile.owned||[]),id])];persist()}
+  else{guestStars-=COST;LS.set('bw_guest',guestStars);LS.set('bw_guest_owned',[...new Set([...LS.get('bw_guest_owned',[]),id])])}
+  sync();SFX.fanfare();confetti();toast(`🎉 فتحت «${g.name}»!`);SFX.sayP('unlock');setTimeout(()=>openGame(id),700);return true;
 }
 
 // ---- auth modal
@@ -760,7 +769,7 @@ $('#kSave').onclick=async()=>{
   const name=$('#kName').value.trim(),age=+$('#kAge').value;
   if(!name)return $('#kErr').textContent='اكتب اسمك';
   if(editKid)Object.assign(editKid,{name,age,avatar:kAv});
-  else{const first=!profile.kids.length;const k={id:'k'+Date.now().toString(36),name,age,avatar:kAv,stars:first?guestStars:0,stats:{}};if(first){const gd=LS.get('bw_guest_daily',null);if(gd)k.daily=gd}profile.kids.push(k);kidId=k.id}
+  else{const first=!profile.kids.length;const k={id:'k'+Date.now().toString(36),name,age,avatar:kAv,stars:first?guestStars:WELCOME,earned:first?LS.get('bw_guest_earned',0):0,welcome:true,stats:{}};if(first){const gd=LS.get('bw_guest_daily',null);if(gd)k.daily=gd;profile.owned=[...new Set([...(profile.owned||[]),...LS.get('bw_guest_owned',[])])]}profile.kids.push(k);kidId=k.id}
   hide('kidOv');await persist();setKid(kidId);
   if($('#dash').classList.contains('show'))openDash();
   toast(editKid?'✅ تم الحفظ':`🎉 مرحبًا ${name}! جاهز للعب`);
@@ -787,9 +796,10 @@ function openDash(){
    <div class="dcard"><h3>${esc(user.name||'حسابي')}</h3><div class="meta" dir="ltr" style="text-align:right">${esc(user.email)}</div>
      <div style="margin-top:8px"><span class="mode ${B.mode==='firebase'?'live':''}">${B.mode==='firebase'?'☁️ متصل بالسحابة':'🧪 وضع تجريبي (هذا المتصفح فقط)'}</span></div></div>
    <div class="dcard"><h3>🎮 ألعابي (${GAMES.filter(isOpen).length}/${GAMES.length})</h3><div class="ownl">${GAMES.filter(isOpen).map(g=>`<span>${g.emoji} ${g.name}</span>`).join('')}</div></div>
+   <div class="dcard"><h3>⭐ متجر النجوم</h3><div class="meta" style="margin-bottom:10px">معك ${stars} ⭐ · كل لعبة تُفتح بـ ${COST} ⭐</div><div class="kact">${[10,30,60].map(n=>`<button class="sbtn pri" data-shop="${n}">${n} ⭐ = ${n/10} ${n===10?"ريال":n===20?"ريالين":"ريالات"}</button>`).join("")}</div></div>
    
    ${profile.kids.map(k=>{const rows=GAMES.filter(g=>k.stats&&k.stats[g.id]).map(g=>{const st=k.stats[g.id];return `<tr><td>${g.emoji} ${g.name}</td><td>${st.plays}</td><td>${'⭐'.repeat(st.best)}${'☆'.repeat(3-st.best)}</td></tr>`}).join('');
-     const tr=[...TROPHIES].reverse().find(t=>k.stars>=t.n);
+     const tr=[...TROPHIES].reverse().find(t=>(k.earned??k.stars)>=t.n);
      return `<div class="dcard"><div class="khead"><span class="av">${AV(k.avatar)}</span><div class="grow"><h3 style="margin:0">${esc(k.name)}</h3><div class="meta">${k.age} سنوات · ⭐ ${k.stars} نجمة${tr?` · ${tr.i} ${tr.t}`:''}</div></div></div>
        ${rows?`<table class="gtable"><tr><th>اللعبة</th><th>مرات اللعب</th><th>أفضل نتيجة</th></tr>${rows}</table>`:'<div class="meta" style="margin-top:8px">لم تلعب بعد.</div>'}
        <div class="kact"><button class="sbtn" data-dk="edit" data-id="${k.id}">✏️ تعديل</button></div></div>`}).join('')}
@@ -802,14 +812,16 @@ function openDash(){
     else if(act==='del'){if(delArm!==id){delArm=id;return openDash()}delArm=null;profile.kids=profile.kids.filter(k=>k.id!==id);if(kidId===id)kidId=profile.kids[0]?profile.kids[0].id:null;await persist();setKid(kidId);openDash()}
   });
   const da=$('#dAdd');if(da)da.onclick=()=>openKid();
+  $('#dashBody').querySelectorAll('[data-shop]').forEach(b=>b.onclick=()=>{hide('dash');openBuy(null,+b.dataset.shop)});
   $('#dOut').onclick=async()=>{await B.signOut();user=null;profile=null;kidId=null;LS.del('bw_kid');hide('dash');sync();toast('👋 تم تسجيل الخروج')};
   show('dash');
 }
-$('#lkGo').onclick=()=>{hide('lockOv');document.getElementById('daily').scrollIntoView({behavior:'smooth'})};
+$('#lkGo').onclick=()=>{hide('lockOv');const u=$('#lkGo').dataset.unlock;if(u)return unlockWithStars(u);document.getElementById(owned.size?'games':'daily').scrollIntoView({behavior:'smooth'})};
 $('#lkBuy').onclick=()=>{hide('lockOv');openBuy($('#lkBuy').dataset.id)};
 $('#lkStars').onclick=()=>{hide('lockOv');openBuy($('#lkStars').dataset.id,+$('#lkStars').dataset.n)};
 $('#dBack').onclick=()=>{delArm=null;hide('dash')};
-const isOpen=g=>stars>=(NEED[g.id]||0)||owned.has(g.id);
+const COST=30;
+const isOpen=g=>owned.has(g.id);
 
 // ---- Sounds & encouragement (generated in the browser, no files)
 const SFX=(()=>{
@@ -885,16 +897,16 @@ function render(){
   const list=GAMES.filter(g=>ageFilter==='all'||g.age===ageFilter||g.age==='all');
   $('#grid').innerHTML=list.map(g=>{
     const open=isOpen(g);
-    const need=NEED[g.id]||0;const tagR=open?'<span class="tag r free">مفتوحة</span>':'';
+    const need=COST;const tagR=open?'<span class="tag r free">مفتوحة</span>':'';
     const tagL=g.isNew?'<span class="tag l new">🆕 جديد</span>':!g.ready?'<span class="tag l">⏳ قريبًا</span>':'';
-    const btn=!g.ready?'<button class="cbtn soon">قريبًا</button>':open?`<button class="cbtn play" data-play="${g.id}">▶ العب</button>`:`<button class="cbtn buy" data-lock="${g.id}">🔒 ${need} ⭐</button>`;
-    const price=open?'<span class="price" style="color:var(--green)">✓ جاهزة</span>':`<span class="lockp"><small>باقي ${need-stars} ⭐ أو ${g.price} ريال</small><i style="--p:${Math.round(stars/need*100)}%"></i></span>`;
+    const btn=!g.ready?'<button class="cbtn soon">قريبًا</button>':open?`<button class="cbtn play" data-play="${g.id}">▶ العب</button>`:`<button class="cbtn buy" data-lock="${g.id}">🔓 ${COST} ⭐</button>`;
+    const price=open?'<span class="price" style="color:var(--green)">✓ جاهزة</span>':`<span class="lockp"><small>${stars>=COST?'نجومك تكفي ✨':`باقي ${COST-stars} ⭐`}</small><i style="--p:${Math.min(100,Math.round(stars/COST*100))}%"></i></span>`;
     return `<div class="card">
       <div class="thumb" style="background:${g.color}">${g.img?`<img class="em ti" src="${g.img}" alt="">`:g.svg?`<span class="em ti">${A(g.svg)}</span>`:`<span class="em">${g.emoji}</span>`}${open?'':'<div class="lock">🔒</div>'}${tagR}${tagL}</div>
       <div class="cbody"><h3>${g.name}</h3>
         <div class="meta">👶 ${g.age==='all'?'6–14':g.age.replace('-','–')} سنة · 🎯 ${g.skill}</div>
         <div class="cfoot">${price}${btn}</div></div></div>`}).join('');
-  $('#troph').innerHTML=TROPHIES.map(t=>`<div class="trophy ${stars>=t.n?'got':''}"><div class="i">${t.i}</div><b>${t.t}</b><small>${stars>=t.n?'✓ حصلت عليه':t.n+' نجمة'}</small></div>`).join('');
+  $('#troph').innerHTML=TROPHIES.map(t=>`<div class="trophy ${earned>=t.n?'got':''}"><div class="i">${t.i}</div><b>${t.t}</b><small>${earned>=t.n?'✓ حصلت عليه':t.n+' نجمة'}</small></div>`).join('');
 }
 
 document.addEventListener('click',e=>{
@@ -916,14 +928,13 @@ function openBuy(id,starsN){
   starsN=starsN||pendingStars||0;pendingStars=0;
   if(!user){pendingBuy=id;pendingStars=starsN;return openAuth('up','أنشئ حسابًا مجانيًا حتى تُحفظ مشترياتك على كل أجهزتك')}
   if(!profile.kids.length){pendingBuy=id;pendingStars=starsN;return openKid()}
-  const g=GAMES.find(x=>x.id===id);
-  if(starsN){const left=Math.max(0,(NEED[id]||0)-stars);if(!left)return openGame(id);starsN=Math.min(starsN,left)}
-  buying=starsN?{...g,price:starsN,stars:starsN}:g;
+  const g=id?GAMES.find(x=>x.id===id):null;
+  buying=starsN?{...(g||{}),id:id,price:starsN/10,stars:starsN}:g;
   buyRef='BZ-'+(hashStr(user.uid+id+Date.now())%9000+1000);
-  $('#bEmoji').innerHTML=starsN?'⭐':g.img?`<img src="${g.img}" style="width:54px;height:54px" alt="">`:g.emoji;$('#bEmoji').style.background=starsN?'#FFF3C4':g.color;
-  $('#bName').textContent=starsN?`${starsN===1?'نجمة واحدة':'نجمتان'} ⭐`:g.name;
-  $('#bMeta').textContent=starsN?`لتكمل نجومك وتفتح «${g.name}»`:`🎯 ${g.skill}`;
-  $('#bPrice').textContent=starsN?(starsN===1?'ريالًا واحدًا':'ريالين'):g.price+' ريال';$('#bNum').textContent=PAY_NUMBER;$('#bRef').textContent=buyRef;
+  $('#bEmoji').innerHTML=starsN||!g?'⭐':g.img?`<img src="${g.img}" style="width:54px;height:54px" alt="">`:g.emoji;$('#bEmoji').style.background=starsN||!g?'#FFF3C4':g.color;
+  $('#bName').textContent=starsN?`${starsN} نجمة ⭐`:g.name;
+  $('#bMeta').textContent=starsN?(g?`لتفتح «${g.name}»`:'رصيد نجوم تفتح به الألعاب'):`🎯 ${g.skill}`;
+  {const r=starsN?starsN/10:g.price;$('#bPrice').textContent=r===1?'ريالًا واحدًا':r===2?'ريالين':r+' ريالات'}$('#bNum').textContent=PAY_NUMBER;$('#bRef').textContent=buyRef;
   $('#buyOv').classList.add('show');
 }
 async function copyTxt(t){try{await navigator.clipboard.writeText(t);toast('📋 تم النسخ')}catch(e){toast('انسخ الرقم يدويًا: '+t)}}
@@ -934,8 +945,8 @@ $('#bPay').onclick=()=>{
   if(b.stars){if(k)k.stars+=b.stars}else profile.owned=[...new Set([...(profile.owned||[]),b.id])];
   profile.payments=[...(profile.payments||[]),{game:b.id,ref:buyRef,price:b.price,...(b.stars?{stars:b.stars}:{}),date:new Date().toISOString()}];
   persist();sync();$('#buyOv').classList.remove('show');
-  SFX.fanfare();confetti();toast(b.stars?`⭐ شكرًا لك! أضفنا ${b.stars===1?'نجمة':'نجمتين'} لرصيدك`:`🎉 شكرًا لك! تم فتح «${b.name}»`);
-  setTimeout(()=>{const g=GAMES.find(x=>x.id===b.id);if(isOpen(g))openGame(b.id)},700);
+  SFX.fanfare();confetti();if(b.stars){toast(`⭐ شكرًا لك! أضفنا ${b.stars} نجمة لرصيدك`);if(b.id&&stars>=COST&&!owned.has(b.id))setTimeout(()=>unlockWithStars(b.id),900)}
+  else{toast(`🎉 شكرًا لك! تم فتح «${b.name}»`);setTimeout(()=>openGame(b.id),700)}
 };
 
 // ---- game engine
@@ -1357,6 +1368,12 @@ function truefalse(){
   show();
 }
 
+const WELCOME=30;
+function giveWelcome(){
+  const k=activeKid();
+  if(k){if(!k.welcome){k.earned=k.earned??k.stars;k.stars+=WELCOME;k.welcome=true;persist();sync();toast('🎁 هدية من نبيه: 30 ⭐ لتفتح أول لعبة!')}}
+  else if(!LS.get('bw_welcome',false)){LS.set('bw_welcome',true);guestStars+=WELCOME;LS.set('bw_guest',guestStars);sync();toast('🎁 هدية من نبيه: 30 ⭐ لتفتح أول لعبة!')}
+}
 // ---- Adventure map
 const ZONES=[
  {min:0,max:0,name:'🏝️ جزيرة البداية',sub:'هنا تبدأ رحلتك!',bg:'linear-gradient(180deg,#C9F2FF,#E2FAF0)',path:'#2EC4A6',deco:['🌴','🐚','🦀','⛵']},
@@ -1373,14 +1390,14 @@ function renderMap(){
   const k=activeKid(),order=GAMES.filter(g=>g.ready).map((g,i)=>({g,i,n:NEED[g.id]||0})).sort((a,b)=>a.n-b.n||a.i-b.i);
   const openList=order.filter(o=>isOpen(o.g)),here=openList.length?openList[openList.length-1].g.id:null,nextLock=order.find(o=>!isOpen(o.g));
   const X=[50,80,50,20];const me=k?AV(k.avatar):'<span style="font-size:22px">🧒</span>';
-  box.innerHTML=`<div class="mapinfo"><b>⭐ ${stars}</b> نجمة · فتحت <b>${openList.length}</b> من ${order.length} محطة${nextLock?` · المحطة القادمة عند ${nextLock.n} ⭐`:' · أنهيت كل المحطات 🏆'}</div>`+
+  box.innerHTML=`<div class="mapinfo"><b>⭐ ${stars}</b> نجمة · فتحت <b>${openList.length}</b> من ${order.length} محطة${nextLock?` · كل لعبة تُفتح بـ ${COST} ⭐`:' · فتحت كل المحطات 🏆'}</div>`+
   ZONES.map((z,zi)=>{
     const items=order.filter(o=>o.n>=z.min&&o.n<=z.max);if(!items.length)return '';
     const top=96,gap=124,H=top+items.length*gap;
     const pts=items.map((o,j)=>[X[j%4],top+j*gap+40]);
     let d=`M${pts[0][0]} ${pts[0][1]}`;let prev=pts[0];
     pts.slice(1).forEach(p=>{const my=(prev[1]+p[1])/2;d+=` C${prev[0]} ${my} ${p[0]} ${my} ${p[0]} ${p[1]}`;prev=p});
-    const zoneOpen=items.some(o=>isOpen(o.g));
+    const zoneOpen=true;
     return `<div class="zone ${zoneOpen?'':'zlock'}" style="background:${z.bg};height:${H}px">
       <div class="zhead"><h3>${z.name}</h3><small>${zoneOpen?z.sub:`🔒 تُفتح عند ${items[0].n} ⭐`}</small></div>
       ${z.deco.map((e,j)=>`<span class="zdeco" style="top:${80+j*(H-120)/4}px;${j%2?'left':'right'}:${4+(j*7)%12}px">${e}</span>`).join('')}
@@ -1390,7 +1407,7 @@ function renderMap(){
         return `<button class="mnode ${op?'open':'locked'} ${isNext?'next':''}" style="left:${pts[j][0]}%;top:${pts[j][1]-40}px;--zc:${z.path}" ${op?`data-play="${g.id}"`:`data-lock="${g.id}"`}>
           <span class="mcirc">${icon}${op?'':'<i class="mlk">🔒</i>'}</span>
           ${isHere?`<span class="mehere">${me}<em>أنت هنا</em></span>`:''}
-          <span class="mlabel"><b>${g.name}</b><small>${op?(best?'⭐'.repeat(best)+'☆'.repeat(3-best):'▶ العب'):`🔒 ${o.n} ⭐`}</small></span></button>`}).join('')}
+          <span class="mlabel"><b>${g.name}</b><small>${op?(best?'⭐'.repeat(best)+'☆'.repeat(3-best):'▶ العب'):`🔓 ${COST} ⭐`}</small></span></button>`}).join('')}
     </div>`}).join('');
 }
 $('#sndBtn').textContent=SFX.on?'🔊':'🔇';
@@ -1401,7 +1418,7 @@ render();
   user=B.current();
   if(user){try{profile=await B.load(user.uid);profile.kids=profile.kids||[];profile.owned=profile.owned||[]}catch(e){profile={owned:[],kids:[]}}
     if(!activeKid())kidId=profile.kids[0]?profile.kids[0].id:null}
-  setKid(kidId);setView(view);
+  setKid(kidId);setView(view);giveWelcome();
   setTimeout(()=>{if(!greeted)greet(false)},900);
 })();
 </script>
