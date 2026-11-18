@@ -255,6 +255,12 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .owlb{flex:1;min-width:0;font-weight:700;font-size:15px;line-height:1.5}.owlb b{color:var(--purple);font-size:13px;display:block}
 .x2{border:0;background:var(--bg);width:28px;height:28px;border-radius:50%;flex:none;color:var(--ink)}
 .owlw{cursor:pointer}
+.cntw{margin-bottom:6px}.cnt{display:flex;flex-wrap:wrap;gap:6px 10px;justify-content:center;max-width:340px;min-height:110px;background:#fff;border-radius:22px;padding:14px;box-shadow:0 5px 0 var(--line)}
+.cnt span{display:inline-block;line-height:1.1}
+.shpw svg{width:min(170px,46vw);height:auto;display:block;filter:drop-shadow(0 6px 0 rgba(0,0,0,.08))}
+.tfq{font-size:clamp(24px,6.5vw,34px);font-weight:800;background:#fff;border-radius:22px;padding:24px 18px;min-height:130px;display:grid;place-items:center;width:min(420px,90vw);box-shadow:0 6px 0 var(--line);margin-bottom:18px}
+.tfb{display:flex;gap:14px}.tfb .btn{min-width:130px;font-size:20px}
+.tfy{background:var(--green);color:#fff;box-shadow:0 6px 0 var(--green-d)}.tfn{background:var(--coral);color:#fff;box-shadow:0 6px 0 #C94848}
 .toast{position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -481,13 +487,18 @@ const GAMES=[
  {id:'xo',name:'إكس أو مع نبيه',emoji:'❌',age:'all',skill:'التخطيط والتفكير',price:3,color:'linear-gradient(135deg,#FFE0EE,#FFB3D1)',ready:true},
  {id:'puzzle',name:'رتّب الصورة',emoji:'🖼️',age:'all',skill:'التركيز والملاحظة',price:3,color:'linear-gradient(135deg,#FFF1C2,#FFD36B)',ready:true},
  {id:'capitals',name:'عواصم العالم',emoji:'🏙️',age:'all',skill:'الجغرافيا والعواصم',price:3,color:'linear-gradient(135deg,#D7ECFF,#9FD0FF)',ready:true},
- {id:'islamic',name:'معلومات إسلامية',emoji:'🕌',age:'all',skill:'الثقافة الإسلامية',price:3,color:'linear-gradient(135deg,#D6F5E1,#8FE3AE)',ready:true,isNew:true},
- {id:'simon',name:'تذكّر الألوان',emoji:'🎵',age:'all',skill:'الذاكرة والانتباه',price:3,color:'linear-gradient(135deg,#FFE0D1,#FFB38F)',ready:true,isNew:true},
- {id:'spelling',name:'تهجئة الكلمات',emoji:'✍️',age:'6-9',skill:'الإملاء والقراءة',price:3,color:'linear-gradient(135deg,#FFF1C2,#FFE08A)',ready:true,isNew:true},
- {id:'clock',name:'قراءة الساعة',emoji:'⏰',age:'all',skill:'الوقت والساعة',price:3,color:'linear-gradient(135deg,#D6E4FF,#A9C4FF)',ready:true,isNew:true},
+ {id:'islamic',name:'معلومات إسلامية',emoji:'🕌',age:'all',skill:'الثقافة الإسلامية',price:3,color:'linear-gradient(135deg,#D6F5E1,#8FE3AE)',ready:true},
+ {id:'simon',name:'تذكّر الألوان',emoji:'🎵',age:'all',skill:'الذاكرة والانتباه',price:3,color:'linear-gradient(135deg,#FFE0D1,#FFB38F)',ready:true},
+ {id:'spelling',name:'تهجئة الكلمات',emoji:'✍️',age:'6-9',skill:'الإملاء والقراءة',price:3,color:'linear-gradient(135deg,#FFF1C2,#FFE08A)',ready:true},
+ {id:'clock',name:'قراءة الساعة',emoji:'⏰',age:'all',skill:'الوقت والساعة',price:3,color:'linear-gradient(135deg,#D6E4FF,#A9C4FF)',ready:true},
+ {id:'count',name:'العدّ الممتع',emoji:'🍎',age:'6-9',skill:'العدّ والأرقام',price:3,color:'linear-gradient(135deg,#FFE0E0,#FFB3B3)',ready:true,isNew:true},
+ {id:'shapes',name:'عالم الأشكال',emoji:'🔷',age:'6-9',skill:'الأشكال الهندسية',price:3,color:'linear-gradient(135deg,#D7ECFF,#A9D4FF)',ready:true,isNew:true},
+ {id:'order',name:'ترتيب الأعداد',emoji:'🔢',age:'all',skill:'مقارنة الأعداد',price:3,color:'linear-gradient(135deg,#E9DCFF,#CDB5FF)',ready:true,isNew:true},
+ {id:'opposites',name:'الأضداد',emoji:'↔️',age:'all',skill:'المفردات واللغة',price:3,color:'linear-gradient(135deg,#FFF1C2,#FFDC7A)',ready:true,isNew:true},
+ {id:'truefalse',name:'صح أم خطأ؟',emoji:'⚡',age:'10-14',skill:'سرعة البديهة',price:3,color:'linear-gradient(135deg,#D6F5E1,#9BE8B9)',ready:true,isNew:true},
  {id:'code',name:'روبوت المتاهة',emoji:'🤖',img:'img/robot.png',age:'10-14',skill:'مبادئ البرمجة',price:3,color:'linear-gradient(135deg,#FFE0D1,#FFB38F)',ready:true},
 ];
-const NEED={animals:0,letters:0,memory:0,xo:0,islamic:0,simon:10,puzzle:15,math:25,spelling:30,flags:40,capitals:50,logic:60,clock:70,science:85,code:100};
+const NEED={animals:0,letters:0,memory:0,xo:0,islamic:0,count:0,shapes:5,order:20,opposites:35,truefalse:45,simon:10,puzzle:15,math:25,spelling:30,flags:40,capitals:50,logic:60,clock:70,science:85,code:100};
 const TROPHIES=[{n:5,i:'🥉',t:'نجم صاعد'},{n:15,i:'🥈',t:'بطل صغير'},{n:30,i:'🥇',t:'عبقري'},{n:60,i:'👑',t:'ملك الذكاء'}];
 
 // =====================================================================
@@ -909,7 +920,7 @@ function stat(prog,score){$('#gProg').textContent=prog;$('#gScore').textContent=
 function openGame(id){
   const g=GAMES.find(x=>x.id===id);if(!isOpen(g))return openLock(id);
   $('#owlPop').classList.remove('show','talking');clearAll();curId=id;$('#gTitle').textContent=g.emoji+' '+g.name;$('#game').classList.add('show');
-  ({animals,letters,memory,math,flags,logic,science,code,capitals,puzzle,xo,clock,spelling,simon,islamic})[id]();
+  ({animals,letters,memory,math,flags,logic,science,code,capitals,puzzle,xo,clock,spelling,simon,islamic,count,shapes,order,opposites,truefalse})[id]();
 }
 $('#gBack').onclick=()=>{clearAll();$('#game').classList.remove('show')};
 function result(score,total,msg){
@@ -1272,6 +1283,54 @@ function greet(speak=true){
   document.addEventListener('pointerdown',function first(e){if(!e.target.closest('#owlX')&&!greeted&&p.classList.contains('show'))greet(true);document.removeEventListener('pointerdown',first)},{passive:true});
 })();
 $('#dailyBox').addEventListener('click',e=>{if(e.target.closest('.owlw'))greet(true)});
+// ---- Games set 4: counting, shapes, ordering, opposites, true/false
+const CNT=[['🍎','تفاحة'],['⭐','نجمة'],['🐟','سمكة'],['🎈','بالونة'],['🚗','سيارة'],['🐥','صوص'],['🌸','وردة'],['⚽','كرة'],['🦋','فراشة'],['🍓','فراولة']];
+function count(){
+  quiz2([...Array(8)].map((_,i)=>{const [e,w]=CNT[rnd(0,CNT.length-1)],n=rnd(2,i<3?6:12),set=new Set([n]);while(set.size<4){const d=n+rnd(-3,3);if(d>0)set.add(d)}
+    return {show:`<div class="cnt">${[...Array(n)].map(()=>`<span style="font-size:${rnd(30,44)}px;transform:rotate(${rnd(-20,20)}deg)">${e}</span>`).join('')}</div>`,showCls:'cntw',prompt:`كم ${w} ترى؟ 🔢`,ans:n,opts:[...set],reveal:`${n}`}}));
+}
+const SHP=[['دائرة','<circle cx="50" cy="50" r="38"/>'],['مربع','<rect x="14" y="14" width="72" height="72" rx="4"/>'],['مثلث','<polygon points="50,10 90,86 10,86"/>'],
+ ['مستطيل','<rect x="6" y="28" width="88" height="46" rx="4"/>'],['نجمة','<polygon points="50,6 61,38 95,38 67,58 78,92 50,72 22,92 33,58 5,38 39,38"/>'],
+ ['معيّن','<polygon points="50,6 88,50 50,94 12,50"/>'],['شكل خماسي','<polygon points="50,8 92,40 76,90 24,90 8,40"/>'],['شكل سداسي','<polygon points="28,12 72,12 94,50 72,88 28,88 6,50"/>'],
+ ['شكل بيضاوي','<ellipse cx="50" cy="50" rx="44" ry="28"/>'],['قلب','<path d="M50 88 C10 60 6 32 26 20 C38 13 48 20 50 30 C52 20 62 13 74 20 C94 32 90 60 50 88Z"/>']];
+const SHC=['#FF5A5F','#3D8BFF','#3CCB6E','#FFC72C','#8B5CF6','#FF8A3D','#2EC4A6','#FF5FA2'];
+function shapes(){quiz2(shuffle(SHP).slice(0,8).map(([n,sh])=>({show:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><g fill="${SHC[rnd(0,SHC.length-1)]}" stroke="#13285C" stroke-width="3" stroke-linejoin="round">${sh}</g></svg>`,showCls:'shpw',prompt:'ما اسم هذا الشكل؟ 🔷',ans:n,opts:[n,...shuffle(SHP.filter(x=>x[0]!==n)).slice(0,3).map(x=>x[0])],txt:true,reveal:n})))}
+function order(){
+  let i=0,score=0;const R=6;
+  const next=()=>{
+    if(i>=R)return result(score,R,`رتّبت ${score} من ${R} بدون أخطاء`);
+    const desc=i%2===1,max=i<2?20:99,set=new Set();while(set.size<5)set.add(rnd(1,max));
+    const nums=[...set],target=[...nums].sort((a,b)=>desc?b-a:a-b);let pos=0,miss=false;
+    stat(`${i+1}/${R}`,score);
+    area.innerHTML=`<div class="big">${desc?'⬇️':'⬆️'}</div><div class="q">اضغط الأرقام من <mark>${desc?'الأكبر إلى الأصغر':'الأصغر إلى الأكبر'}</mark></div>
+      <div class="spell" id="sp" dir="ltr" style="font-size:30px">&nbsp;</div><div class="ltrs">${shuffle(nums).map(n=>`<button class="ltr" style="width:72px" data-n="${n}">${n}</button>`).join('')}</div><div class="reveal" id="rv"></div>`;
+    area.querySelectorAll('.ltr').forEach(b=>b.onclick=()=>{
+      if(busy||b.classList.contains('used'))return;
+      if(+b.dataset.n===target[pos]){b.classList.add('used');pos++;$('#sp').textContent=target.slice(0,pos).join(desc?' > ':' < ');SFX.ok(false);
+        if(pos===target.length){busy=true;if(!miss){score++;popEmoji(HAPPY[rnd(0,HAPPY.length-1)])}SFX.ok(true);$('#rv').textContent=miss?'اكتمل الترتيب':'✔ ترتيب صحيح!';later(()=>{busy=false;i++;next()},1400)}}
+      else{miss=true;b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');SFX.no()}
+    });
+  };next();
+}
+const OPP=[['كبير','صغير'],['طويل','قصير'],['حار','بارد'],['ليل','نهار'],['سريع','بطيء'],['فوق','تحت'],['سعيد','حزين'],['ثقيل','خفيف'],['قريب','بعيد'],['مفتوح','مغلق'],['نظيف','متّسخ'],['جديد','قديم'],['قوي','ضعيف'],['داخل','خارج'],['أبيض','أسود'],['يمين','يسار'],['كثير','قليل'],['شجاع','جبان'],['صعب','سهل'],['ممتلئ','فارغ']];
+function opposites(){quiz2(shuffle(OPP).slice(0,8).map(p=>{const [w,a]=Math.random()<.5?p:[p[1],p[0]];const pool=OPP.filter(x=>x!==p).flat();
+  return {show:'↔️',prompt:`ما عكس كلمة <mark>${w}</mark>؟`,ans:a,opts:[a,...shuffle(pool).slice(0,3)],txt:true,reveal:`${w} ↔️ ${a}`}}))}
+const TF=[['الشمس نجم',1],['الماء يتجمّد عند صفر درجة مئوية',1],['للعنكبوت ثمانية أرجل',1],['الحوت من الثدييات',1],['القمر يدور حول الأرض',1],['النحل يصنع العسل',1],
+ ['في الأسبوع سبعة أيام',1],['في السنة 12 شهرًا',1],['القلب يضخّ الدم في الجسم',1],['للمثلث ثلاثة أضلاع',1],['الرياض عاصمة السعودية',1],['البطريق طائر لا يطير',1],['5 × 5 = 25',1],['الصوت لا ينتقل في الفراغ',1],
+ ['الشمس تدور حول الأرض',0],['للحشرة ثمانية أرجل',0],['الخفاش من الطيور',0],['الماء يغلي عند 50 درجة مئوية',0],['القمر نجم',0],['في الساعة 100 دقيقة',0],['للمربع خمسة أضلاع',0],
+ ['السمك يتنفس بالرئتين',0],['7 + 8 = 16',0],['الأرض أكبر كوكب في المجموعة الشمسية',0],['الدولفين سمكة',0],['في اليوم 20 ساعة',0]];
+function truefalse(){
+  let score=0,left=60,i=0;const qs=shuffle(TF);
+  area.innerHTML=`<div class="timer"><i id="tb" style="width:100%"></i></div><div class="tfq" id="tfq"></div>
+    <div class="tfb"><button class="btn tfy" data-v="1">✅ صح</button><button class="btn tfn" data-v="0">❌ خطأ</button></div><div class="reveal" id="rv"></div>`;
+  const show=()=>{$('#tfq').textContent=qs[i%qs.length][0];stat(`⏱ ${left}`,score)};
+  timers.push(setInterval(()=>{left--;$('#tb').style.width=(left/60*100)+'%';stat(`⏱ ${left}`,score);if(left<=0)result(Math.min(score,12),12,`أجبت صحيحًا على ${score} في دقيقة ⚡`)},1000));
+  area.querySelectorAll('.tfb .btn').forEach(b=>b.onclick=()=>{if(busy)return;busy=true;const q=qs[i%qs.length],ok=+b.dataset.v===q[1];
+    if(ok){score++;SFX.ok(false);$('#rv').textContent='✔ صحيح'}else{SFX.no();$('#rv').textContent=`✖ الصواب: ${q[1]?'صح':'خطأ'}`}
+    later(()=>{busy=false;i++;$('#rv').textContent='';show()},ok?450:1100)});
+  show();
+}
+
 $('#sndBtn').textContent=SFX.on?'🔊':'🔇';
 $('#sndBtn').onclick=()=>{const v=SFX.toggle();$('#sndBtn').textContent=v?'🔊':'🔇';toast(v?'🔊 الصوت مفعّل':'🔇 تم كتم الصوت');if(v)SFX.ok()};
 render();
