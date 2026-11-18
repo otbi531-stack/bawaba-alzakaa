@@ -246,7 +246,16 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .pstep>b{flex:none;width:24px;height:24px;border-radius:50%;background:var(--pri);color:#fff;display:grid;place-items:center;font-size:13px}
 .pnum{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;border:2px dashed var(--line);border-radius:14px;padding:8px 10px 8px 12px;margin:0 0 6px 0}
 .pnum span{font-size:22px;font-weight:800;letter-spacing:1px;color:var(--ink);font-family:'Baloo Bhaijaan 2',Tajawal}
-.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
+.owlpop{position:fixed;bottom:16px;right:16px;left:16px;max-width:440px;display:flex;align-items:center;gap:10px;background:#fff;border-radius:22px;padding:10px 12px;box-shadow:0 12px 30px rgba(19,40,92,.28);z-index:58;transform:translateY(170%);transition:transform .5s cubic-bezier(.2,1.4,.4,1);cursor:pointer}
+.owlpop.show{transform:none}
+.owlpw{width:64px;flex:none}.owlpw svg{width:100%;height:auto;display:block}
+.owlpop.talking .owlpw{animation:talk .32s ease-in-out infinite}
+.owlpop.talking .spk{animation:flick .6s infinite}
+@keyframes talk{50%{transform:translateY(-4px) rotate(-5deg)}}
+.owlb{flex:1;min-width:0;font-weight:700;font-size:15px;line-height:1.5}.owlb b{color:var(--purple);font-size:13px;display:block}
+.x2{border:0;background:var(--bg);width:28px;height:28px;border-radius:50%;flex:none;color:var(--ink)}
+.owlw{cursor:pointer}
+.toast{position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
@@ -687,7 +696,7 @@ $('#aGo').onclick=async()=>{
     if(!activeKid())kidId=profile.kids[0]?profile.kids[0].id:null;
     hide('authOv');setKid(kidId);
     toast(aTab==='up'?`🎉 أهلًا ${user.name}! حسابك جاهز`:`👋 أهلًا بعودتك ${user.name||''}`);
-    if(!profile.kids.length)openKid();else if(pendingBuy){const b=pendingBuy;pendingBuy=null;openBuy(b)}
+    if(!profile.kids.length)openKid();else if(pendingBuy){const b=pendingBuy;pendingBuy=null;openBuy(b)}else greet(true);
   }catch(e){console.warn(e);$('#aErr').textContent=errMsg(e)}
   g.disabled=false;g.textContent=old;
 };
@@ -716,6 +725,7 @@ $('#kSave').onclick=async()=>{
   hide('kidOv');await persist();setKid(kidId);
   if($('#dash').classList.contains('show'))openDash();
   toast(editKid?'✅ تم الحفظ':`🎉 مرحبًا ${name}! جاهز للعب`);
+  if(!editKid&&!pendingBuy)setTimeout(()=>greet(true),400);
   if(pendingBuy){const b=pendingBuy;pendingBuy=null;openBuy(b)}
 };
 
@@ -888,7 +898,7 @@ function clearAll(){timers.forEach(t=>{clearTimeout(t);clearInterval(t)});timers
 function stat(prog,score){$('#gProg').textContent=prog;$('#gScore').textContent='⭐ '+score}
 function openGame(id){
   const g=GAMES.find(x=>x.id===id);if(!isOpen(g))return openLock(id);
-  clearAll();curId=id;$('#gTitle').textContent=g.emoji+' '+g.name;$('#game').classList.add('show');
+  $('#owlPop').classList.remove('show','talking');clearAll();curId=id;$('#gTitle').textContent=g.emoji+' '+g.name;$('#game').classList.add('show');
   ({animals,letters,memory,math,flags,logic,science,code,capitals,puzzle,xo,clock,spelling,simon,islamic})[id]();
 }
 $('#gBack').onclick=()=>{clearAll();$('#game').classList.remove('show')};
@@ -1230,6 +1240,28 @@ const ISL=[['🕌','كم عدد أركان الإسلام؟','5',['3','4','6']],
  ['🎉','كم عدد الأعياد عند المسلمين؟','2',['1','3','4']],['💧','ماذا نفعل قبل الصلاة لنكون على طهارة؟','الوضوء',['الأذان','الدعاء','الصيام']]];
 function islamic(){quiz2(shuffle(ISL).slice(0,8).map(([e,q,a,w])=>({show:e,prompt:q,ans:a,opts:[a,...w],txt:true,reveal:a})))}
 
+// ---- Talking owl welcome (نبيه يرحّب بالطفل باسمه)
+let greeted=false;
+function welcomeText(){
+  const k=activeKid(),g=!!(k&&/^g/.test(k.avatar)),h=new Date().getHours(),gr=h<12?'صباح الخير':'مساء الخير',grS=h<12?'صَباحَ الخَيْر':'مَساءَ الخَيْر';
+  if(!k)return {show:`${gr}! 👋 أنا نبيه 🦉 هيا نتعلم ونلعب! سجّل اسمك لأناديك باسمك`,say:`${grS}! أنا نَبيه. هَيّا نَتَعَلَّمُ ونَلْعَب!`};
+  const st=daily(),sk=streakNow(st),n=k.name,left=st.list.length-st.done.length;
+  const show=`${gr} يا ${n}! 👋 أنا نبيه، ${g?'اشتقت لكِ':'اشتقت لك'}!${sk?` شعلتك ${sk} ${sk===1?'يوم':'أيام'} 🔥`:''} ${left?`${g?'مهامكِ':'مهامك'} اليوم تنتظر${g?'كِ':'ك'} 🎯`:'أنجزت مهام اليوم 🎉'}`;
+  const say=`${grS} يا ${n}! أنا نَبيه، ${g?'اشْتَقْتُ لَكِ':'اشْتَقْتُ لَك'}! ${left?(g?'هَيّا نُنْجِزُ مَهامَّكِ اليَوْم':'هَيّا نُنْجِزُ مَهامَّكَ اليَوْم'):(g?'أَنْجَزْتِ مَهامَّ اليَوْم، أَحْسَنْتِ':'أَنْجَزْتَ مَهامَّ اليَوْم، أَحْسَنْت')}`;
+  return {show,say};
+}
+function greet(speak=true){
+  const w=welcomeText(),p=$('#owlPop');$('#owlTxt').textContent=w.show;p.classList.add('show');
+  if(speak){greeted=true;p.classList.add('talking');SFX.say(w.say);clearTimeout(greet.t);greet.t=setTimeout(()=>p.classList.remove('talking'),Math.max(2600,w.say.length*90))}
+  clearTimeout(greet.h);greet.h=setTimeout(()=>p.classList.remove('show','talking'),speak?10000:14000);
+}
+(function(){const p=document.createElement('div');p.className='owlpop';p.id='owlPop';
+  p.innerHTML=`<div class="owlpw">${OWL()}</div><div class="owlb"><b>نبيه 🦉 <span class="spk">🔊</span></b><div id="owlTxt"></div></div><button class="x2" id="owlX" aria-label="إغلاق">✕</button>`;
+  document.body.appendChild(p);
+  p.addEventListener('click',e=>{if(e.target.closest('#owlX')){p.classList.remove('show','talking');return}greet(true)});
+  document.addEventListener('pointerdown',function first(e){if(!e.target.closest('#owlX')&&!greeted&&p.classList.contains('show'))greet(true);document.removeEventListener('pointerdown',first)},{passive:true});
+})();
+$('#dailyBox').addEventListener('click',e=>{if(e.target.closest('.owlw'))greet(true)});
 $('#sndBtn').textContent=SFX.on?'🔊':'🔇';
 $('#sndBtn').onclick=()=>{const v=SFX.toggle();$('#sndBtn').textContent=v?'🔊':'🔇';toast(v?'🔊 الصوت مفعّل':'🔇 تم كتم الصوت');if(v)SFX.ok()};
 render();
@@ -1239,6 +1271,7 @@ render();
   if(user){try{profile=await B.load(user.uid);profile.kids=profile.kids||[];profile.owned=profile.owned||[]}catch(e){profile={owned:[],kids:[]}}
     if(!activeKid())kidId=profile.kids[0]?profile.kids[0].id:null}
   setKid(kidId);
+  setTimeout(()=>{if(!greeted)greet(false)},900);
 })();
 </script>
 </body>
