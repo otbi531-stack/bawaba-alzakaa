@@ -363,7 +363,7 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 </div>
 </main>
 
-<footer>بوابة الذكاء © 2026 — ألعاب تعليمية عربية</footer>
+<footer>بوابة الذكاء © 2026 — ألعاب تعليمية عربية<br><small style="opacity:.6">الإصدار 2026.11.18-23</small></footer>
 
 <!-- Admin -->
 <div class="game" id="adm">
@@ -1489,6 +1489,10 @@ async function openAdmin(){
 }
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
+// ---- Auto-update: reload when a newer version is published
+const APP_VERSION='2026.11.18-23';
+(async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
+  if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 $('#sndBtn').textContent=SFX.on?'🔊':'🔇';
 $('#sndBtn').onclick=()=>{const v=SFX.toggle();$('#sndBtn').textContent=v?'🔊':'🔇';toast(v?'🔊 الصوت مفعّل':'🔇 تم كتم الصوت');if(v)SFX.ok()};
 render();
