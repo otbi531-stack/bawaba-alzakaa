@@ -303,6 +303,9 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .vgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px;max-height:60vh;overflow:auto}
 .vbtn{border:2px solid var(--line);background:#fff;border-radius:16px;padding:10px;font-weight:800;font-size:15px;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--ink)}
 .vbtn span{font-size:30px}.vbtn small{color:var(--muted);font-weight:500}
+.recbtn{width:110px;height:110px;border-radius:50%;border:0;background:var(--coral);color:#fff;font-size:50px;margin:14px auto 10px;display:grid;place-items:center;box-shadow:0 6px 0 #c94a3a}
+.recbtn.on{animation:recp 1s infinite;background:#e53935}@keyframes recp{50%{transform:scale(1.08)}}
+.recbarw{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin:6px 0 8px}.recbar{height:100%;background:var(--coral);width:0;transition:width .9s linear}
 .toast{position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -378,6 +381,17 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 </main>
 
 <footer>بوابة الذكاء © 2026 — ألعاب تعليمية عربية<br><small style="opacity:.6">الإصدار 2026.11.18-24</small></footer>
+
+<!-- Voice recorder -->
+<div class="ov" id="recOv"><div class="modal" style="text-align:center">
+  <button class="x" id="recClose">✕</button>
+  <h3 id="recTitle"></h3>
+  <button class="recbtn" id="recBtn">🎤</button>
+  <div class="recbarw"><div class="recbar" id="recBar"></div></div>
+  <div class="meta"><b id="recT">0 / 15 ث</b> · <span id="recHint"></span></div>
+  <div style="display:flex;gap:8px;justify-content:center;margin-top:12px"><button class="btn" id="recPlay">▶ استمع</button><button class="btn blue" id="recSend">📨 أرسل</button></div>
+  <div class="note" style="margin-top:12px">🛡️ لا تذكر في رسالتك عنوانك أو رقم جوالك أو اسم مدرستك.</div>
+</div></div>
 
 <!-- Friends picker -->
 <div class="ov" id="vOv"><div class="modal">
@@ -1539,7 +1553,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-26';
+const APP_VERSION='2026.11.19-27';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
@@ -1568,8 +1582,8 @@ function startInbox(){if(unwatchInbox){try{unwatchInbox()}catch(e){}unwatchInbox
     const fresh=msgs.filter(m=>!m.read&&!seenMsg.has(m.id));msgs.forEach(m=>seenMsg.add(m.id));
     const sig=JSON.stringify(msgs.map(m=>[m.id,m.read,m.done]));const changed=sig!==startInbox.sig;startInbox.sig=sig;inbox=msgs;
     if(first){first=false;if(fresh.length)toast(`📬 لديك ${fresh.length} ${fresh.length===1?'رسالة جديدة':'رسائل جديدة'} من أصدقائك`)}
-    else fresh.forEach(m=>{const t=msgText(m);toast(`📬 ${m.fromName}: ${t.short}`);SFX.ok();setTimeout(()=>SFX.say(t.say),500);if(m.type==='added')loadFriends()});
-    const old=Date.now()-7*864e5;msgs.filter(m=>m.read&&tsOf(m)&&tsOf(m)<old).forEach(m=>B.deleteMsg(m.id).catch(()=>{}));
+    else fresh.forEach(m=>{const t=msgText(m);toast(`📬 ${m.fromName}: ${t.short}`);SFX.ok();if(t.say)setTimeout(()=>SFX.say(t.say),500);if(m.type==='added')loadFriends()});
+    const old=Date.now()-7*864e5,oldA=Date.now()-3*864e5;msgs.filter(m=>tsOf(m)&&((m.read&&tsOf(m)<old)||(m.type==='audio'&&tsOf(m)<oldA))).forEach(m=>B.deleteMsg(m.id).catch(()=>{}));
     if(changed){renderFriends();updFrBadge()}
   })}catch(e){console.warn(e)}}
 function updFrBadge(){const n=inbox.filter(m=>!m.read).length,b=document.querySelector('#viewtg [data-view=friends]');if(b)b.innerHTML=`👫 أصدقائي${n?` <span class="nbadge">${n}</span>`:''}`}
@@ -1577,6 +1591,7 @@ function msgText(m){const g=m.game?GAMES.find(x=>x.id===m.game):null,gn=g?g.name
   if(m.type==='voice'){const v=VMAP[m.key]||VOICES[0];return {icon:v[1],short:v[2],say:`${m.fromName} يَقول: ${v[3]}`}}
   if(m.type==='challenge')return {icon:'🏆',short:`تحدّاك في «${gn}» (${'⭐'.repeat(m.score)})`,say:`${m.fromName} يَتَحَدّاك!`};
   if(m.type==='result')return {icon:m.outcome==='win'?'🥇':m.outcome==='lose'?'💪':'🤝',short:m.outcome==='win'?`فاز عليك في «${gn}»!`:m.outcome==='lose'?`خسر أمامك في «${gn}»، أنت البطل!`:`تعادل معك في «${gn}»`,say:m.outcome==='lose'?`مَبْروك! فُزْتَ عَلى ${m.fromName}`:`${m.fromName} لَعِبَ تَحَدّيك`};
+  if(m.type==='audio')return {icon:'🎤',short:`رسالة صوتية (${m.dur||1} ث)`,say:''};
   if(m.type==='added')return {icon:'👫',short:'أضافك صديقًا!',say:`${m.fromName} أَضافَكَ صَديقًا`};
   return {icon:'💬',short:'',say:''};
 }
@@ -1593,18 +1608,19 @@ function renderFriends(){
      <button class="sbtn pri" id="frCopy">📋 انسخ الكود</button><div class="meta" style="margin-top:8px">🔒 أعطِ كودك فقط لأصدقائك الذين تعرفهم في الواقع، مثل زملاء المدرسة والأقارب.</div></div>
    <div class="dcard"><h3>➕ أضف صديقًا</h3><div class="fradd"><input id="frIn" maxlength="6" dir="ltr" placeholder="اكتب كود صديقك" autocomplete="off"><button class="btn blue" id="frAdd">أضف</button></div><div class="err" id="frErr"></div></div>
    ${msgs.length?`<div class="dcard"><h3>📬 رسائلي</h3>${msgs.map(m=>{const t=msgText(m);return `<div class="frmsg ${m.read?'':'unread'}"><span class="fav">${AV(m.fromAvatar||'b1')}</span><div class="grow"><b>${esc(m.fromName||'')}</b> <span>${t.icon} ${t.short}</span><small>${fmtD(tsOf(m))}</small></div>
-      <div class="kact" style="margin:0">${m.type==='voice'||m.type==='added'||m.type==='result'?`<button class="sbtn" data-play-msg="${m.id}">🔊</button>`:''}${m.type==='challenge'&&!m.done?`<button class="sbtn pri" data-acc="${m.id}">▶ اقبل</button>`:''}<button class="sbtn" data-del-msg="${m.id}">✕</button></div></div>`}).join('')}</div>`:''}
+      <div class="kact" style="margin:0">${m.type==='voice'||m.type==='added'||m.type==='result'||m.type==='audio'?`<button class="sbtn" data-play-msg="${m.id}">🔊</button>`:''}${m.type==='challenge'&&!m.done?`<button class="sbtn pri" data-acc="${m.id}">▶ اقبل</button>`:''}<button class="sbtn" data-del-msg="${m.id}">✕</button></div></div>`}).join('')}</div>`:''}
    <div class="dcard"><h3>🏆 لوحة الأبطال</h3>${board.map((p,i)=>`<div class="frrow ${p.me?'me':''}"><b class="rk">${medal(i)}</b><span class="fav">${AV(p.avatar||'b1')}</span><b class="grow">${esc(p.name)}${p.me?' (أنت)':''}</b><span>⭐ ${p.earned||0}</span></div>`).join('')}
      ${friends.length?'':'<div class="meta" style="margin-top:8px">أضف أصدقاءك ليظهروا هنا وتتنافسوا!</div>'}</div>
    ${friends.length?`<div class="dcard"><h3>👫 أصدقائي (${friends.length})</h3>${friends.map(f=>`<div class="frcard"><span class="fav big">${AV(f.avatar||'b1')}</span><div class="grow"><b>${esc(f.name)}</b><small>⭐ ${f.earned||0} نجمة</small></div>
-      <div class="kact" style="margin:0"><button class="sbtn pri" data-voice="${f.uid}">🎙️ رسالة</button><button class="sbtn" data-dare="${f.uid}">🏆 تحدَّ</button><button class="sbtn del" data-unf="${f.uid}">${delFr===f.uid?'⚠️ تأكيد':'🗑'}</button></div></div>`).join('')}</div>`:''}
-   <div class="note" style="margin-bottom:10px">🛡️ الرسائل جاهزة فقط بدون كتابة أو كلام حر، حفاظًا على سلامتك. إذا أزعجك أحد احذفه من أصدقائك وأخبر أهلك.</div>`;
+      <div class="kact" style="margin:0"><button class="sbtn pri" data-rec="${f.uid}">🎤 سجّل</button><button class="sbtn" data-voice="${f.uid}">💬</button><button class="sbtn" data-dare="${f.uid}">🏆 تحدَّ</button><button class="sbtn del" data-unf="${f.uid}">${delFr===f.uid?'⚠️ تأكيد':'🗑'}</button></div></div>`).join('')}</div>`:''}
+   <div class="note" style="margin-bottom:10px">🛡️ الرسائل الصوتية تصل لأصدقائك المضافين فقط وتُحذف تلقائيًا بعد 3 أيام. لا تذكر عنوانك أو رقمك، وإذا أزعجك أحد احذفه من أصدقائك وأخبر أهلك.</div>`;
   $('#frCopy').onclick=()=>copyTxt(profile.code||'');
   $('#frAdd').onclick=addFriendByCode;$('#frIn').onkeydown=e=>{if(e.key==='Enter')addFriendByCode()};
+  box.querySelectorAll('[data-rec]').forEach(b=>b.onclick=()=>openRec(b.dataset.rec));
   box.querySelectorAll('[data-voice]').forEach(b=>b.onclick=()=>openVoice(b.dataset.voice));
   box.querySelectorAll('[data-dare]').forEach(b=>b.onclick=()=>openDare(b.dataset.dare));
   box.querySelectorAll('[data-unf]').forEach(b=>b.onclick=async()=>{const uid=b.dataset.unf;if(delFr!==uid){delFr=uid;return renderFriends()}delFr=null;const f=friends.find(x=>x.uid===uid);try{await B.removeFriendship(f.fid);toast('تم حذف الصديق')}catch(e){toast('⚠️ تعذّر الحذف')}loadFriends()});
-  box.querySelectorAll('[data-play-msg]').forEach(b=>b.onclick=()=>{const m=inbox.find(x=>x.id===b.dataset.playMsg);if(!m)return;SFX.say(msgText(m).say);popEmoji(msgText(m).icon);if(!m.read)B.markMsg(m.id,{read:true}).catch(()=>{})});
+  box.querySelectorAll('[data-play-msg]').forEach(b=>b.onclick=()=>{const m=inbox.find(x=>x.id===b.dataset.playMsg);if(!m)return;if(m.type==='audio')playAudio(m.audio);else SFX.say(msgText(m).say);popEmoji(msgText(m).icon);if(!m.read)B.markMsg(m.id,{read:true}).catch(()=>{})});
   box.querySelectorAll('[data-del-msg]').forEach(b=>b.onclick=()=>B.deleteMsg(b.dataset.delMsg).then(()=>{inbox=inbox.filter(m=>m.id!==b.dataset.delMsg);renderFriends();updFrBadge()}).catch(()=>{}));
   box.querySelectorAll('[data-acc]').forEach(b=>b.onclick=()=>acceptDare(b.dataset.acc));
   msgs.filter(m=>!m.read&&m.type!=='challenge').forEach(m=>B.markMsg(m.id,{read:true}).catch(()=>{}));
@@ -1643,6 +1659,40 @@ function challengeResult(s){
   return `<br><b style="color:var(--pink)">${out==='lose'?`🏆 فزت على ${esc(c.fromName)}!`:out==='win'?`💪 ${esc(c.fromName)} فاز هذه المرة`:`🤝 تعادلت مع ${esc(c.fromName)}`} (${s}⭐ مقابل ${c.score}⭐)</b>`;
 }
 $('#vClose').onclick=()=>hide('vOv');
+// ---- Recorded voice notes between friends (max 15s, stored inline, auto-deleted after 3 days)
+const REC_MAX=15;let rec=null,recChunks=[],recBlob=null,recUrl='',recData='',recSecs=0,recTimer=null,recStream=null,curAudio=null;
+function recMime(){const c=['audio/webm;codecs=opus','audio/mp4','audio/webm','audio/ogg;codecs=opus'];try{return c.find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported(t))||''}catch(e){return ''}}
+function recUI(state){const b=$('#recBtn'),s=$('#recSend'),pl=$('#recPlay');
+  b.classList.toggle('on',state==='rec');b.innerHTML=state==='rec'?'⏹':'🎤';
+  $('#recHint').textContent=state==='rec'?'جارٍ التسجيل... اضغط لإيقافه':state==='done'?'استمع لرسالتك ثم أرسلها':'اضغط على الميكروفون وتكلّم (حتى 15 ثانية)';
+  s.style.display=pl.style.display=state==='done'?'':'none';$('#recT').textContent=`${recSecs} / ${REC_MAX} ث`;
+  $('#recBar').style.width=Math.min(100,recSecs/REC_MAX*100)+'%'}
+function recStopStream(){if(recStream){recStream.getTracks().forEach(t=>t.stop());recStream=null}clearInterval(recTimer)}
+function recReset(){if(rec&&rec.state==='recording'){rec.onstop=null;rec.stop()}recStopStream();rec=null;recBlob=null;recData='';recSecs=0;if(recUrl){URL.revokeObjectURL(recUrl);recUrl=''}if(curAudio){curAudio.pause();curAudio=null}}
+function openRec(uid){frTarget=friends.find(f=>f.uid===uid);if(!frTarget)return;recReset();
+  $('#recTitle').textContent=`🎤 رسالة صوتية إلى ${frTarget.name}`;recUI('idle');show('recOv')}
+let recLast=0;
+async function recToggle(){
+  const now=Date.now();if(now-recLast<700)return;recLast=now;
+  if(rec&&rec.state==='recording'){rec.stop();return}
+  if(!navigator.mediaDevices||!window.MediaRecorder){toast('⚠️ جهازك لا يدعم التسجيل الصوتي');return}
+  recReset();
+  try{recStream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){toast('🎤 اسمح للموقع باستخدام الميكروفون من إعدادات المتصفح');return}
+  const mt=recMime();try{rec=new MediaRecorder(recStream,mt?{mimeType:mt,audioBitsPerSecond:24000}:{audioBitsPerSecond:24000})}catch(e){rec=new MediaRecorder(recStream)}
+  recChunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)recChunks.push(e.data)};
+  rec.onstop=()=>{recStopStream();recBlob=new Blob(recChunks,{type:rec.mimeType||mt||'audio/webm'});recUrl=URL.createObjectURL(recBlob);
+    const fr=new FileReader();fr.onload=()=>{recData=fr.result;recUI('done')};fr.readAsDataURL(recBlob)};
+  rec.start(250);recSecs=0;recUI('rec');
+  recTimer=setInterval(()=>{recSecs++;recUI('rec');if(recSecs>=REC_MAX)rec.stop()},1000)}
+function playAudio(src){try{if(curAudio)curAudio.pause();curAudio=new Audio(src);curAudio.play().catch(()=>toast('⚠️ تعذّر تشغيل الصوت'))}catch(e){}}
+$('#recBtn').onclick=recToggle;
+$('#recPlay').onclick=()=>recUrl&&playAudio(recUrl);
+$('#recSend').onclick=async()=>{if(!recData||!frTarget)return;if(recData.length>700000){toast('⚠️ الرسالة طويلة، سجّل رسالة أقصر');return}
+  const b=$('#recSend');b.disabled=true;
+  try{await sendTo(frTarget,{type:'audio',audio:recData,dur:Math.max(1,recSecs)});hide('recOv');toast(`📨 أرسلت رسالتك الصوتية إلى ${frTarget.name}`);SFX.ok();recReset()}
+  catch(e){console.warn(e);toast('⚠️ تعذّر الإرسال، حاول مرة أخرى')}b.disabled=false};
+$('#recClose').onclick=()=>{recReset();hide('recOv')};
+
 $('#sndBtn').textContent=SFX.on?'🔊':'🔇';
 $('#sndBtn').onclick=()=>{const v=SFX.toggle();$('#sndBtn').textContent=v?'🔊':'🔇';toast(v?'🔊 الصوت مفعّل':'🔇 تم كتم الصوت');if(v)SFX.ok()};
 render();
