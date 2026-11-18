@@ -306,6 +306,14 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .recbtn{width:110px;height:110px;border-radius:50%;border:0;background:var(--coral);color:#fff;font-size:50px;margin:14px auto 10px;display:grid;place-items:center;box-shadow:0 6px 0 #c94a3a}
 .recbtn.on{animation:recp 1s infinite;background:#e53935}@keyframes recp{50%{transform:scale(1.08)}}
 .recbarw{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin:6px 0 8px}.recbar{height:100%;background:var(--coral);width:0;transition:width .9s linear}
+.vsopt{border:2px solid var(--line);background:#fff;border-radius:14px;padding:9px 10px;font-weight:800;font-size:14px;color:var(--ink)}
+.vsopt.on{border-color:var(--pri);background:#EAF2FF;color:var(--pri)}.vsopt.big{width:100%;font-size:16px;padding:12px}
+.vsstyles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.vslist{display:flex;flex-direction:column;gap:8px;max-height:38vh;overflow:auto}
+.vsrow{display:flex;align-items:center;gap:8px;border:2px solid var(--line);background:#fff;border-radius:14px;padding:9px 12px;text-align:right;color:var(--ink);font-size:15px}
+.vsrow.on{border-color:var(--pri);background:#EAF2FF}.vsrow small{display:block;color:var(--muted);font-size:12px}.vsrow .grow{flex:1}
+.vsrow .play{width:32px;height:32px;border-radius:50%;background:var(--pri);color:#fff;display:grid;place-items:center;font-size:13px}
+.hq{font-size:11px;background:#FFF2C2;color:#8a6200;border-radius:8px;padding:1px 6px}
 .toast{position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -381,6 +389,18 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 </main>
 
 <footer>بوابة الذكاء © 2026 — ألعاب تعليمية عربية<br><small style="opacity:.6">الإصدار 2026.11.18-24</small></footer>
+
+<!-- Voice settings -->
+<div class="ov" id="vsOv"><div class="modal">
+  <button class="x" id="vsClose">✕</button>
+  <h3>🔊 صوت نبيه</h3>
+  <button class="vsopt big" id="vsOn"></button>
+  <div class="meta" style="margin:12px 0 6px"><b>طريقة الكلام</b></div>
+  <div class="vsstyles" id="vsStyles"></div>
+  <div class="meta" style="margin:14px 0 6px"><b>اختر الصوت</b> · اضغط على أي صوت لتسمعه</div>
+  <div class="vslist" id="vsVoices"></div>
+  <button class="btn blue" id="vsTest" style="width:100%;margin-top:12px">▶ جرّب الصوت المختار</button>
+</div></div>
 
 <!-- Voice recorder -->
 <div class="ov" id="recOv"><div class="modal" style="text-align:center">
@@ -914,21 +934,22 @@ const isOpen=g=>owned.has(g.id);
 
 // ---- Sounds & encouragement (generated in the browser, no files)
 const SFX=(()=>{
-  let ctx=null,on=LS.get('bw_sound',true),voice=null,noise=null;
+  let ctx=null,on=LS.get('bw_sound',true),voice=null,noise=null,vURI=LS.get('bw_voice',''),vst=LS.get('bw_vstyle','normal'),allV=[];
+  const STY={normal:{n:'🦉 نبيه العادي',r:.92,p:1.05},slow:{n:'🐢 بطيء وواضح',r:.72,p:1},kid:{n:'🧒 صوت طفولي',r:.95,p:1.45},calm:{n:'😌 هادئ ودافئ',r:.82,p:.85},fast:{n:'⚡ سريع ونشيط',r:1.08,p:1.15}};
   const ensure=()=>{try{if(!ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;ctx=new C()}if(ctx.state==='suspended')ctx.resume();return ctx}catch(e){return null}};
   document.addEventListener('pointerdown',()=>{if(on)ensure()},{passive:true});
   function pickVoice(){try{const vs=speechSynthesis.getVoices().filter(v=>/^ar([-_]|$)/i.test(v.lang));
     const sc=v=>(/sa/i.test(v.lang)?4:0)+(/enhanced|premium|neural|natural|محسّن/i.test(v.name)?3:0)+(/laila|hala|zariyah|mariam|amira|salma|lana|ليلى/i.test(v.name)?2:0)+(v.localService?1:0);
-    voice=vs.sort((a,b)=>sc(b)-sc(a))[0]||null}catch(e){}}
+    allV=vs.sort((a,b)=>sc(b)-sc(a));voice=(vURI&&allV.find(v=>v.voiceURI===vURI))||allV[0]||null}catch(e){}}
   try{pickVoice();speechSynthesis.onvoiceschanged=pickVoice}catch(e){}
   function tone(f,t0,d,type,vol,f2){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type||'triangle';o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+d);g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(vol||.2,t0+.02);g.gain.exponentialRampToValueAtTime(0.0001,t0+d);o.connect(g);g.connect(ctx.destination);o.start(t0);o.stop(t0+d+.05);return o}
   function noiseBuf(){if(noise)return noise;const n=ctx.sampleRate;noise=ctx.createBuffer(1,n,ctx.sampleRate);const d=noise.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;return noise}
   function clap(t,vol){const s=ctx.createBufferSource();s.buffer=noiseBuf();const f=ctx.createBiquadFilter();f.type='bandpass';f.frequency.value=900+Math.random()*1600;f.Q.value=.8;const g=ctx.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.0001,t+.07);s.connect(f);f.connect(g);g.connect(ctx.destination);s.start(t,Math.random()*.8,.1)}
-  function say(t){if(!on||!voice)return;try{const go=()=>{const u=new SpeechSynthesisUtterance(t);try{u.voice=voice}catch(e){}u.lang=voice.lang||'ar-SA';u.rate=.92;u.pitch=1.05;u.volume=1;speechSynthesis.speak(u)};
+  function say(t,force){if((!on&&!force)||!voice)return;try{const go=()=>{const u=new SpeechSynthesisUtterance(t),st=STY[vst]||STY.normal;try{u.voice=voice}catch(e){}u.lang=voice.lang||'ar-SA';u.rate=st.r;u.pitch=st.p;u.volume=1;speechSynthesis.speak(u)};
     if(speechSynthesis.speaking||speechSynthesis.pending){speechSynthesis.cancel();setTimeout(go,120)}else go()}catch(e){}}
   const girl=()=>{try{const k=activeKid();return !!(k&&/^g/.test(k.avatar))}catch(e){return false}};
-  const PRAISE_M=['أَحْسَنْت!','رائِع!','مُمْتاز!','بْرافو!','أَنْتَ ذَكِيّ!','اِسْتَمِرَّ يا بَطَل!'];
-  const PRAISE_F=['أَحْسَنْتِ!','رائِع!','مُمْتاز!','بْرافو!','أَنْتِ ذَكِيَّة!','اِسْتَمِرِّي يا بَطَلَة!'];
+  const PRAISE_M=['أَحْسَنْت!','رائِع!','مُمْتاز!','برافو!','أَنْتَ ذَكِيّ!','اسْتَمِرَّ يا بَطَل!'];
+  const PRAISE_F=['أَحْسَنْتِ!','رائِع!','مُمْتاز!','برافو!','أَنْتِ ذَكِيَّة!','اسْتَمِرّي يا بَطَلَة!'];
   const PH={win3:['مُمْتاز! أَنْتَ بَطَل','مُمْتاز! أَنْتِ بَطَلَة'],win2:['أَحْسَنْت! عَمَلٌ رائِع','أَحْسَنْتِ! عَمَلٌ رائِع'],
     one:['جَيِّد! حاوِلْ مَرَّةً ثانِيَة لِتَجْمَعَ نُجومًا أَكْثَر','جَيِّد! حاوِلي مَرَّةً ثانِيَة لِتَجْمَعي نُجومًا أَكْثَر'],
     lose:['لا بَأْس، حاوِلْ مَرَّةً ثانِيَة','لا بَأْس، حاوِلي مَرَّةً ثانِيَة'],
@@ -973,7 +994,10 @@ const SFX=(()=>{
     applause(dur){if(!on||!ensure())return;dur=dur||2.2;const t=ctx.currentTime,n=Math.round(dur*45);for(let i=0;i<n;i++){const x=Math.random(),env=Math.sin(Math.PI*x);clap(t+x*dur,.06+.34*env*Math.random())}},
     fanfare(){if(!on||!ensure())return;const t=ctx.currentTime;[[523,0,.16],[659,.12,.16],[784,.24,.16],[1047,.38,.6]].forEach(([f,d,l])=>tone(f,t+d,l,'triangle',.22));tone(1568,t+.38,.6,'sine',.07)},
     sad(){if(!on||!ensure())return;const t=ctx.currentTime;[[392,0],[370,.38],[349,.76]].forEach(([f,d])=>tone(f,t+d,.35,'sawtooth',.07));const o=tone(330,t+1.14,1.1,'sawtooth',.07,300);const l=ctx.createOscillator(),lg=ctx.createGain();l.frequency.value=6;lg.gain.value=8;l.connect(lg);lg.connect(o.frequency);l.start(t+1.14);l.stop(t+2.3)},
-    say,sayP
+    say,sayP,
+    get voices(){try{if(!allV.length)pickVoice()}catch(e){}return allV},get voice(){return voice},get styles(){return STY},get style(){return vst},
+    setVoice(uri){vURI=uri;LS.set('bw_voice',uri);pickVoice()},setStyle(k){vst=k;LS.set('bw_vstyle',k)},
+    setOn(v){if(v!==on)this.toggle()}
   };
 })();
 function popEmoji(e,big){const d=document.createElement('div');d.className='popemo'+(big?' big':'');d.textContent=e;document.body.appendChild(d);setTimeout(()=>d.remove(),big?1600:900)}
@@ -1553,7 +1577,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-27';
+const APP_VERSION='2026.11.19-28';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
@@ -1694,7 +1718,24 @@ $('#recSend').onclick=async()=>{if(!recData||!frTarget)return;if(recData.length>
 $('#recClose').onclick=()=>{recReset();hide('recOv')};
 
 $('#sndBtn').textContent=SFX.on?'🔊':'🔇';
-$('#sndBtn').onclick=()=>{const v=SFX.toggle();$('#sndBtn').textContent=v?'🔊':'🔇';toast(v?'🔊 الصوت مفعّل':'🔇 تم كتم الصوت');if(v)SFX.ok()};
+$('#sndBtn').onclick=openVoiceSet;
+const VSAMPLE=()=>{const k=activeKid(),n=k?k.name:'يا بَطَل';return /^g/.test(k&&k.avatar||'')?`أَحْسَنْتِ ${n}! هَيّا نَلْعَبُ مَعًا`:`أَحْسَنْتَ ${n}! هَيّا نَلْعَبُ مَعًا`};
+const LANGN={SA:'🇸🇦 سعودي',EG:'🇪🇬 مصري',AE:'🇦🇪 إماراتي',KW:'🇰🇼 كويتي',QA:'🇶🇦 قطري',BH:'🇧🇭 بحريني',OM:'🇴🇲 عماني',JO:'🇯🇴 أردني',LB:'🇱🇧 لبناني',SY:'🇸🇾 سوري',IQ:'🇮🇶 عراقي',MA:'🇲🇦 مغربي',DZ:'🇩🇿 جزائري',TN:'🇹🇳 تونسي',LY:'🇱🇾 ليبي',YE:'🇾🇪 يمني',SD:'🇸🇩 سوداني','001':'🌍 فصحى',XA:'🌍 فصحى'};
+function vLabel(v){const cc=(v.lang.split(/[-_]/)[1]||'').toUpperCase(),nm=(/google/i.test(v.name)?'صوت Google':v.name.split(' - ')[0].replace(/\s*\(.*?\)\s*/g,' ').replace(/Microsoft|Online|Arabic|العربية/gi,'').trim())||'صوت';
+  return {nm,reg:LANGN[cc]||'🌍 عربي',hq:/enhanced|premium|neural|natural|محسّن/i.test(v.name)}}
+function openVoiceSet(){renderVoiceSet();show('vsOv');setTimeout(renderVoiceSet,500)}
+function renderVoiceSet(){
+  const vs=SFX.voices,cur=SFX.voice,st=SFX.styles;
+  $('#vsOn').classList.toggle('on',SFX.on);$('#vsOn').textContent=SFX.on?'🔊 الصوت مفعّل':'🔇 الصوت مكتوم';
+  $('#vsStyles').innerHTML=Object.entries(st).map(([k,o])=>`<button class="vsopt ${SFX.style===k?'on':''}" data-st="${k}">${o.n}</button>`).join('');
+  $('#vsVoices').innerHTML=vs.length?vs.map((v,i)=>{const l=vLabel(v);return `<button class="vsrow ${cur&&cur.voiceURI===v.voiceURI?'on':''}" data-vi="${i}"><span class="grow"><b>${esc(l.nm)}</b>${l.hq?' <span class="hq">✨ جودة عالية</span>':''}<small>${l.reg}</small></span><span class="play">▶</span></button>`}).join('')
+   :`<div class="note">لا يوجد صوت عربي في جهازك. لإضافة صوت أوضح:<br><b>آيفون:</b> الإعدادات ← تسهيلات الاستخدام ← المحتوى المنطوق ← الأصوات ← العربية، ونزّل صوت «ماجد» أو «ليلى» المحسّن.<br><b>أندرويد:</b> الإعدادات ← تحويل النص إلى كلام ← محرك Google ← تثبيت بيانات الصوت ← العربية.</div>`;
+  $('#vsStyles').querySelectorAll('[data-st]').forEach(b=>b.onclick=()=>{SFX.setStyle(b.dataset.st);renderVoiceSet();SFX.say(VSAMPLE(),true)});
+  $('#vsVoices').querySelectorAll('[data-vi]').forEach(b=>b.onclick=()=>{const v=vs[+b.dataset.vi];SFX.setVoice(v.voiceURI);renderVoiceSet();SFX.say(VSAMPLE(),true)});
+}
+$('#vsOn').onclick=()=>{const v=SFX.toggle();$('#sndBtn').textContent=v?'🔊':'🔇';renderVoiceSet();if(v){SFX.ok();SFX.say(VSAMPLE())}};
+$('#vsTest').onclick=()=>SFX.say(VSAMPLE(),true);
+$('#vsClose').onclick=()=>hide('vsOv');
 render();
 (async()=>{
   try{await B.init()}catch(e){console.warn(e);B=LocalBackend;toast('تعذر الاتصال بـ Firebase، تم التشغيل بالوضع التجريبي')}
