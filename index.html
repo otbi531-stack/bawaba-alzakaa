@@ -285,6 +285,11 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .mehere{position:absolute;top:-30px;right:-4px;display:flex;flex-direction:column;align-items:center;animation:float 2s ease-in-out infinite;z-index:3}
 .mehere svg{width:42px;height:42px;border-radius:50%;border:3px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.25);display:block}
 .mehere em{font-style:normal;font-size:10px;font-weight:800;background:var(--pink);color:#fff;border-radius:8px;padding:0 6px;margin-top:-4px}
+.req.pending{border-color:#FFD36B}.req .rq1{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.rref{font-family:'Baloo Bhaijaan 2',monospace;font-size:26px;font-weight:800;color:var(--pri);margin:6px 0 2px;letter-spacing:1px}
+.rst{font-size:13px;border-radius:999px;padding:2px 10px;background:#FFF3C4;color:#8A6500;white-space:nowrap}.rst.approved{background:#DDF7E6;color:#1E7A41}.rst.rejected{background:#FFE3E3;color:#C0392B}
+.rqm{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line);font-weight:700;font-size:14px}
+.rref2{color:var(--muted);font-family:monospace}
 .toast{position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -360,6 +365,12 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 
 <footer>بوابة الذكاء © 2026 — ألعاب تعليمية عربية</footer>
 
+<!-- Admin -->
+<div class="game" id="adm">
+  <div class="gbar"><button class="back" id="admBack">→ رجوع</button><b>⚙️ لوحة الإدارة</b><button class="back" id="admRef">🔄 تحديث</button></div>
+  <div class="dwrap" id="admBody"></div>
+</div>
+
 <!-- Locked game -->
 <div class="ov" id="lockOv"><div class="modal" style="text-align:center">
   <button class="x" data-close="lockOv">✕</button>
@@ -418,10 +429,10 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
     <div class="pnum"><span id="bNum" dir="ltr">0505550531</span><button class="sbtn" id="bCopy">📋 نسخ</button></div>
     <div class="pstep"><b>2</b><span>اكتب هذا الرمز في ملاحظة التحويل:</span></div>
     <div class="pnum"><span id="bRef" dir="ltr"></span><button class="sbtn" id="bCopyRef">📋 نسخ</button></div>
-    <div class="pstep"><b>3</b><span>بعد التحويل اضغط الزر بالأسفل لتُفتح اللعبة</span></div>
+    <div class="pstep"><b>3</b><span>بعد التحويل اضغط الزر بالأسفل لإرسال طلبك</span></div>
   </div>
-  <button class="btn blue full" id="bPay">✅ حوّلت المبلغ، افتح اللعبة</button>
-  <div class="note">نثق بك 🤝 اللعبة تُفتح مباشرة بعد الضغط</div>
+  <button class="btn blue full" id="bPay">✅ حوّلت المبلغ، أرسل الطلب</button>
+  <div class="note">⏳ تُضاف نجومك تلقائيًا بعد التأكد من وصول التحويل</div>
 </div></div>
 
 <!-- Game screen -->
@@ -558,7 +569,13 @@ const LocalBackend={
   async signOut(){LS.del('bw_session')},
   async reset(){throw {code:'demo-reset'}},
   async load(uid){return LS.get('bw_p_'+uid,{owned:[],kids:[]})},
-  async save(uid,p){LS.set('bw_p_'+uid,p)}
+  async save(uid,p){LS.set('bw_p_'+uid,p)},
+  async createRequest(d){const a=LS.get('bw_requests',[]),id='r'+Date.now().toString(36);a.push({id,...d,created:Date.now()});LS.set('bw_requests',a);return id},
+  watchMine(uid,cb){const f=()=>cb(LS.get('bw_requests',[]).filter(r=>r.uid===uid));f();const t=setInterval(f,2000);return ()=>clearInterval(t)},
+  async markApplied(id){const a=LS.get('bw_requests',[]),r=a.find(x=>x.id===id);if(r)r.applied=true;LS.set('bw_requests',a)},
+  async listRequests(){const a=LS.get('bw_requests',[]);return {pending:a.filter(r=>r.status==='pending'),done:a.filter(r=>r.status!=='pending').slice(-40)}},
+  async decide(id,status){const a=LS.get('bw_requests',[]),r=a.find(x=>x.id===id);if(r){r.status=status;r.decidedAt=Date.now()}LS.set('bw_requests',a)},
+  isVerified(){return true},async sendVerify(){},async refreshUser(){return true}
 };
 const FirebaseBackend={
   mode:'firebase',
@@ -574,7 +591,16 @@ const FirebaseBackend={
   async signOut(){await this.A.signOut(this.auth)},
   async reset(email){await this.A.sendPasswordResetEmail(this.auth,email)},
   async load(uid){const d=await this.F.getDoc(this.F.doc(this.db,'parents',uid));return d.exists()?d.data():{owned:[],kids:[]}},
-  async save(uid,p){await this.F.setDoc(this.F.doc(this.db,'parents',uid),p)}
+  async save(uid,p){await this.F.setDoc(this.F.doc(this.db,'parents',uid),p)},
+  async createRequest(d){const r=await this.F.addDoc(this.F.collection(this.db,'requests'),{...d,created:this.F.serverTimestamp()});return r.id},
+  watchMine(uid,cb){return this.F.onSnapshot(this.F.query(this.F.collection(this.db,'requests'),this.F.where('uid','==',uid)),s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))),e=>console.warn(e))},
+  async markApplied(id){await this.F.updateDoc(this.F.doc(this.db,'requests',id),{applied:true})},
+  async listRequests(){const c=this.F.collection(this.db,'requests'),m=x=>x.docs.map(d=>({id:d.id,...d.data()}));
+    const [a,b]=await Promise.all([this.F.getDocs(this.F.query(c,this.F.where('status','==','pending'))),this.F.getDocs(this.F.query(c,this.F.where('status','in',['approved','rejected']),this.F.limit(60)))]);return {pending:m(a),done:m(b)}},
+  async decide(id,status){await this.F.updateDoc(this.F.doc(this.db,'requests',id),{status,decidedAt:this.F.serverTimestamp()})},
+  isVerified(){return !!(this.auth.currentUser&&this.auth.currentUser.emailVerified)},
+  async sendVerify(){await this.A.sendEmailVerification(this.auth.currentUser)},
+  async refreshUser(){await this.auth.currentUser.reload();await this.auth.currentUser.getIdToken(true);return this.isVerified()}
 };
 function errMsg(e){const c=(e&&e.code)||'';
   if(c==='exists'||c==='auth/email-already-in-use')return 'هذا البريد مسجّل مسبقًا، جرّب تسجيل الدخول';
@@ -744,7 +770,8 @@ $('#aGo').onclick=async()=>{
     if(!activeKid())kidId=profile.kids[0]?profile.kids[0].id:null;
     hide('authOv');setKid(kidId);
     toast(aTab==='up'?`🎉 أهلًا ${user.name}! حسابك جاهز`:`👋 أهلًا بعودتك ${user.name||''}`);
-    if(!profile.kids.length)openKid();else if(pendingBuy){const b=pendingBuy;pendingBuy=null;openBuy(b)}else greet(true);
+    startWatch();
+    if(isAdmin()&&!profile.kids.length){openAdmin()}else if(!profile.kids.length)openKid();else if(pendingBuy){const b=pendingBuy;pendingBuy=null;openBuy(b)}else greet(true);
   }catch(e){console.warn(e);$('#aErr').textContent=errMsg(e)}
   g.disabled=false;g.textContent=old;
 };
@@ -804,7 +831,9 @@ function openDash(){
        ${rows?`<table class="gtable"><tr><th>اللعبة</th><th>مرات اللعب</th><th>أفضل نتيجة</th></tr>${rows}</table>`:'<div class="meta" style="margin-top:8px">لم تلعب بعد.</div>'}
        <div class="kact"><button class="sbtn" data-dk="edit" data-id="${k.id}">✏️ تعديل</button></div></div>`}).join('')}
    
+   ${myReqsCard()}${isAdmin()?'<button class="btn blue full" style="margin-top:6px" id="dAdmin">⚙️ لوحة الإدارة</button>':''}
    <button class="btn full" style="margin-top:14px;background:#FFE3E3;color:#C0392B" id="dOut">تسجيل الخروج</button>`;
+  {const da2=$('#dAdmin');if(da2)da2.onclick=()=>openAdmin();}
   $('#dashBody').querySelectorAll('[data-dk]').forEach(b=>b.onclick=async()=>{
     const id=b.dataset.id,act=b.dataset.dk;
     if(act==='play'){setKid(id);openDash()}
@@ -813,7 +842,7 @@ function openDash(){
   });
   const da=$('#dAdd');if(da)da.onclick=()=>openKid();
   $('#dashBody').querySelectorAll('[data-shop]').forEach(b=>b.onclick=()=>{hide('dash');openBuy(null,+b.dataset.shop)});
-  $('#dOut').onclick=async()=>{await B.signOut();user=null;profile=null;kidId=null;LS.del('bw_kid');hide('dash');sync();toast('👋 تم تسجيل الخروج')};
+  $('#dOut').onclick=async()=>{if(unwatch){try{unwatch()}catch(e){}unwatch=null}myReqs=[];await B.signOut();user=null;profile=null;kidId=null;LS.del('bw_kid');hide('dash');sync();toast('👋 تم تسجيل الخروج')};
   show('dash');
 }
 $('#lkGo').onclick=()=>{hide('lockOv');const u=$('#lkGo').dataset.unlock;if(u)return unlockWithStars(u);document.getElementById(owned.size?'games':'daily').scrollIntoView({behavior:'smooth'})};
@@ -922,6 +951,7 @@ document.addEventListener('click',e=>{
 
 // ---- purchase (STC Bank transfer, trust-based)
 const PAY_NUMBER='0505550531';
+const girlNow=()=>{const k=activeKid();return !!(k&&/^g/.test(k.avatar))};
 let buying=null,buyRef='',pendingStars=0;
 function openBuy(id,starsN){
   const op=document.getElementById('owlPop');if(op)op.classList.remove('show','talking');
@@ -940,13 +970,13 @@ function openBuy(id,starsN){
 async function copyTxt(t){try{await navigator.clipboard.writeText(t);toast('📋 تم النسخ')}catch(e){toast('انسخ الرقم يدويًا: '+t)}}
 $('#bCopy').onclick=()=>copyTxt(PAY_NUMBER);
 $('#bCopyRef').onclick=()=>copyTxt(buyRef);
-$('#bPay').onclick=()=>{
-  const b=buying,k=activeKid();
-  if(b.stars){if(k)k.stars+=b.stars}else profile.owned=[...new Set([...(profile.owned||[]),b.id])];
-  profile.payments=[...(profile.payments||[]),{game:b.id,ref:buyRef,price:b.price,...(b.stars?{stars:b.stars}:{}),date:new Date().toISOString()}];
-  persist();sync();$('#buyOv').classList.remove('show');
-  SFX.fanfare();confetti();if(b.stars){toast(`⭐ شكرًا لك! أضفنا ${b.stars} نجمة لرصيدك`);if(b.id&&stars>=COST&&!owned.has(b.id))setTimeout(()=>unlockWithStars(b.id),900)}
-  else{toast(`🎉 شكرًا لك! تم فتح «${b.name}»`);setTimeout(()=>openGame(b.id),700)}
+$('#bPay').onclick=async()=>{
+  const b=buying,k=activeKid(),btn=$('#bPay');btn.disabled=true;btn.textContent='⏳ جارٍ إرسال الطلب...';
+  try{await B.createRequest({uid:user.uid,email:(user.email||'').toLowerCase(),name:k?k.name:(user.name||''),kind:b.stars?'stars':'game',stars:b.stars||0,game:b.id||null,price:b.price,ref:buyRef,status:'pending',applied:false});
+    $('#buyOv').classList.remove('show');SFX.ok();toast('⏳ وصل طلبك! ستُضاف نجومك بعد التأكد من التحويل');
+    SFX.say(girlNow()?'شُكْرًا لَكِ! سَتَصِلُكِ النُّجومُ قَريبًا':'شُكْرًا لَك! سَتَصِلُكَ النُّجومُ قَريبًا');
+  }catch(e){console.warn(e);toast('⚠️ تعذّر إرسال الطلب، حاول مرة أخرى')}
+  btn.disabled=false;btn.textContent='✅ حوّلت المبلغ، أرسل الطلب';
 };
 
 // ---- game engine
@@ -1410,6 +1440,55 @@ function renderMap(){
           <span class="mlabel"><b>${g.name}</b><small>${op?(best?'⭐'.repeat(best)+'☆'.repeat(3-best):'▶ العب'):`🔓 ${COST} ⭐`}</small></span></button>`}).join('')}
     </div>`}).join('');
 }
+// ---- Payment requests & admin approval
+const ADMIN_EMAILS=['otbi531@gmail.com'];
+const isAdmin=()=>!!(user&&ADMIN_EMAILS.includes((user.email||'').toLowerCase()));
+let myReqs=[],unwatch=null;
+const tsOf=r=>r&&r.created?(r.created.toMillis?r.created.toMillis():r.created):0;
+const fmtD=t=>t?new Date(t).toLocaleString('ar-SA',{dateStyle:'medium',timeStyle:'short'}):'';
+function startWatch(){startWatch.sig='';if(unwatch){try{unwatch()}catch(e){}unwatch=null}if(!user)return;
+  try{unwatch=B.watchMine(user.uid,reqs=>{const sig=JSON.stringify(reqs.map(r=>[r.id,r.status,r.applied]));if(sig===startWatch.sig)return;startWatch.sig=sig;myReqs=reqs;applyApproved(reqs);if($('#dash').classList.contains('show')&&!$('#kidOv').classList.contains('show'))openDash()})}catch(e){console.warn(e)}}
+let applying=false;
+async function applyApproved(reqs){if(applying||!profile)return;applying=true;
+  try{for(const r of reqs){if(r.status!=='approved'||r.applied)continue;
+    try{await B.markApplied(r.id)}catch(e){console.warn(e);continue}
+    const k=activeKid();
+    if(r.kind==='game'&&r.game)profile.owned=[...new Set([...(profile.owned||[]),r.game])];else if(k)k.stars+=r.stars||0;
+    await persist();sync();confetti();SFX.fanfare();
+    toast(r.kind==='game'?'🎉 تم تأكيد الدفع وفُتحت لعبتك!':`🎉 تم تأكيد التحويل! وصلت نجومك: +${r.stars} ⭐`);
+    SFX.say(r.kind==='game'?'مَبْروك! فُتِحَتْ لُعْبَتُك':'مَبْروك! وَصَلَتْ نُجومُك');
+    if(r.game&&r.kind!=='game'&&!owned.has(r.game)&&stars>=COST)setTimeout(()=>unlockWithStars(r.game),1500);
+  }}finally{applying=false}}
+function reqLine(r){const g=r.game?GAMES.find(x=>x.id===r.game):null,st=r.status==='pending'?'⏳ بانتظار التأكيد':r.status==='approved'?'✅ تمت الموافقة':'❌ مرفوض';
+  return `<div class="rqm"><span>${r.kind==='game'?'🎮 '+(g?g.name:''):`⭐ ${r.stars} نجمة`} · ${r.price} ريال</span><span class="rref2" dir="ltr">${esc(r.ref||'')}</span><b class="rst ${r.status}">${st}</b></div>`}
+function myReqsCard(){if(!myReqs.length)return '';const list=[...myReqs].sort((a,b)=>tsOf(b)-tsOf(a)).slice(0,6);
+  return `<div class="dcard"><h3>🧾 طلباتي</h3>${list.map(reqLine).join('')}<div class="meta" style="margin-top:6px">تُضاف النجوم تلقائيًا بعد التأكد من وصول التحويل.</div></div>`}
+async function openAdmin(){
+  if(!isAdmin())return toast('هذه الصفحة للإدارة فقط');
+  hide('dash');show('adm');const body=$('#admBody');
+  if(!B.isVerified()){body.innerHTML=`<div class="dcard" style="text-align:center"><h3>🔐 أكّد بريدك أولًا</h3><div class="meta" style="margin:8px 0 14px">لحماية لوحة الإدارة يجب تأكيد البريد <b dir="ltr">${esc(user.email)}</b>. سنرسل لك رابطًا، اضغطه ثم ارجع هنا.</div>
+    <button class="btn blue full" id="admSend">📧 أرسل رابط التأكيد</button><button class="btn ghost full" style="margin-top:10px" id="admChk">✔ أكّدت بريدي، حدّث</button></div>`;
+    $('#admSend').onclick=async()=>{try{await B.sendVerify();toast('📧 أرسلنا الرابط إلى بريدك')}catch(e){toast(errMsg(e))}};
+    $('#admChk').onclick=async()=>{try{if(await B.refreshUser())openAdmin();else toast('لم يتم التأكيد بعد')}catch(e){toast(errMsg(e))}};return}
+  body.innerHTML='<div class="meta" style="text-align:center;padding:30px">⏳ جارٍ تحميل الطلبات...</div>';
+  let data;try{data=await B.listRequests()}catch(e){console.warn(e);body.innerHTML=`<div class="dcard"><h3>⚠️ تعذّر تحميل الطلبات</h3><div class="meta">تأكد من نشر قواعد Firestore الجديدة، ثم حدّث الصفحة.</div></div>`;return}
+  const pend=data.pending.sort((a,b)=>tsOf(a)-tsOf(b)),done=data.done.sort((a,b)=>tsOf(b)-tsOf(a));
+  const sum=done.filter(r=>r.status==='approved').reduce((a,r)=>a+(+r.price||0),0);
+  const card=r=>{const g=r.game?GAMES.find(x=>x.id===r.game):null;return `<div class="dcard req ${r.status}">
+    <div class="rq1"><b>${esc(r.name||'—')}</b><span class="mode">${r.kind==='game'?'🎮 '+(g?g.name:''):`⭐ ${r.stars} نجمة`}</span></div>
+    <div class="meta" dir="ltr" style="text-align:right">${esc(r.email||'')}</div>
+    <div class="rref" dir="ltr">${esc(r.ref||'')}</div>
+    <div class="meta">💰 <b>${r.price} ريال</b> · ${fmtD(tsOf(r))}${g&&r.kind!=='game'?` · لفتح «${g.name}»`:''}</div>
+    ${r.status==='pending'?`<div class="kact"><button class="sbtn pri" data-ok="${r.id}">✅ وصل التحويل، موافقة</button><button class="sbtn del" data-no="${r.id}">❌ رفض</button></div>`:`<b class="rst ${r.status}">${r.status==='approved'?'✅ موافق عليه':'❌ مرفوض'}</b>`}</div>`};
+  body.innerHTML=`<div class="dcard"><h3>📊 ملخص</h3><div class="meta">طلبات معلّقة: <b>${pend.length}</b> · المبالغ الموافق عليها (آخر ${done.length} قرار): <b>${sum} ريال</b></div>
+     <div class="meta" style="margin-top:6px">قارن <b>الرمز المرجعي</b> بملاحظة التحويل في تطبيق STC Bank قبل الموافقة.</div></div>
+    <h3 style="margin:16px 4px 8px">⏳ بانتظار التأكيد (${pend.length})</h3>${pend.length?pend.map(card).join(''):'<div class="meta" style="padding:0 6px">لا توجد طلبات معلّقة 👍</div>'}
+    <h3 style="margin:18px 4px 8px">🗂️ آخر القرارات</h3>${done.slice(0,20).map(card).join('')||'<div class="meta" style="padding:0 6px">لا يوجد بعد</div>'}`;
+  body.querySelectorAll('[data-ok],[data-no]').forEach(b=>b.onclick=async()=>{const id=b.dataset.ok||b.dataset.no,st=b.dataset.ok?'approved':'rejected';
+    b.disabled=true;try{await B.decide(id,st);toast(st==='approved'?'✅ تمت الموافقة، ستصل النجوم للطفل':'❌ تم الرفض');openAdmin()}catch(e){console.warn(e);toast('⚠️ تعذّر الحفظ');b.disabled=false}});
+}
+$('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
+$('#admRef').onclick=()=>openAdmin();
 $('#sndBtn').textContent=SFX.on?'🔊':'🔇';
 $('#sndBtn').onclick=()=>{const v=SFX.toggle();$('#sndBtn').textContent=v?'🔊':'🔇';toast(v?'🔊 الصوت مفعّل':'🔇 تم كتم الصوت');if(v)SFX.ok()};
 render();
@@ -1418,7 +1497,7 @@ render();
   user=B.current();
   if(user){try{profile=await B.load(user.uid);profile.kids=profile.kids||[];profile.owned=profile.owned||[]}catch(e){profile={owned:[],kids:[]}}
     if(!activeKid())kidId=profile.kids[0]?profile.kids[0].id:null}
-  setKid(kidId);setView(view);giveWelcome();
+  setKid(kidId);setView(view);giveWelcome();startWatch();if(location.hash==='#admin'&&isAdmin())openAdmin();
   setTimeout(()=>{if(!greeted)greet(false)},900);
 })();
 </script>
