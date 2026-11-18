@@ -190,6 +190,12 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .sbtn.del{background:#FFE3E3;color:#C0392B}
 .brand,.hbtn,.mystars{white-space:nowrap}
 @media(max-width:480px){.hbtn{padding:7px 10px;font-size:13px}.brand{font-size:19px;gap:6px}.brand .logo{width:34px;height:34px;font-size:18px}.mystars{padding:4px 10px 4px 6px;font-size:14px}.mystars b{display:none}}
+.popemo{position:fixed;left:50%;top:30%;transform:translate(-50%,-50%) scale(.3);font-size:90px;z-index:95;pointer-events:none;animation:popE .9s ease-out forwards}
+.popemo.big{font-size:150px;animation-duration:1.6s}
+@keyframes popE{30%{transform:translate(-50%,-50%) scale(1.15);opacity:1}100%{transform:translate(-50%,-90%) scale(1);opacity:0}}
+.resemo{font-size:96px;line-height:1.1;display:inline-block;animation:wob 1.2s ease-in-out infinite}
+@keyframes wob{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg) translateY(-6px)}}
+.hbtn.snd{padding:8px 11px;font-size:16px}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -201,7 +207,7 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 
 <header><div class="wrap nav">
   <div class="brand"><div class="logo">💡</div>بوابة الذكاء</div>
-  <div class="hright"><button class="mystars" id="kidChip">⭐ 0</button><button class="hbtn" id="acctBtn">👤 دخول</button></div>
+  <div class="hright"><button class="hbtn snd" id="sndBtn" aria-label="الصوت">🔊</button><button class="mystars" id="kidChip">⭐ 0</button><button class="hbtn" id="acctBtn">👤 دخول</button></div>
 </div></header>
 
 <main>
@@ -581,6 +587,32 @@ function openDash(){
 $('#dBack').onclick=()=>{delArm=null;hide('dash')};
 const isOpen=g=>g.price===0||owned.has(g.id);
 
+// ---- Sounds & encouragement (generated in the browser, no files)
+const SFX=(()=>{
+  let ctx=null,on=LS.get('bw_sound',true),voice=null,noise=null;
+  const ensure=()=>{try{if(!ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;ctx=new C()}if(ctx.state==='suspended')ctx.resume();return ctx}catch(e){return null}};
+  document.addEventListener('pointerdown',()=>{if(on)ensure()},{passive:true});
+  function pickVoice(){try{const vs=speechSynthesis.getVoices();voice=vs.find(v=>/^ar([-_]|$)/i.test(v.lang))||null}catch(e){}}
+  try{pickVoice();speechSynthesis.onvoiceschanged=pickVoice}catch(e){}
+  function tone(f,t0,d,type,vol,f2){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type||'triangle';o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+d);g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(vol||.2,t0+.02);g.gain.exponentialRampToValueAtTime(0.0001,t0+d);o.connect(g);g.connect(ctx.destination);o.start(t0);o.stop(t0+d+.05);return o}
+  function noiseBuf(){if(noise)return noise;const n=ctx.sampleRate;noise=ctx.createBuffer(1,n,ctx.sampleRate);const d=noise.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;return noise}
+  function clap(t,vol){const s=ctx.createBufferSource();s.buffer=noiseBuf();const f=ctx.createBiquadFilter();f.type='bandpass';f.frequency.value=900+Math.random()*1600;f.Q.value=.8;const g=ctx.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.0001,t+.07);s.connect(f);f.connect(g);g.connect(ctx.destination);s.start(t,Math.random()*.8,.1)}
+  function say(t){if(!on||!voice)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.voice=voice;u.lang=voice.lang;u.rate=1;u.pitch=1.25;speechSynthesis.speak(u)}catch(e){}}
+  const PRAISE=['أحسنت!','رائع!','ممتاز!','برافو!','أنت ذكي!','استمر يا بطل!'];
+  return {
+    get on(){return on},
+    toggle(){on=!on;LS.set('bw_sound',on);if(on)ensure();else{try{speechSynthesis.cancel()}catch(e){}}return on},
+    ok(speak){if(!on||!ensure())return;const t=ctx.currentTime;tone(784,t,.14,'triangle',.22);tone(1047,t+.1,.22,'triangle',.22);tone(1319,t+.2,.3,'sine',.15);if(speak&&Math.random()<.6)say(PRAISE[Math.random()*PRAISE.length|0])},
+    no(){if(!on||!ensure())return;const t=ctx.currentTime;tone(330,t,.18,'square',.07,260);tone(247,t+.17,.3,'square',.06,190)},
+    applause(dur){if(!on||!ensure())return;dur=dur||2.2;const t=ctx.currentTime,n=Math.round(dur*45);for(let i=0;i<n;i++){const x=Math.random(),env=Math.sin(Math.PI*x);clap(t+x*dur,.06+.34*env*Math.random())}},
+    fanfare(){if(!on||!ensure())return;const t=ctx.currentTime;[[523,0,.16],[659,.12,.16],[784,.24,.16],[1047,.38,.6]].forEach(([f,d,l])=>tone(f,t+d,l,'triangle',.22));tone(1568,t+.38,.6,'sine',.07)},
+    sad(){if(!on||!ensure())return;const t=ctx.currentTime;[[392,0],[370,.38],[349,.76]].forEach(([f,d])=>tone(f,t+d,.35,'sawtooth',.07));const o=tone(330,t+1.14,1.1,'sawtooth',.07,300);const l=ctx.createOscillator(),lg=ctx.createGain();l.frequency.value=6;lg.gain.value=8;l.connect(lg);lg.connect(o.frequency);l.start(t+1.14);l.stop(t+2.3)},
+    say
+  };
+})();
+function popEmoji(e,big){const d=document.createElement('div');d.className='popemo'+(big?' big':'');d.textContent=e;document.body.appendChild(d);setTimeout(()=>d.remove(),big?1600:900)}
+const HAPPY=['🎉','⭐','👏','😃','🌟','💪'];
+
 function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2200)}
 function confetti(){const e=['⭐','🎉','✨','🎈','💛'];for(let i=0;i<24;i++){const c=document.createElement('div');c.className='confetti';c.textContent=e[i%e.length];c.style.left=Math.random()*100+'vw';c.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),2300)}}
 
@@ -628,7 +660,7 @@ $('#bPay').onclick=()=>{
   const b=$('#bPay');b.disabled=true;b.textContent='⏳ جارٍ تأكيد الدفع...';
   setTimeout(()=>{
     b.disabled=false;profile.owned=[...new Set([...(profile.owned||[]),buying.id])];persist();sync();$('#buyOv').classList.remove('show');
-    confetti();toast(`🎉 تم فتح «${buying.name}»`);setTimeout(()=>openGame(buying.id),700);
+    SFX.fanfare();confetti();toast(`🎉 تم فتح «${buying.name}»`);setTimeout(()=>openGame(buying.id),700);
   },1100);
 };
 
@@ -645,8 +677,8 @@ function openGame(id){
 $('#gBack').onclick=()=>{clearAll();$('#game').classList.remove('show')};
 function result(score,total,msg){
   clearAll();const r=score/total,s=r>=.9?3:r>=.6?2:r>=.3?1:0;
-  recordPlay(curId,s);if(s>=2)confetti();
-  area.innerHTML=`${s===3?'<img src="img/trophy.png" alt="" style="width:120px;height:120px">':''}<div class="stars">${'⭐'.repeat(s)}${'☆'.repeat(3-s)}</div>
+  recordPlay(curId,s);if(s>=2){confetti();SFX.fanfare();setTimeout(()=>SFX.applause(),350);setTimeout(()=>SFX.say(s===3?'ممتاز! أنت بطل':'أحسنت! عمل رائع'),1200)}else if(s===1){SFX.ok();SFX.say('جيد! حاول مرة ثانية لتجمع نجوما أكثر')}else{SFX.sad();popEmoji('😢',true);setTimeout(()=>SFX.say('لا بأس، حاول مرة ثانية'),2300)}
+  area.innerHTML=`${s===3?'<img src="img/trophy.png" alt="" style="width:120px;height:120px">':`<div class="resemo">${s===2?'🥳':s===1?'🙂':'😢'}</div>`}<div class="stars">${'⭐'.repeat(s)}${'☆'.repeat(3-s)}</div>
    <h2 style="margin:6px 0">${s===3?'ممتاز! 🏆':s===2?'أحسنت! 👏':s===1?'جيد، حاول مرة أخرى 💪':'لا بأس، جرّب مرة ثانية 🌱'}</h2>
    <div class="q">${msg}<br><small style="color:var(--muted)">ربحت ${s} نجوم · مجموع نجومك ${stars}</small></div>
    <div class="levels"><button class="btn pri" id="again">🔁 العب مرة أخرى</button><button class="btn ghost" id="home">🏠 كل الألعاب</button></div>`;
@@ -663,7 +695,7 @@ function quiz(items,{prompt,show,answer,pool,txt,reveal}){
       <div class="opts">${opts.map(o=>`<button class="opt ${txt?'txt':''}">${o}</button>`).join('')}</div><div class="reveal" id="rv"></div>`;
     area.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
       if(busy)return;busy=true;const ok=b.textContent===ans;
-      if(ok){score++;b.classList.add('ok')}else{b.classList.add('no');[...area.querySelectorAll('.opt')].find(x=>x.textContent===ans).classList.add('ok')}
+      if(ok){score++;b.classList.add('ok');SFX.ok(true);popEmoji(HAPPY[rnd(0,HAPPY.length-1)])}else{b.classList.add('no');SFX.no();popEmoji('😢');[...area.querySelectorAll('.opt')].find(x=>x.textContent===ans).classList.add('ok')}
       $('#rv').textContent=(ok?'✔ ':'')+reveal(it);stat(`${i+1}/${items.length}`,score);
       later(()=>{busy=false;i++;next()},1200);
     });
@@ -682,7 +714,7 @@ function animals(){
       <div class="acards">${opts.map((o,k)=>`<button class="acard" data-k="${k}"><span class="ae">${A(o[3])}</span><b>${o[1]}</b></button>`).join('')}</div><div class="reveal" id="rv"></div>`;
     area.querySelectorAll('.acard').forEach(b=>b.onclick=()=>{
       if(busy)return;busy=true;const pick=opts[+b.dataset.k],ok=pick===it;
-      if(ok){score++;b.classList.add('ok')}else{b.classList.add('no');area.querySelectorAll('.acard')[opts.indexOf(it)].classList.add('ok')}
+      if(ok){score++;b.classList.add('ok');SFX.ok(true);popEmoji(HAPPY[rnd(0,HAPPY.length-1)])}else{b.classList.add('no');SFX.no();popEmoji('😢');area.querySelectorAll('.acard')[opts.indexOf(it)].classList.add('ok')}
       $('#rv').textContent=ok?`✔ صحيح! ${it[1]} يصدر ${it[2]}`:`الإجابة: ${it[1]} يصدر ${it[2]}`;stat(`${i+1}/${items.length}`,score);
       later(()=>{busy=false;i++;next()},1400);
     });
@@ -706,7 +738,7 @@ function memory(){
     c.classList.add('open');
     if(!first){first=c;return}
     moves++;
-    if(first.dataset.k===c.dataset.k){first.classList.replace('open','done');c.classList.replace('open','done');first=null;pairs++;stat(`${pairs}/8`,pairs);
+    if(first.dataset.k===c.dataset.k){first.classList.replace('open','done');c.classList.replace('open','done');first=null;pairs++;SFX.ok(false);stat(`${pairs}/8`,pairs);
       if(pairs===8)later(()=>result(Math.max(0,24-moves),16,`أنهيت اللعبة في ${moves} محاولة`),600)}
     else{busy=true;const a=first;first=null;later(()=>{a.classList.remove('open');c.classList.remove('open');busy=false},800)}
   });
@@ -735,7 +767,7 @@ function math(){
       $('#mo').innerHTML=shuffle([...set]).map(o=>`<button class="opt">${o}</button>`).join('');
       $('#mo').querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
         if(busy)return;busy=true;const ok=+b.textContent===ans;
-        b.classList.add(ok?'ok':'no');if(ok)score++;stat(`⏱ ${left}`,score);
+        b.classList.add(ok?'ok':'no');if(ok){score++;SFX.ok(false)}else SFX.no();stat(`⏱ ${left}`,score);
         later(()=>{busy=false;ask()},ok?350:700);
       });
     };ask();
@@ -753,7 +785,7 @@ function quiz2(items){
       <div class="opts">${opts.map(o=>`<button class="opt ${it.txt?'txt':''} ${it.emo?'emo':''}">${o}</button>`).join('')}</div><div class="reveal" id="rv"></div>`;
     area.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
       if(busy)return;busy=true;const ok=b.textContent===ans;
-      if(ok){score++;b.classList.add('ok')}else{b.classList.add('no');[...area.querySelectorAll('.opt')].find(x=>x.textContent===ans).classList.add('ok')}
+      if(ok){score++;b.classList.add('ok');SFX.ok(true);popEmoji(HAPPY[rnd(0,HAPPY.length-1)])}else{b.classList.add('no');SFX.no();popEmoji('😢');[...area.querySelectorAll('.opt')].find(x=>x.textContent===ans).classList.add('ok')}
       $('#rv').textContent=(ok?'✔ ':'')+(it.reveal||'');stat(`${i+1}/${items.length}`,score);
       later(()=>{busy=false;i++;next()},1400);
     });
@@ -833,7 +865,7 @@ function code(){
     const step=()=>{
       [...$('#prog').children].forEach((s,i)=>s.classList.toggle('cur',i===k));
       const [dr,dc]=DIR[prog[k]],np=[pos[0]+dr,pos[1]+dc];
-      if(np[0]<0||np[0]>4||np[1]<0||np[1]>4||m[np[0]][np[1]]==='#'){draw(pos,true);running=false;$('#rv').textContent='💥 اصطدم الروبوت! عدّل البرنامج وجرّب مرة أخرى';return}
+      if(np[0]<0||np[0]>4||np[1]<0||np[1]>4||m[np[0]][np[1]]==='#'){draw(pos,true);running=false;SFX.no();popEmoji('😵');$('#rv').textContent='💥 اصطدم الروبوت! عدّل البرنامج وجرّب مرة أخرى';return}
       pos=np;draw(pos);k++;
       if(m[pos[0]][pos[1]]==='G')return win();
       if(k>=prog.length){running=false;$('#rv').textContent='🤔 انتهى البرنامج قبل الوصول، أضف خطوات';return}
@@ -842,12 +874,14 @@ function code(){
   }
   function win(){
     points+=tries===1?1:.6;stat(`مرحلة ${lv+1}/5`,Math.round(points));
-    $('#rv').textContent=tries===1?'🎉 رائع! من أول محاولة':'🎉 أحسنت! وصلت';confetti();
+    $('#rv').textContent=tries===1?'🎉 رائع! من أول محاولة':'🎉 أحسنت! وصلت';confetti();SFX.ok(true);SFX.applause(1.2);
     later(()=>{lv++;if(lv>=5)result(points,5,'أنهيت المراحل الخمس، أنت مبرمج صغير! 👨‍💻');else level()},1400);
   }
   level();
 }
 
+$('#sndBtn').textContent=SFX.on?'🔊':'🔇';
+$('#sndBtn').onclick=()=>{const v=SFX.toggle();$('#sndBtn').textContent=v?'🔊':'🔇';toast(v?'🔊 الصوت مفعّل':'🔇 تم كتم الصوت');if(v)SFX.ok()};
 render();
 (async()=>{
   try{await B.init()}catch(e){console.warn(e);B=LocalBackend;toast('تعذر الاتصال بـ Firebase، تم التشغيل بالوضع التجريبي')}
