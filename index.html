@@ -1539,8 +1539,8 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.18-25';
-(async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='2026.11.18-25']+)'/);
+const APP_VERSION='2026.11.19-26';
+(async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
 const VOICES=[['hi','👋','مرحبًا!','مَرْحَبًا!'],['bravo','👏','أحسنت يا بطل!','أَحْسَنْتَ يا بَطَل!'],['play','🎮','تعال نلعب!','تَعالَ نَلْعَب!'],['dare','🔥','تحدّاني إن استطعت!','تَحَدّاني إِنِ اسْتَطَعْت!'],
