@@ -757,13 +757,25 @@ const SFX=(()=>{
   let ctx=null,on=LS.get('bw_sound',true),voice=null,noise=null;
   const ensure=()=>{try{if(!ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;ctx=new C()}if(ctx.state==='suspended')ctx.resume();return ctx}catch(e){return null}};
   document.addEventListener('pointerdown',()=>{if(on)ensure()},{passive:true});
-  function pickVoice(){try{const vs=speechSynthesis.getVoices();voice=vs.find(v=>/^ar([-_]|$)/i.test(v.lang))||null}catch(e){}}
+  function pickVoice(){try{const vs=speechSynthesis.getVoices().filter(v=>/^ar([-_]|$)/i.test(v.lang));
+    const sc=v=>(/sa/i.test(v.lang)?4:0)+(/enhanced|premium|neural|natural|محسّن/i.test(v.name)?3:0)+(/laila|hala|zariyah|mariam|amira|salma|lana|ليلى/i.test(v.name)?2:0)+(v.localService?1:0);
+    voice=vs.sort((a,b)=>sc(b)-sc(a))[0]||null}catch(e){}}
   try{pickVoice();speechSynthesis.onvoiceschanged=pickVoice}catch(e){}
   function tone(f,t0,d,type,vol,f2){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type||'triangle';o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+d);g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(vol||.2,t0+.02);g.gain.exponentialRampToValueAtTime(0.0001,t0+d);o.connect(g);g.connect(ctx.destination);o.start(t0);o.stop(t0+d+.05);return o}
   function noiseBuf(){if(noise)return noise;const n=ctx.sampleRate;noise=ctx.createBuffer(1,n,ctx.sampleRate);const d=noise.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;return noise}
   function clap(t,vol){const s=ctx.createBufferSource();s.buffer=noiseBuf();const f=ctx.createBiquadFilter();f.type='bandpass';f.frequency.value=900+Math.random()*1600;f.Q.value=.8;const g=ctx.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.0001,t+.07);s.connect(f);f.connect(g);g.connect(ctx.destination);s.start(t,Math.random()*.8,.1)}
-  function say(t){if(!on||!voice)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.voice=voice;u.lang=voice.lang;u.rate=1;u.pitch=1.25;speechSynthesis.speak(u)}catch(e){}}
-  const PRAISE=['أحسنت!','رائع!','ممتاز!','برافو!','أنت ذكي!','استمر يا بطل!'];
+  function say(t){if(!on||!voice)return;try{const go=()=>{const u=new SpeechSynthesisUtterance(t);try{u.voice=voice}catch(e){}u.lang=voice.lang||'ar-SA';u.rate=.92;u.pitch=1.05;u.volume=1;speechSynthesis.speak(u)};
+    if(speechSynthesis.speaking||speechSynthesis.pending){speechSynthesis.cancel();setTimeout(go,120)}else go()}catch(e){}}
+  const girl=()=>{try{const k=activeKid();return !!(k&&/^g/.test(k.avatar))}catch(e){return false}};
+  const PRAISE_M=['أَحْسَنْت!','رائِع!','مُمْتاز!','بْرافو!','أَنْتَ ذَكِيّ!','اِسْتَمِرَّ يا بَطَل!'];
+  const PRAISE_F=['أَحْسَنْتِ!','رائِع!','مُمْتاز!','بْرافو!','أَنْتِ ذَكِيَّة!','اِسْتَمِرِّي يا بَطَلَة!'];
+  const PH={win3:['مُمْتاز! أَنْتَ بَطَل','مُمْتاز! أَنْتِ بَطَلَة'],win2:['أَحْسَنْت! عَمَلٌ رائِع','أَحْسَنْتِ! عَمَلٌ رائِع'],
+    one:['جَيِّد! حاوِلْ مَرَّةً ثانِيَة لِتَجْمَعَ نُجومًا أَكْثَر','جَيِّد! حاوِلي مَرَّةً ثانِيَة لِتَجْمَعي نُجومًا أَكْثَر'],
+    lose:['لا بَأْس، حاوِلْ مَرَّةً ثانِيَة','لا بَأْس، حاوِلي مَرَّةً ثانِيَة'],
+    daily:['رائِع! أَنْجَزْتَ مَهامَّ اليَوْمِ كُلَّها','رائِع! أَنْجَزْتِ مَهامَّ اليَوْمِ كُلَّها'],
+    unlock:['مَبْروك! فَتَحْتَ لُعْبَةً جَديدَة','مَبْروك! فَتَحْتِ لُعْبَةً جَديدَة']};
+  const sayP=k=>say(PH[k][girl()?1:0]);
+  document.addEventListener('pointerdown',function warm(){try{if(on&&voice){const u=new SpeechSynthesisUtterance(' ');u.volume=0;try{u.voice=voice}catch(e){}speechSynthesis.speak(u)}}catch(e){}document.removeEventListener('pointerdown',warm)},{passive:true});
   function syn(o){const c=ctx,t0=c.currentTime+(o.t||0),d=o.d||.5,v=o.v||.2,att=o.att||.02,rel=o.rel||.08;const os=c.createOscillator(),g=c.createGain();os.type=o.type||'sawtooth';
     (o.f||[[0,440]]).forEach(([tt,ff],i)=>i?os.frequency.linearRampToValueAtTime(ff,t0+tt):os.frequency.setValueAtTime(ff,t0+tt));
     let node=os;
@@ -796,12 +808,12 @@ const SFX=(()=>{
     animal(k){if(!on||!ensure()||!ANIMAL_SND[k])return;try{ANIMAL_SND[k]()}catch(e){console.warn(e)}},
     get on(){return on},
     toggle(){on=!on;LS.set('bw_sound',on);if(on)ensure();else{try{speechSynthesis.cancel()}catch(e){}}return on},
-    ok(speak){if(!on||!ensure())return;const t=ctx.currentTime;tone(784,t,.14,'triangle',.22);tone(1047,t+.1,.22,'triangle',.22);tone(1319,t+.2,.3,'sine',.15);if(speak&&Math.random()<.6)say(PRAISE[Math.random()*PRAISE.length|0])},
+    ok(speak){if(!on||!ensure())return;const t=ctx.currentTime;tone(784,t,.14,'triangle',.22);tone(1047,t+.1,.22,'triangle',.22);tone(1319,t+.2,.3,'sine',.15);if(speak&&Math.random()<.5){const P=girl()?PRAISE_F:PRAISE_M;say(P[Math.random()*P.length|0])}},
     no(){if(!on||!ensure())return;const t=ctx.currentTime;tone(330,t,.18,'square',.07,260);tone(247,t+.17,.3,'square',.06,190)},
     applause(dur){if(!on||!ensure())return;dur=dur||2.2;const t=ctx.currentTime,n=Math.round(dur*45);for(let i=0;i<n;i++){const x=Math.random(),env=Math.sin(Math.PI*x);clap(t+x*dur,.06+.34*env*Math.random())}},
     fanfare(){if(!on||!ensure())return;const t=ctx.currentTime;[[523,0,.16],[659,.12,.16],[784,.24,.16],[1047,.38,.6]].forEach(([f,d,l])=>tone(f,t+d,l,'triangle',.22));tone(1568,t+.38,.6,'sine',.07)},
     sad(){if(!on||!ensure())return;const t=ctx.currentTime;[[392,0],[370,.38],[349,.76]].forEach(([f,d])=>tone(f,t+d,.35,'sawtooth',.07));const o=tone(330,t+1.14,1.1,'sawtooth',.07,300);const l=ctx.createOscillator(),lg=ctx.createGain();l.frequency.value=6;lg.gain.value=8;l.connect(lg);lg.connect(o.frequency);l.start(t+1.14);l.stop(t+2.3)},
-    say
+    say,sayP
   };
 })();
 function popEmoji(e,big){const d=document.createElement('div');d.className='popemo'+(big?' big':'');d.textContent=e;document.body.appendChild(d);setTimeout(()=>d.remove(),big?1600:900)}
@@ -872,13 +884,13 @@ function openGame(id){
 $('#gBack').onclick=()=>{clearAll();$('#game').classList.remove('show')};
 function result(score,total,msg){
   clearAll();const r=score/total,s=r>=.9?3:r>=.6?2:r>=.3?1:0;
-  recordPlay(curId,s);if(s>=2){confetti();SFX.fanfare();setTimeout(()=>SFX.applause(),350);setTimeout(()=>SFX.say(s===3?'ممتاز! أنت بطل':'أحسنت! عمل رائع'),1200)}else if(s===1){SFX.ok();SFX.say('جيد! حاول مرة ثانية لتجمع نجوما أكثر')}else{SFX.sad();popEmoji('😢',true);setTimeout(()=>SFX.say('لا بأس، حاول مرة ثانية'),2300)}
+  recordPlay(curId,s);if(s>=2){confetti();SFX.fanfare();setTimeout(()=>SFX.applause(),350);setTimeout(()=>SFX.sayP(s===3?'win3':'win2'),1200)}else if(s===1){SFX.ok();SFX.sayP('one')}else{SFX.sad();popEmoji('😢',true);setTimeout(()=>SFX.sayP('lose'),2300)}
   area.innerHTML=`${s===3?'<img src="img/trophy.png" alt="" style="width:120px;height:120px">':`<div class="resemo">${s===2?'🥳':s===1?'🙂':'😢'}</div>`}<div class="stars">${'⭐'.repeat(s)}${'☆'.repeat(3-s)}</div>
    <h2 style="margin:6px 0">${s===3?'ممتاز! 🏆':s===2?'أحسنت! 👏':s===1?'جيد، حاول مرة أخرى 💪':'لا بأس، جرّب مرة ثانية 🌱'}</h2>
    <div class="q">${msg}<br><small style="color:var(--muted)">ربحت ${s} نجوم · مجموع نجومك ${stars}</small>${lastMission?`<br><b style="color:var(--green-d)">✅ مهمة اليوم ${lastMission.n}/${lastMission.total}${lastMission.finished?` · أنجزت كل المهام! +5 ⭐ · 🔥 ${lastMission.streak}`:''}</b>`:''}${lastUnlocked.length?`<br><b style="color:var(--purple)">🎁 فتحت لعبة جديدة: ${lastUnlocked.map(g=>g.emoji+' '+g.name).join('، ')}!</b>`:''}</div>
    <div class="levels"><button class="btn pri" id="again">🔁 العب مرة أخرى</button><button class="btn ghost" id="home">🏠 كل الألعاب</button></div>`;
-  if(lastMission&&lastMission.finished)setTimeout(()=>{confetti();SFX.fanfare();SFX.say('رائع! أنجزت مهام اليوم كلها')},2600);
-  if(lastUnlocked.length)setTimeout(()=>{confetti();SFX.fanfare();SFX.say('مبروك! فتحت لعبة جديدة')},lastMission&&lastMission.finished?5400:2600);
+  if(lastMission&&lastMission.finished)setTimeout(()=>{confetti();SFX.fanfare();SFX.sayP('daily')},2600);
+  if(lastUnlocked.length)setTimeout(()=>{confetti();SFX.fanfare();SFX.sayP('unlock')},lastMission&&lastMission.finished?5400:2600);
   $('#again').onclick=()=>openGame(curId);$('#home').onclick=()=>$('#gBack').click();
 }
 function quiz(items,{prompt,show,answer,pool,txt,reveal}){
