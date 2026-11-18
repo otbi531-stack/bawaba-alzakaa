@@ -261,6 +261,30 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .tfq{font-size:clamp(24px,6.5vw,34px);font-weight:800;background:#fff;border-radius:22px;padding:24px 18px;min-height:130px;display:grid;place-items:center;width:min(420px,90vw);box-shadow:0 6px 0 var(--line);margin-bottom:18px}
 .tfb{display:flex;gap:14px}.tfb .btn{min-width:130px;font-size:20px}
 .tfy{background:var(--green);color:#fff;box-shadow:0 6px 0 var(--green-d)}.tfn{background:var(--coral);color:#fff;box-shadow:0 6px 0 #C94848}
+.viewtg{display:flex;gap:6px;background:var(--bg);border-radius:16px;padding:4px;margin:0 auto 16px;max-width:420px}
+.viewtg button{flex:1;border:0;background:transparent;padding:10px;border-radius:12px;font-weight:800;color:var(--muted);font-size:15px}
+.viewtg button.on{background:var(--pri);color:#fff}
+.mapinfo{text-align:center;background:#fff;border:2px solid var(--line);border-radius:16px;padding:10px;margin-bottom:12px;font-weight:700;color:var(--muted)}
+.mapinfo b{color:var(--ink)}
+.zone{position:relative;border-radius:28px;margin-bottom:14px;overflow:hidden;border:2px solid rgba(0,0,0,.04)}
+.zone.zlock{filter:saturate(.55)}
+.zhead{position:absolute;top:14px;left:0;right:0;text-align:center;z-index:2}
+.zhead h3{margin:0;font-size:22px}.zhead small{color:var(--muted);font-weight:700}
+.zpath{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.zdeco{position:absolute;font-size:30px;opacity:.55;z-index:0;pointer-events:none}
+.mnode{position:absolute;transform:translateX(-50%);border:0;background:none;padding:0;display:flex;flex-direction:column;align-items:center;z-index:1;width:130px}
+.mcirc{width:80px;height:80px;border-radius:50%;background:#fff;border:5px solid var(--zc);display:grid;place-items:center;position:relative;box-shadow:0 6px 0 rgba(0,0,0,.12);transition:transform .15s}
+.mnode:active .mcirc{transform:scale(.94)}
+.mcirc img,.mcirc svg{width:54px;height:54px;display:block}.mne{font-size:40px;line-height:1}
+.mnode.locked .mcirc{border-color:#B8C2D6;background:#F1F4F9}.mnode.locked .mcirc>*:not(.mlk){filter:grayscale(1);opacity:.45}
+.mlk{position:absolute;bottom:-6px;left:-6px;font-style:normal;background:#13285C;border-radius:50%;width:30px;height:30px;display:grid;place-items:center;font-size:15px}
+.mnode.next .mcirc{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,199,44,.8),0 6px 0 rgba(0,0,0,.12)}50%{box-shadow:0 0 0 12px rgba(255,199,44,0),0 6px 0 rgba(0,0,0,.12)}}
+.mlabel{margin-top:6px;background:#fff;border-radius:12px;padding:3px 8px;box-shadow:0 2px 0 rgba(0,0,0,.06);display:flex;flex-direction:column;align-items:center;max-width:130px}
+.mlabel b{font-size:13px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}.mlabel small{font-size:11px;color:var(--muted)}
+.mehere{position:absolute;top:-30px;right:-4px;display:flex;flex-direction:column;align-items:center;animation:float 2s ease-in-out infinite;z-index:3}
+.mehere svg{width:42px;height:42px;border-radius:50%;border:3px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.25);display:block}
+.mehere em{font-style:normal;font-size:10px;font-weight:800;background:var(--pink);color:#fff;border-radius:8px;padding:0 6px;margin-top:-4px}
 .toast{position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -300,8 +324,10 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
   <section id="daily" style="padding-bottom:0"><div class="daily" id="dailyBox"></div></section>
 
   <section id="games">
-    <div class="sec-head">
-      <div><h2>🎮 الألعاب</h2><p>ألعاب جديدة تُضاف باستمرار</p></div>
+    <div class="viewtg" id="viewtg"><button data-view="map" class="on">🗺️ خريطة المغامرة</button><button data-view="list">📋 كل الألعاب</button></div>
+    <div id="mapView"></div>
+    <div class="sec-head" id="listHead">
+      <div><h2>🎮 كل الألعاب</h2><p>ألعاب جديدة تُضاف باستمرار</p></div>
       <div class="tabs" id="tabs">
         <button class="on" data-age="all">الكل</button>
         <button data-age="6-9">6–9 سنوات</button>
@@ -601,7 +627,7 @@ const AV=k=>KID(KIDS[k]?k:'b1');
 
 const AVATARS=['b1','b2','b3','b4','b5','g1','g2','g3','g4','g5'];
 function activeKid(){return profile&&profile.kids.find(k=>k.id===kidId)||null}
-function sync(){owned=new Set(profile?profile.owned||[]:[]);const k=activeKid();stars=k?k.stars:guestStars;renderHeader();render();renderDaily()}
+function sync(){owned=new Set(profile?profile.owned||[]:[]);const k=activeKid();stars=k?k.stars:guestStars;renderHeader();render();renderDaily();if(typeof renderMap==='function')renderMap()}
 async function persist(){if(user&&profile){try{await B.save(user.uid,profile)}catch(e){console.warn(e);toast('⚠️ تعذر الحفظ، تحقق من الاتصال')}}}
 function recordPlay(gid,s){
   const before=stars;const k=activeKid();
@@ -1331,6 +1357,42 @@ function truefalse(){
   show();
 }
 
+// ---- Adventure map
+const ZONES=[
+ {min:0,max:0,name:'🏝️ جزيرة البداية',sub:'هنا تبدأ رحلتك!',bg:'linear-gradient(180deg,#C9F2FF,#E2FAF0)',path:'#2EC4A6',deco:['🌴','🐚','🦀','⛵']},
+ {min:1,max:29,name:'🌳 غابة الأرقام',sub:'ألغاز وأرقام بين الأشجار',bg:'linear-gradient(180deg,#DDF7D2,#F0FBE6)',path:'#3CCB6E',deco:['🌲','🍄','🦉','🐿️']},
+ {min:30,max:49,name:'🏔️ جبل الكلمات',sub:'اصعد وتعلّم كلمات جديدة',bg:'linear-gradient(180deg,#E6EEFF,#F4F7FF)',path:'#3D8BFF',deco:['⛰️','❄️','🦅','☁️']},
+ {min:50,max:69,name:'🏜️ واحة المعرفة',sub:'اكتشف العالم وحلّ الألغاز',bg:'linear-gradient(180deg,#FFF0CC,#FFF8E6)',path:'#FFA62B',deco:['🌵','🐪','🌴','☀️']},
+ {min:70,max:1e9,name:'🚀 مدينة الفضاء',sub:'آخر محطة للأبطال!',bg:'linear-gradient(180deg,#E4DBFF,#F2EDFF)',path:'#8B5CF6',deco:['🪐','⭐','🛸','🌙']}];
+let view=LS.get('bw_view','map');
+function setView(v){view=v;LS.set('bw_view',v);document.querySelectorAll('#viewtg button').forEach(b=>b.classList.toggle('on',b.dataset.view===v));
+  $('#mapView').style.display=v==='map'?'block':'none';$('#listHead').style.display=$('#grid').style.display=v==='list'?'':'none';if(v==='map')renderMap()}
+document.querySelectorAll('#viewtg button').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+function renderMap(){
+  const box=$('#mapView');if(!box||view!=='map')return;
+  const k=activeKid(),order=GAMES.filter(g=>g.ready).map((g,i)=>({g,i,n:NEED[g.id]||0})).sort((a,b)=>a.n-b.n||a.i-b.i);
+  const openList=order.filter(o=>isOpen(o.g)),here=openList.length?openList[openList.length-1].g.id:null,nextLock=order.find(o=>!isOpen(o.g));
+  const X=[50,80,50,20];const me=k?AV(k.avatar):'<span style="font-size:22px">🧒</span>';
+  box.innerHTML=`<div class="mapinfo"><b>⭐ ${stars}</b> نجمة · فتحت <b>${openList.length}</b> من ${order.length} محطة${nextLock?` · المحطة القادمة عند ${nextLock.n} ⭐`:' · أنهيت كل المحطات 🏆'}</div>`+
+  ZONES.map((z,zi)=>{
+    const items=order.filter(o=>o.n>=z.min&&o.n<=z.max);if(!items.length)return '';
+    const top=96,gap=124,H=top+items.length*gap;
+    const pts=items.map((o,j)=>[X[j%4],top+j*gap+40]);
+    let d=`M${pts[0][0]} ${pts[0][1]}`;let prev=pts[0];
+    pts.slice(1).forEach(p=>{const my=(prev[1]+p[1])/2;d+=` C${prev[0]} ${my} ${p[0]} ${my} ${p[0]} ${p[1]}`;prev=p});
+    const zoneOpen=items.some(o=>isOpen(o.g));
+    return `<div class="zone ${zoneOpen?'':'zlock'}" style="background:${z.bg};height:${H}px">
+      <div class="zhead"><h3>${z.name}</h3><small>${zoneOpen?z.sub:`🔒 تُفتح عند ${items[0].n} ⭐`}</small></div>
+      ${z.deco.map((e,j)=>`<span class="zdeco" style="top:${80+j*(H-120)/4}px;${j%2?'left':'right'}:${4+(j*7)%12}px">${e}</span>`).join('')}
+      <svg class="zpath" viewBox="0 0 100 ${H}" preserveAspectRatio="none"><path d="${d}" stroke="${z.path}" stroke-width="7" fill="none" stroke-linecap="round" stroke-dasharray="2 14" vector-effect="non-scaling-stroke"/></svg>
+      ${items.map((o,j)=>{const g=o.g,op=isOpen(g),st=k&&k.stats&&k.stats[g.id],best=st?st.best:0,isNext=nextLock&&nextLock.g.id===g.id,isHere=here===g.id;
+        const icon=g.img?`<img src="${g.img}" alt="">`:g.svg?A(g.svg):`<span class="mne">${g.emoji}</span>`;
+        return `<button class="mnode ${op?'open':'locked'} ${isNext?'next':''}" style="left:${pts[j][0]}%;top:${pts[j][1]-40}px;--zc:${z.path}" ${op?`data-play="${g.id}"`:`data-lock="${g.id}"`}>
+          <span class="mcirc">${icon}${op?'':'<i class="mlk">🔒</i>'}</span>
+          ${isHere?`<span class="mehere">${me}<em>أنت هنا</em></span>`:''}
+          <span class="mlabel"><b>${g.name}</b><small>${op?(best?'⭐'.repeat(best)+'☆'.repeat(3-best):'▶ العب'):`🔒 ${o.n} ⭐`}</small></span></button>`}).join('')}
+    </div>`}).join('');
+}
 $('#sndBtn').textContent=SFX.on?'🔊':'🔇';
 $('#sndBtn').onclick=()=>{const v=SFX.toggle();$('#sndBtn').textContent=v?'🔊':'🔇';toast(v?'🔊 الصوت مفعّل':'🔇 تم كتم الصوت');if(v)SFX.ok()};
 render();
@@ -1339,7 +1401,7 @@ render();
   user=B.current();
   if(user){try{profile=await B.load(user.uid);profile.kids=profile.kids||[];profile.owned=profile.owned||[]}catch(e){profile={owned:[],kids:[]}}
     if(!activeKid())kidId=profile.kids[0]?profile.kids[0].id:null}
-  setKid(kidId);
+  setKid(kidId);setView(view);
   setTimeout(()=>{if(!greeted)greet(false)},900);
 })();
 </script>
