@@ -507,7 +507,44 @@ function errMsg(e){const c=(e&&e.code)||'';
 
 let B=FIREBASE_CONFIG?FirebaseBackend:LocalBackend,user=null,profile=null,kidId=LS.get('bw_kid',null),guestStars=LS.get('bw_guest',0),pendingBuy=null;
 let owned=new Set(),stars=0,ageFilter='all';
-const AVATARS=['lion','cat','panda','rabbit','frog','bee','dog','sheep','horse','dove'];
+// ---- Kid avatars (original SVG)
+const KIDS={
+ b1:{bg:'#CFE3FF',skin:'#F9D3B4',hair:'#4A2C1A',style:'short',shirt:'#1F5BD6'},
+ b2:{bg:'#D6F5E1',skin:'#E8B48A',style:'ghutra',shirt:'#FFFFFF'},
+ b3:{bg:'#FFE2C6',skin:'#C68B59',hair:'#1E1A1A',style:'curly',shirt:'#FF8A3D',glasses:1},
+ b4:{bg:'#D3F4F1',skin:'#F9D3B4',hair:'#6B3E1F',style:'cap',shirt:'#3CCB6E'},
+ b5:{bg:'#E9DCFF',skin:'#8D5A3B',hair:'#1E1A1A',style:'short',shirt:'#8B5CF6'},
+ g1:{bg:'#FFDDEB',skin:'#F9D3B4',hijab:'#FF5FA2',style:'hijab',shirt:'#FF5FA2'},
+ g2:{bg:'#EDE2FF',skin:'#E8B48A',hijab:'#8B5CF6',style:'hijab',shirt:'#8B5CF6'},
+ g3:{bg:'#FFF1C2',skin:'#F9D3B4',hair:'#6B3E1F',style:'long',shirt:'#FFC72C'},
+ g4:{bg:'#D6F5E9',skin:'#C68B59',hair:'#1E1A1A',style:'pony',shirt:'#2EC4A6'},
+ g5:{bg:'#D7ECFF',skin:'#8D5A3B',hijab:'#1F5BD6',style:'hijab',shirt:'#4DA8FF',glasses:1},
+};
+function KID(key){
+  const c=KIDS[key]||KIDS.b1,D='#2B2340';let back='',front='',acc='',ears=true;
+  const face=(r=29,cy=64)=>`<circle cx="60" cy="${cy}" r="${r}" fill="${c.skin}"/>`;
+  let f=face();
+  if(c.style==='short'){front=`<path d="M31 62 Q28 30 60 29 Q92 30 89 62 Q86 46 72 42 Q66 50 52 46 Q38 46 31 62Z" fill="${c.hair}"/>`}
+  if(c.style==='curly'){front=[[38,42],[48,34],[60,31],[72,34],[82,42],[88,52],[32,52]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="10" fill="${c.hair}"/>`).join('')}
+  if(c.style==='cap'){front=`<path d="M31 60 Q30 44 40 42 L80 42 Q90 44 89 60 Q80 50 60 50 Q40 50 31 60Z" fill="${c.hair}"/><path d="M30 48 Q30 24 60 24 Q90 24 90 48Z" fill="#E63946"/><path d="M60 47 Q92 46 104 52 Q96 56 60 52Z" fill="#B82632"/><circle cx="60" cy="25" r="3" fill="#B82632"/>`}
+  if(c.style==='long'){back=`<path d="M26 66 Q24 28 60 27 Q96 28 94 66 L96 104 Q78 110 60 108 Q42 110 24 104Z" fill="${c.hair}"/>`;front=`<path d="M31 60 Q30 32 60 31 Q90 32 89 60 Q82 44 60 42 Q44 42 40 50 Q36 54 31 60Z" fill="${c.hair}"/><path d="M80 34 l12 -8 l2 14z M80 34 l-10 -8 l-2 12z" fill="#FF5FA2"/><circle cx="81" cy="34" r="4" fill="#E63946"/>`}
+  if(c.style==='pony'){back=`<circle cx="24" cy="56" r="13" fill="${c.hair}"/><circle cx="96" cy="56" r="13" fill="${c.hair}"/>`;front=`<path d="M31 60 Q29 30 60 30 Q91 30 89 60 Q80 42 60 42 Q40 42 31 60Z" fill="${c.hair}"/><circle cx="33" cy="48" r="4" fill="#FFC72C"/><circle cx="87" cy="48" r="4" fill="#FFC72C"/>`}
+  if(c.style==='ghutra'){ears=false;back=`<path d="M22 108 Q18 60 28 42 Q42 20 60 20 Q78 20 92 42 Q102 60 98 108Z" fill="#FFFFFF" stroke="#D5DCE8" stroke-width="2"/>`;
+    f=face(26,66);acc=`<ellipse cx="60" cy="39" rx="27" ry="7" fill="none" stroke="${D}" stroke-width="5"/><path d="M36 42 Q60 34 84 42" stroke="#E6EAF2" stroke-width="3" fill="none"/>`}
+  if(c.style==='hijab'){ears=false;back=`<path d="M60 22 Q98 22 98 66 Q98 104 60 110 Q22 104 22 66 Q22 22 60 22Z" fill="${c.hijab}"/>`;
+    f=`<circle cx="60" cy="66" r="28" fill="${c.hijab}" opacity=".55"/>`+face(25,67);acc=`<path d="M36 52 Q60 34 84 52" stroke="#fff" stroke-width="2" opacity=".35" fill="none"/>`}
+  const cy=c.style==='hijab'||c.style==='ghutra'?67:64;
+  const eyes=`<ellipse cx="50" cy="${cy}" rx="3.6" ry="4.6" fill="${D}"/><ellipse cx="70" cy="${cy}" rx="3.6" ry="4.6" fill="${D}"/><circle cx="51.3" cy="${cy-1.6}" r="1.3" fill="#fff"/><circle cx="71.3" cy="${cy-1.6}" r="1.3" fill="#fff"/>`;
+  const gl=c.glasses?`<circle cx="50" cy="${cy}" r="8.5" fill="none" stroke="${D}" stroke-width="2.4"/><circle cx="70" cy="${cy}" r="8.5" fill="none" stroke="${D}" stroke-width="2.4"/><path d="M58.5 ${cy} h3" stroke="${D}" stroke-width="2.4"/>`:'';
+  const mouth=`<path d="M52 ${cy+11} Q60 ${cy+18} 68 ${cy+11}" stroke="${D}" stroke-width="2.8" fill="none" stroke-linecap="round"/>`;
+  const cheeks=`<ellipse cx="41" cy="${cy+9}" rx="5" ry="3.2" fill="#FF7F9E" opacity=".45"/><ellipse cx="79" cy="${cy+9}" rx="5" ry="3.2" fill="#FF7F9E" opacity=".45"/>`;
+  const earsS=ears?`<circle cx="31" cy="66" r="6" fill="${c.skin}"/><circle cx="89" cy="66" r="6" fill="${c.skin}"/>`:'';
+  const shirt=`<path d="M22 122 Q26 96 60 96 Q94 96 98 122Z" fill="${c.shirt}" ${c.shirt==='#FFFFFF'?'stroke="#D5DCE8" stroke-width="2"':''}/>`;
+  return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="kc${key}"><circle cx="60" cy="60" r="58"/></clipPath></defs><g clip-path="url(#kc${key})"><circle cx="60" cy="60" r="58" fill="${c.bg}"/>${back}${shirt}${earsS}${f}${front}${eyes}${gl}${mouth}${cheeks}${acc}</g></svg>`;
+}
+const AV=k=>KID(KIDS[k]?k:'b1');
+
+const AVATARS=['b1','b2','b3','b4','b5','g1','g2','g3','g4','g5'];
 function activeKid(){return profile&&profile.kids.find(k=>k.id===kidId)||null}
 function sync(){owned=new Set(profile?profile.owned||[]:[]);const k=activeKid();stars=k?k.stars:guestStars;renderHeader();render();renderDaily()}
 async function persist(){if(user&&profile){try{await B.save(user.uid,profile)}catch(e){console.warn(e);toast('⚠️ تعذر الحفظ، تحقق من الاتصال')}}}
@@ -522,7 +559,7 @@ function recordPlay(gid,s){
 }
 function renderHeader(){
   const k=activeKid();
-  $('#kidChip').innerHTML=k?`<span class="av">${A(k.avatar)}</span><b>${esc(k.name)}</b> ⭐ ${k.stars}`:`⭐ ${stars} <span class="t">نجمة</span>`;
+  $('#kidChip').innerHTML=k?`<span class="av">${AV(k.avatar)}</span><b>${esc(k.name)}</b> ⭐ ${k.stars}`:`⭐ ${stars} <span class="t">نجمة</span>`;
   $('#acctBtn').innerHTML=user?'👤 ملفي':'👤 دخول';
 }
 function setKid(id){
@@ -633,7 +670,7 @@ function openKid(id){
   $('#kTitle').textContent=editKid?'تعديل ملفي':'اختر شخصيتك 🎮';
   $('#kName').value=editKid?editKid.name:((user&&user.name)||'');$('#kAge').value=editKid?editKid.age:8;
   kAv=editKid?editKid.avatar:AVATARS[profile.kids.length%AVATARS.length];$('#kErr').textContent='';
-  $('#kAv').innerHTML=AVATARS.map(a=>`<button class="avo ${a===kAv?'on':''}" data-av="${a}">${A(a)}</button>`).join('');
+  $('#kAv').innerHTML=AVATARS.map(a=>`<button class="avo ${a===kAv?'on':''}" data-av="${a}">${AV(a)}</button>`).join('');
   $('#kAv').querySelectorAll('.avo').forEach(b=>b.onclick=()=>{kAv=b.dataset.av;$('#kAv').querySelectorAll('.avo').forEach(x=>x.classList.toggle('on',x===b))});
   hide('pickOv');show('kidOv');
 }
@@ -650,7 +687,7 @@ $('#kSave').onclick=async()=>{
 
 // ---- who is playing
 function openPick(){
-  $('#pickList').innerHTML=profile.kids.map(k=>`<button class="kidbtn ${k.id===kidId?'on':''}" data-kid="${k.id}"><span class="av">${A(k.avatar)}</span>${esc(k.name)}<small>⭐ ${k.stars} · ${k.age} سنوات</small></button>`).join('')
+  $('#pickList').innerHTML=profile.kids.map(k=>`<button class="kidbtn ${k.id===kidId?'on':''}" data-kid="${k.id}"><span class="av">${AV(k.avatar)}</span>${esc(k.name)}<small>⭐ ${k.stars} · ${k.age} سنوات</small></button>`).join('')
    +(profile.kids.length<5?`<button class="kidbtn add" id="pickAdd">➕<br>أضف طفلًا</button>`:'');
   $('#pickList').querySelectorAll('[data-kid]').forEach(b=>b.onclick=()=>{setKid(b.dataset.kid);hide('pickOv');toast(`🎮 ${activeKid().name} يلعب الآن`)});
   const ad=$('#pickAdd');if(ad)ad.onclick=()=>openKid();
@@ -670,7 +707,7 @@ function openDash(){
    
    ${profile.kids.map(k=>{const rows=GAMES.filter(g=>k.stats&&k.stats[g.id]).map(g=>{const st=k.stats[g.id];return `<tr><td>${g.emoji} ${g.name}</td><td>${st.plays}</td><td>${'⭐'.repeat(st.best)}${'☆'.repeat(3-st.best)}</td></tr>`}).join('');
      const tr=[...TROPHIES].reverse().find(t=>k.stars>=t.n);
-     return `<div class="dcard"><div class="khead"><span class="av">${A(k.avatar)}</span><div class="grow"><h3 style="margin:0">${esc(k.name)}</h3><div class="meta">${k.age} سنوات · ⭐ ${k.stars} نجمة${tr?` · ${tr.i} ${tr.t}`:''}</div></div></div>
+     return `<div class="dcard"><div class="khead"><span class="av">${AV(k.avatar)}</span><div class="grow"><h3 style="margin:0">${esc(k.name)}</h3><div class="meta">${k.age} سنوات · ⭐ ${k.stars} نجمة${tr?` · ${tr.i} ${tr.t}`:''}</div></div></div>
        ${rows?`<table class="gtable"><tr><th>اللعبة</th><th>مرات اللعب</th><th>أفضل نتيجة</th></tr>${rows}</table>`:'<div class="meta" style="margin-top:8px">لم تلعب بعد.</div>'}
        <div class="kact"><button class="sbtn" data-dk="edit" data-id="${k.id}">✏️ تعديل</button></div></div>`}).join('')}
    
