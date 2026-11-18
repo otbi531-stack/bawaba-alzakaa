@@ -241,6 +241,11 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .simon{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:min(300px,78vw);direction:ltr}
 .sp{aspect-ratio:1;border:0;border-radius:30px;opacity:.45;transition:opacity .1s,transform .1s;box-shadow:0 6px 0 rgba(0,0,0,.15)}
 .sp.lit{opacity:1;transform:scale(1.06)}
+.paybox{background:var(--bg);border-radius:18px;padding:12px 14px;margin:4px 0 14px}
+.pstep{display:flex;gap:10px;align-items:flex-start;font-weight:700;font-size:15px;margin:8px 0}
+.pstep>b{flex:none;width:24px;height:24px;border-radius:50%;background:var(--pri);color:#fff;display:grid;place-items:center;font-size:13px}
+.pnum{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;border:2px dashed var(--line);border-radius:14px;padding:8px 10px 8px 12px;margin:0 0 6px 0}
+.pnum span{font-size:22px;font-weight:800;letter-spacing:1px;color:var(--ink);font-family:'Baloo Bhaijaan 2',Tajawal}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -366,11 +371,15 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 <div class="ov" id="buyOv"><div class="modal">
   <button class="x" data-close="buyOv">✕</button>
   <div class="ph"><div class="e" id="bEmoji"></div><div><h3 id="bName"></h3><div class="meta" id="bMeta"></div></div></div>
-  <div class="pay-opt on" data-m="stc"><span class="pm"><i style="background:#4F008C">stc pay</i> STC Pay</span><small>من محفظتك</small></div>
-  <div class="pay-opt" data-m="barq"><span class="pm"><i style="background:#00A19A">برق</i> برق</span><small>من محفظتك</small></div>
-  <div class="total"><span>المبلغ (مرة واحدة)</span><span id="bPrice"></span></div>
-  <button class="btn blue full" id="bPay"></button>
-  <div class="note">نموذج تجريبي، ولن يُخصم أي مبلغ حقيقي. في النسخة الفعلية تنتقل لتطبيق المحفظة لتأكيد الدفع.</div>
+  <div class="paybox">
+    <div class="pstep"><b>1</b><span>حوّل <b id="bPrice"></b> عبر <b style="color:#4F008C">STC Bank</b> إلى الرقم:</span></div>
+    <div class="pnum"><span id="bNum" dir="ltr">0505550531</span><button class="sbtn" id="bCopy">📋 نسخ</button></div>
+    <div class="pstep"><b>2</b><span>اكتب هذا الرمز في ملاحظة التحويل:</span></div>
+    <div class="pnum"><span id="bRef" dir="ltr"></span><button class="sbtn" id="bCopyRef">📋 نسخ</button></div>
+    <div class="pstep"><b>3</b><span>بعد التحويل اضغط الزر بالأسفل لتُفتح اللعبة</span></div>
+  </div>
+  <button class="btn blue full" id="bPay">✅ حوّلت المبلغ، افتح اللعبة</button>
+  <div class="note">نثق بك 🤝 اللعبة تُفتح مباشرة بعد الضغط</div>
 </div></div>
 
 <!-- Game screen -->
@@ -849,26 +858,27 @@ document.addEventListener('click',e=>{
   else if(t.dataset.age){ageFilter=t.dataset.age;document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b===t));render()}
 });
 
-// ---- purchase (demo)
-let buying=null,method='stc';
-const MN={stc:'STC Pay',barq:'برق'};
+// ---- purchase (STC Bank transfer, trust-based)
+const PAY_NUMBER='0505550531';
+let buying=null,buyRef='';
 function openBuy(id){
   if(!user){pendingBuy=id;return openAuth('up','أنشئ حسابًا مجانيًا حتى تُحفظ اللعبة التي تشتريها على كل أجهزتك')}
   if(!profile.kids.length){pendingBuy=id;return openKid()}
-  buying=GAMES.find(g=>g.id===id);method='stc';
+  buying=GAMES.find(g=>g.id===id);
+  buyRef='BZ-'+(hashStr(user.uid+id+Date.now())%9000+1000);
   $('#bEmoji').innerHTML=buying.img?`<img src="${buying.img}" style="width:54px;height:54px" alt="">`:buying.emoji;$('#bEmoji').style.background=buying.color;
   $('#bName').textContent=buying.name;$('#bMeta').textContent=`🎯 ${buying.skill}`;
-  $('#bPrice').textContent=buying.price+' ر.س';
-  updPay();$('#buyOv').classList.add('show');
+  $('#bPrice').textContent=buying.price+' ريال';$('#bNum').textContent=PAY_NUMBER;$('#bRef').textContent=buyRef;
+  $('#buyOv').classList.add('show');
 }
-function updPay(){document.querySelectorAll('#buyOv .pay-opt').forEach(o=>o.classList.toggle('on',o.dataset.m===method));$('#bPay').textContent=`ادفع ${buying.price} ر.س عبر ${MN[method]}`}
-document.querySelectorAll('#buyOv .pay-opt').forEach(o=>o.onclick=()=>{method=o.dataset.m;updPay()});
+async function copyTxt(t){try{await navigator.clipboard.writeText(t);toast('📋 تم النسخ')}catch(e){toast('انسخ الرقم يدويًا: '+t)}}
+$('#bCopy').onclick=()=>copyTxt(PAY_NUMBER);
+$('#bCopyRef').onclick=()=>copyTxt(buyRef);
 $('#bPay').onclick=()=>{
-  const b=$('#bPay');b.disabled=true;b.textContent='⏳ جارٍ تأكيد الدفع...';
-  setTimeout(()=>{
-    b.disabled=false;profile.owned=[...new Set([...(profile.owned||[]),buying.id])];persist();sync();$('#buyOv').classList.remove('show');
-    SFX.fanfare();confetti();toast(`🎉 تم فتح «${buying.name}»`);setTimeout(()=>openGame(buying.id),700);
-  },1100);
+  profile.owned=[...new Set([...(profile.owned||[]),buying.id])];
+  profile.payments=[...(profile.payments||[]),{game:buying.id,ref:buyRef,price:buying.price,date:new Date().toISOString()}];
+  persist();sync();$('#buyOv').classList.remove('show');
+  SFX.fanfare();confetti();toast(`🎉 شكرًا لك! تم فتح «${buying.name}»`);setTimeout(()=>openGame(buying.id),700);
 };
 
 // ---- game engine
