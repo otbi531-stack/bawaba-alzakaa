@@ -195,6 +195,8 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 @keyframes popE{30%{transform:translate(-50%,-50%) scale(1.15);opacity:1}100%{transform:translate(-50%,-90%) scale(1);opacity:0}}
 .resemo{font-size:96px;line-height:1.1;display:inline-block;animation:wob 1.2s ease-in-out infinite}
 @keyframes wob{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg) translateY(-6px)}}
+.hear{border:0;background:#fff;border-radius:999px;padding:8px 20px;font-weight:800;font-size:17px;box-shadow:0 4px 0 var(--line);margin:-6px 0 16px;color:var(--pri)}
+.hear:active{transform:translateY(2px)}
 .hbtn.snd{padding:8px 11px;font-size:16px}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
@@ -599,7 +601,35 @@ const SFX=(()=>{
   function clap(t,vol){const s=ctx.createBufferSource();s.buffer=noiseBuf();const f=ctx.createBiquadFilter();f.type='bandpass';f.frequency.value=900+Math.random()*1600;f.Q.value=.8;const g=ctx.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.0001,t+.07);s.connect(f);f.connect(g);g.connect(ctx.destination);s.start(t,Math.random()*.8,.1)}
   function say(t){if(!on||!voice)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.voice=voice;u.lang=voice.lang;u.rate=1;u.pitch=1.25;speechSynthesis.speak(u)}catch(e){}}
   const PRAISE=['أحسنت!','رائع!','ممتاز!','برافو!','أنت ذكي!','استمر يا بطل!'];
+  function syn(o){const c=ctx,t0=c.currentTime+(o.t||0),d=o.d||.5,v=o.v||.2,att=o.att||.02,rel=o.rel||.08;const os=c.createOscillator(),g=c.createGain();os.type=o.type||'sawtooth';
+    (o.f||[[0,440]]).forEach(([tt,ff],i)=>i?os.frequency.linearRampToValueAtTime(ff,t0+tt):os.frequency.setValueAtTime(ff,t0+tt));
+    let node=os;
+    if(o.vib){const l=c.createOscillator(),lg=c.createGain();l.frequency.value=o.vibR||6;lg.gain.value=o.vib;l.connect(lg);lg.connect(os.frequency);l.start(t0);l.stop(t0+d+.1)}
+    [['lowpass',o.lp],['bandpass',o.bp]].forEach(([ty,fr])=>{if(fr){const fl=c.createBiquadFilter();fl.type=ty;fl.frequency.value=fr;fl.Q.value=o.q||1;node.connect(fl);node=fl}});
+    g.gain.setValueAtTime(0.0001,t0);g.gain.linearRampToValueAtTime(v,t0+att);g.gain.setValueAtTime(v,t0+Math.max(att,d-rel));g.gain.linearRampToValueAtTime(0.0001,t0+d);
+    if(o.trem){const l=c.createOscillator(),lg=c.createGain();l.frequency.value=o.tremR||10;lg.gain.value=v*o.trem;l.connect(lg);lg.connect(g.gain);l.start(t0);l.stop(t0+d+.1)}
+    node.connect(g);g.connect(c.destination);os.start(t0);os.stop(t0+d+.05)}
+  function nz(o){const c=ctx,t0=c.currentTime+(o.t||0),d=o.d||.3,v=o.v||.2,s=c.createBufferSource();s.buffer=noiseBuf();s.loop=true;let node=s;
+    [['bandpass',o.bp],['lowpass',o.lp],['highpass',o.hp]].forEach(([ty,fr])=>{if(fr){const fl=c.createBiquadFilter();fl.type=ty;fl.frequency.value=fr;fl.Q.value=o.q||1;node.connect(fl);node=fl}});
+    const g=c.createGain();g.gain.setValueAtTime(0.0001,t0);g.gain.linearRampToValueAtTime(v,t0+(o.att||.01));g.gain.exponentialRampToValueAtTime(0.0001,t0+d);node.connect(g);g.connect(c.destination);s.start(t0);s.stop(t0+d+.05)}
+  const ANIMAL_SND={
+    cat:()=>syn({f:[[0,500],[.15,820],[.45,620],[.62,450]],d:.65,v:.18,lp:2200,q:4,vib:15,vibR:7}),
+    lion:()=>{syn({f:[[0,120],[.3,165],[1.2,90]],d:1.3,v:.35,lp:700,vib:25,vibR:30,att:.08});nz({d:1.2,v:.22,lp:600,att:.08})},
+    dog:()=>[0,.3].forEach(k=>{syn({t:k,f:[[0,380],[.05,560],[.15,300]],d:.17,v:.3,lp:1500,q:3});nz({t:k,d:.12,v:.15,bp:1000})}),
+    cow:()=>syn({f:[[0,160],[.25,178],[1.1,118]],d:1.2,v:.32,lp:600,q:6,vib:3,vibR:5,att:.15,rel:.3}),
+    sheep:()=>syn({f:[[0,430],[.85,380]],d:.9,v:.22,bp:900,q:2,trem:.8,tremR:14,vib:10,vibR:14,att:.05}),
+    horse:()=>{syn({f:[[0,700],[.2,1100],[1,500]],d:1.1,v:.2,bp:1200,q:2,vib:60,vibR:18});nz({t:1.05,d:.25,v:.15,lp:800})},
+    frog:()=>[0,.2].forEach(k=>syn({t:k,type:'square',f:[[0,220],[.1,175]],d:.13,v:.18,lp:900,trem:1,tremR:40})),
+    bee:()=>syn({f:[[0,220],[.4,245],[.8,210],[1.2,232]],d:1.2,v:.14,lp:1500,vib:8,vibR:9,trem:.5,tremR:25,att:.1}),
+    snake:()=>nz({d:1.2,v:.22,hp:3000,att:.15}),
+    rooster:()=>syn({f:[[0,500],[.15,900],[.35,950],[.55,880],[.9,1100],[1.4,700]],d:1.5,v:.2,bp:1200,q:3,vib:20,vibR:10}),
+    wolf:()=>{syn({type:'sine',f:[[0,300],[.6,700],[1.6,650],[2.2,400]],d:2.3,v:.25,vib:8,vibR:5,att:.2,rel:.4});syn({type:'triangle',f:[[0,600],[.6,1400],[1.6,1300],[2.2,800]],d:2.3,v:.05,att:.2,rel:.4})},
+    dove:()=>[[0,.45],[.55,.3],[.95,.45]].forEach(([k,d])=>syn({t:k,type:'sine',f:[[0,330],[d*.35,370],[d,300]],d,v:.25,vib:6,vibR:8,att:.05})),
+    panda:()=>[0,.32].forEach(k=>syn({t:k,type:'sine',f:[[0,800],[.12,1200],[.25,900]],d:.28,v:.2})),
+    rabbit:()=>[0,.12,.24].forEach(k=>syn({t:k,type:'triangle',f:[[0,1500],[.06,1850]],d:.08,v:.15})),
+  };
   return {
+    animal(k){if(!on||!ensure()||!ANIMAL_SND[k])return;try{ANIMAL_SND[k]()}catch(e){console.warn(e)}},
     get on(){return on},
     toggle(){on=!on;LS.set('bw_sound',on);if(on)ensure();else{try{speechSynthesis.cancel()}catch(e){}}return on},
     ok(speak){if(!on||!ensure())return;const t=ctx.currentTime;tone(784,t,.14,'triangle',.22);tone(1047,t+.1,.22,'triangle',.22);tone(1319,t+.2,.3,'sine',.15);if(speak&&Math.random()<.6)say(PRAISE[Math.random()*PRAISE.length|0])},
@@ -710,13 +740,14 @@ function animals(){
     if(i>=items.length)return result(score,items.length,`عرفت ${score} حيوانات من ${items.length}`);
     const it=items[i];const opts=shuffle([it,...shuffle(ANIM.filter(a=>a!==it)).slice(0,2)]);
     stat(`${i+1}/${items.length}`,score);
-    area.innerHTML=`<div class="q" style="font-size:26px">اختر الحيوان الذي يصدر صوت <mark>${it[2]}</mark></div>
+    area.innerHTML=`<div class="q" style="font-size:26px">اختر الحيوان الذي يصدر صوت <mark>${it[2]}</mark></div><button class="hear" id="hear">🔊 اسمع الصوت</button>
       <div class="acards">${opts.map((o,k)=>`<button class="acard" data-k="${k}"><span class="ae">${A(o[3])}</span><b>${o[1]}</b></button>`).join('')}</div><div class="reveal" id="rv"></div>`;
+    $('#hear').onclick=()=>SFX.animal(it[3]);later(()=>SFX.animal(it[3]),400);
     area.querySelectorAll('.acard').forEach(b=>b.onclick=()=>{
-      if(busy)return;busy=true;const pick=opts[+b.dataset.k],ok=pick===it;
-      if(ok){score++;b.classList.add('ok');SFX.ok(true);popEmoji(HAPPY[rnd(0,HAPPY.length-1)])}else{b.classList.add('no');SFX.no();popEmoji('😢');area.querySelectorAll('.acard')[opts.indexOf(it)].classList.add('ok')}
+      if(busy)return;busy=true;const pick=opts[+b.dataset.k],ok=pick===it;SFX.animal(pick[3]);
+      if(ok){score++;b.classList.add('ok');later(()=>SFX.ok(true),900);popEmoji(HAPPY[rnd(0,HAPPY.length-1)])}else{b.classList.add('no');later(()=>SFX.no(),900);popEmoji('😢');area.querySelectorAll('.acard')[opts.indexOf(it)].classList.add('ok')}
       $('#rv').textContent=ok?`✔ صحيح! ${it[1]} يصدر ${it[2]}`:`الإجابة: ${it[1]} يصدر ${it[2]}`;stat(`${i+1}/${items.length}`,score);
-      later(()=>{busy=false;i++;next()},1400);
+      later(()=>{busy=false;i++;next()},2200);
     });
   };next();
 }
@@ -735,10 +766,10 @@ function memory(){
   area.innerHTML=`<div class="q">اقلب البطاقات وطابق كل حيوان مع شبيهه</div><div class="mem">${deck.map(e=>`<button class="mc" data-k="${e}"><span>${A(e)}</span></button>`).join('')}</div>`;
   area.querySelectorAll('.mc').forEach(c=>c.onclick=()=>{
     if(busy||c.classList.contains('open')||c.classList.contains('done'))return;
-    c.classList.add('open');
+    c.classList.add('open');SFX.animal(c.dataset.k);
     if(!first){first=c;return}
     moves++;
-    if(first.dataset.k===c.dataset.k){first.classList.replace('open','done');c.classList.replace('open','done');first=null;pairs++;SFX.ok(false);stat(`${pairs}/8`,pairs);
+    if(first.dataset.k===c.dataset.k){first.classList.replace('open','done');c.classList.replace('open','done');first=null;pairs++;later(()=>SFX.ok(false),650);stat(`${pairs}/8`,pairs);
       if(pairs===8)later(()=>result(Math.max(0,24-moves),16,`أنهيت اللعبة في ${moves} محاولة`),600)}
     else{busy=true;const a=first;first=null;later(()=>{a.classList.remove('open');c.classList.remove('open');busy=false},800)}
   });
