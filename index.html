@@ -210,6 +210,10 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .dhead{display:flex;align-items:center;gap:12px}
 .owlw{width:86px;flex:none;animation:float 3s ease-in-out infinite}.owlw svg{width:100%;height:auto;display:block}
 .blink{transform-box:fill-box;transform-origin:center;animation:blink 4s infinite}
+.wl,.wr{transform-box:fill-box}.wl{transform-origin:top right}.wr{transform-origin:top left}
+.buddy .wl,.owlw .wl{animation:flapL 3s ease-in-out infinite}.buddy .wr,.owlw .wr{animation:flapR 3s ease-in-out infinite}
+.buddy.yay .wl,.buddy.win .wl{animation:flapL .25s ease-in-out 4}.buddy.yay .wr,.buddy.win .wr{animation:flapR .25s ease-in-out 4}
+@keyframes flapL{50%{transform:rotate(18deg)}}@keyframes flapR{50%{transform:rotate(-18deg)}}
 @keyframes blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
 .bubble2{flex:1;min-width:0;background:#fff;border-radius:18px;padding:10px 14px;position:relative;font-weight:700;box-shadow:0 4px 0 rgba(0,0,0,.05)}
 .bubble2:before{content:'';position:absolute;right:-14px;top:22px;border:8px solid transparent;border-left-color:#fff}
@@ -345,6 +349,43 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .footbtns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}.footbtns button{border:0;border-radius:14px;padding:9px 14px;font-weight:800;font-size:14px;background:#fff;color:var(--pri);box-shadow:0 3px 0 var(--line)}
 .league h3 small,.invite h3 small{font-size:12px;color:var(--muted);font-weight:500;margin-inline-start:6px}
 .invite{background:linear-gradient(135deg,#FFF5D6,#FFE3F0)}
+.vsbar{position:relative;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;padding:8px 12px 14px;background:linear-gradient(90deg,#E3F0FF,#FFE6F1);border-bottom:2px solid var(--line);animation:vsIn .5s both}
+@keyframes vsIn{from{transform:translateY(-100%);opacity:0}}
+.vsp{display:flex;align-items:center;gap:6px;min-width:0}.vsp.op{justify-content:flex-end;text-align:left}.vsp b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.vsp small{font-size:12px;color:var(--muted);font-weight:800}
+.vsp small.late{color:var(--coral)}.vav svg{width:40px;height:40px;display:block;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.vsp.me .vav{animation:bob 1.2s ease-in-out infinite}.vsp.op .vav{animation:bob 1.2s ease-in-out .6s infinite}@keyframes bob{50%{transform:translateY(-4px)}}
+.vsx{font-family:'Baloo Bhaijaan 2',sans-serif;font-weight:800;font-size:22px;color:#fff;background:linear-gradient(135deg,var(--coral),var(--pink));border-radius:50%;width:44px;height:44px;display:grid;place-items:center;box-shadow:0 3px 0 #c4406f;animation:vsP 1.4s ease-in-out infinite}
+@keyframes vsP{50%{transform:scale(1.12) rotate(-6deg)}}
+.vsrace{position:absolute;left:12px;right:12px;bottom:4px;height:5px;background:#fff;border-radius:3px}.vsrace i{position:absolute;right:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,var(--coral),var(--sun));border-radius:3px;transition:width .5s linear}
+.vsrace .flag{position:absolute;left:-6px;top:-10px;font-size:14px}
+/* animated buddy */
+.buddy{position:absolute;left:10px;bottom:10px;width:74px;height:74px;z-index:3;pointer-events:none;animation:bfloat 2.6s ease-in-out infinite}
+.buddy svg{width:100%;height:100%;overflow:visible}
+@keyframes bfloat{50%{transform:translateY(-7px) rotate(-3deg)}}
+.buddy.yay{animation:byay .9s ease}@keyframes byay{30%{transform:translateY(-34px) rotate(-12deg) scale(1.15)}60%{transform:translateY(0) rotate(10deg)}80%{transform:translateY(-10px)}}
+.buddy.oops{animation:boops .8s ease}@keyframes boops{20%{transform:rotate(-14deg)}40%{transform:rotate(12deg)}60%{transform:rotate(-8deg) translateY(4px)}80%{transform:rotate(4deg)}}
+.buddy.win{animation:bwin 1.2s ease 3}@keyframes bwin{25%{transform:translateY(-40px) rotate(180deg) scale(1.2)}50%{transform:translateY(0) rotate(360deg)}75%{transform:translateY(-14px) scale(1.1)}}
+.buddy.cry{animation:bcry 2s ease-in-out infinite;filter:saturate(.6)}@keyframes bcry{50%{transform:translateY(5px) rotate(-6deg) scaleY(.95)}}
+.buddysay{position:absolute;left:78px;bottom:58px;background:#fff;border-radius:14px 14px 14px 2px;padding:5px 10px;font-weight:800;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,.12);z-index:3;opacity:0;pointer-events:none}
+.buddysay.show{animation:bsay 1.4s ease}@keyframes bsay{10%,75%{opacity:1;transform:scale(1)}0%{opacity:0;transform:scale(.4)}100%{opacity:0;transform:translateY(-10px)}}
+/* lively game content */
+.gfloat{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}.gfloat span{position:absolute;font-size:28px;opacity:.22;animation:drift linear infinite}
+@keyframes drift{from{transform:translateX(110vw)}to{transform:translateX(-30vw)}}
+.game .garea{position:relative;z-index:1}
+#area .big,#area .resemo,#area .bemo{display:inline-block;animation:wig 2.4s ease-in-out infinite}@keyframes wig{0%,100%{transform:rotate(0) scale(1)}25%{transform:rotate(-6deg) scale(1.05)}75%{transform:rotate(6deg) scale(1.05)}}
+#area .opt,#area .chip,#area .mbtn,#area .acard{animation:popIn .4s cubic-bezier(.3,1.6,.5,1) both}
+#area .opt:nth-child(2),#area .chip:nth-child(2),#area .mbtn:nth-child(2),#area .acard:nth-child(2){animation-delay:.07s}
+#area .opt:nth-child(3),#area .chip:nth-child(3),#area .mbtn:nth-child(3),#area .acard:nth-child(3){animation-delay:.14s}
+#area .opt:nth-child(4),#area .chip:nth-child(4),#area .mbtn:nth-child(4),#area .acard:nth-child(4){animation-delay:.21s}
+#area .mbtn:nth-child(5),#area .chip:nth-child(5){animation-delay:.28s}
+@keyframes popIn{from{transform:scale(.3) translateY(20px);opacity:0}}
+#area .opt.ok{animation:okb .5s ease}@keyframes okb{40%{transform:scale(1.15)}}
+#area .opt.no{animation:shk .35s}
+#area .opt:active,#area .chip:active,#area .mbtn:active{transform:scale(.93)}
+#area .q{animation:qIn .35s ease both}@keyframes qIn{from{opacity:0;transform:translateY(-8px)}}
+#area .stars{animation:starsIn .8s cubic-bezier(.3,1.6,.5,1) both}@keyframes starsIn{from{transform:scale(0) rotate(-30deg)}}
+.mnode.open .mcirc{animation:nbob 3s ease-in-out infinite}.mnode.open:nth-child(odd) .mcirc{animation-delay:1.5s}@keyframes nbob{50%{transform:translateY(-5px)}}
+@media (prefers-reduced-motion:reduce){.buddy,.gfloat span,#area *{animation:none!important}}
 .toast{position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -538,7 +579,9 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
     <b id="gTitle"></b>
     <div class="gstat"><span class="pill" id="gProg"></span><span class="pill" id="gScore">⭐ 0</span></div>
   </div>
+  <div class="gfloat" aria-hidden="true"><span style="top:12%;animation-duration:38s">☁️</span><span style="top:30%;animation-duration:52s;animation-delay:-20s">⭐</span><span style="top:58%;animation-duration:44s;animation-delay:-8s">☁️</span><span style="top:78%;animation-duration:60s;animation-delay:-35s">🎈</span><span style="top:45%;animation-duration:70s;animation-delay:-50s">✨</span></div>
   <div class="garea" id="area"></div>
+  <div class="buddy" id="buddy" aria-hidden="true"></div><div class="buddysay" id="buddySay"></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -786,10 +829,10 @@ function activeKid(){return profile&&profile.kids.find(k=>k.id===kidId)||null}
 function sync(){owned=new Set(profile?profile.owned||[]:LS.get('bw_guest_owned',[]));const k=activeKid();stars=k?k.stars:guestStars;earned=k?(k.earned??k.stars):LS.get('bw_guest_earned',guestStars);renderHeader();render();renderDaily();if(typeof renderMap==='function')renderMap();if(typeof renderBox==='function')renderBox();if(typeof publishPlayer==='function')publishPlayer()}
 async function persist(){if(user&&profile){try{await B.save(user.uid,profile)}catch(e){console.warn(e);toast('⚠️ تعذر الحفظ، تحقق من الاتصال')}}}
 let lastLoss=0;
-function recordPlay(gid,s){
+function recordPlay(gid,s,secs){
   const before=stars;const k=activeKid();lastLoss=0;
   if(s===0){lastLoss=Math.min(LOSS,Math.max(0,k?k.stars:guestStars));if(k)k.stars-=lastLoss;else{guestStars-=lastLoss;LS.set('bw_guest',guestStars)}}
-  if(k){k.stars+=s;k.earned=(k.earned??(k.stars-s))+s;k.stats=k.stats||{};const st=k.stats[gid]||{plays:0,best:0};st.plays++;st.best=Math.max(st.best,s);k.stats[gid]=st;persist()}
+  if(k){k.stars+=s;k.earned=(k.earned??(k.stars-s))+s;k.stats=k.stats||{};const st=k.stats[gid]||{plays:0,best:0};st.plays++;if(secs&&(s>st.best||(s===st.best&&s>0&&(!st.bt||secs<st.bt))))st.bt=secs;st.best=Math.max(st.best,s);k.stats[gid]=st;persist()}
   else{guestStars+=s;LS.set('bw_guest',guestStars);LS.set('bw_guest_earned',LS.get('bw_guest_earned',guestStars-s)+s)}
   addWeekXp(s);lastMission=dailyMark(gid,s);
   if(lastMission&&lastMission.finished){addWeekXp(5);if(k){k.stars+=5;k.earned=(k.earned||0)+5;persist()}else{guestStars+=5;LS.set('bw_guest',guestStars);LS.set('bw_guest_earned',LS.get('bw_guest_earned',0)+5)}}
@@ -834,7 +877,7 @@ function dailyMark(gid,s){
 }
 function OWL(){return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
  <path d="M28 44 L33 16 L50 34Z" fill="#6D3FD8"/><path d="M92 44 L87 16 L70 34Z" fill="#6D3FD8"/>
- <ellipse cx="22" cy="80" rx="10" ry="22" fill="#6D3FD8" transform="rotate(15 22 80)"/><ellipse cx="98" cy="80" rx="10" ry="22" fill="#6D3FD8" transform="rotate(-15 98 80)"/>
+ <g class="wl"><ellipse cx="22" cy="80" rx="10" ry="22" fill="#6D3FD8" transform="rotate(15 22 80)"/></g><g class="wr"><ellipse cx="98" cy="80" rx="10" ry="22" fill="#6D3FD8" transform="rotate(-15 98 80)"/></g>
  <ellipse cx="60" cy="72" rx="40" ry="42" fill="#8B5CF6" stroke="#2B2340" stroke-width="2.5"/>
  <ellipse cx="60" cy="86" rx="25" ry="24" fill="#E4D8FF"/><path d="M48 80 q4 4 8 0 M64 80 q4 4 8 0 M56 92 q4 4 8 0" stroke="#B9A3F5" stroke-width="2.5" fill="none" stroke-linecap="round"/>
  <g class="blink"><circle cx="44" cy="56" r="15" fill="#fff" stroke="#2B2340" stroke-width="2.5"/><circle cx="76" cy="56" r="15" fill="#fff" stroke="#2B2340" stroke-width="2.5"/>
@@ -1128,12 +1171,14 @@ function openGame(id){
   const g=GAMES.find(x=>x.id===id);if(!isOpen(g))return openLock(id);
   if(stars<=0){$('#game').classList.remove('show');clearAll();toast('⭐ نفدت نجومك! اشترِ نجومًا لتكمل اللعب');return openBuy(null,50)}
   $('#owlPop').classList.remove('show','talking');clearAll();curId=id;$('#gTitle').textContent=g.emoji+' '+g.name;$('#game').classList.add('show');
+  gameT0=Date.now();$('#buddy').className='buddy';
   ({animals,letters,memory,math,flags,logic,science,code,capitals,puzzle,xo,clock,spelling,simon,islamic,count,shapes,order,opposites,truefalse,riddles,emojiq,whoami,mathriddles,matchpairs,arrange,fillblank})[id]();
+  renderVs();
 }
-$('#gBack').onclick=()=>{clearAll();$('#game').classList.remove('show')};
+$('#gBack').onclick=()=>{clearAll();vsStop();const vb=$('#vsBar');if(vb)vb.remove();$('#game').classList.remove('show')};
 function result(score,total,msg){
   clearAll();const r=score/total,s=r>=.9?3:r>=.6?2:r>=.3?1:0;
-  recordPlay(curId,s);const chLine=challengeResult(s);if(s>=2){confetti();SFX.fanfare();setTimeout(()=>SFX.applause(),350);setTimeout(()=>SFX.sayP(s===3?'win3':'win2'),1200)}else if(s===1){SFX.ok();SFX.sayP('one')}else{SFX.sad();popEmoji('😢',true);setTimeout(()=>SFX.sayP('lose'),2300)}
+  const secs=Math.max(1,Math.round((Date.now()-gameT0)/1000));vsStop();recordPlay(curId,s,secs);const chLine=challengeResult(s,secs);setTimeout(()=>buddy(s>=2?'win':s===0?'cry':'yay'),200);if(s>=2){confetti();SFX.fanfare();setTimeout(()=>SFX.applause(),350);setTimeout(()=>SFX.sayP(s===3?'win3':'win2'),1200)}else if(s===1){SFX.ok();SFX.sayP('one')}else{SFX.sad();popEmoji('😢',true);setTimeout(()=>SFX.sayP('lose'),2300)}
   area.innerHTML=`${s===3?'<img src="img/trophy.png" alt="" style="width:120px;height:120px">':`<div class="resemo">${s===2?'🥳':s===1?'🙂':'😢'}</div>`}<div class="stars">${'⭐'.repeat(s)}${'☆'.repeat(3-s)}</div>
    <h2 style="margin:6px 0">${s===3?'ممتاز! 🏆':s===2?'أحسنت! 👏':s===1?'جيد، حاول مرة أخرى 💪':'لا بأس، جرّب مرة ثانية 🌱'}</h2>
    <div class="q">${msg}<br><small style="color:var(--muted)">${s?`ربحت ${s} ${s===1?'نجمة':'نجوم'}`:`<b style="color:var(--coral)">خسرت ${lastLoss} نجوم</b>`} · رصيدك ${stars} ⭐</small>${stars<=0?`<br><b style="color:var(--coral)">⭐ نفدت نجومك! اشترِ نجومًا لتكمل اللعب</b>`:''}${lastMission?`<br><b style="color:var(--green-d)">✅ مهمة اليوم ${lastMission.n}/${lastMission.total}${lastMission.finished?` · أنجزت كل المهام! +5 ⭐ · 🔥 ${lastMission.streak}`:''}</b>`:''}${lastUnlocked.length?`<br><b style="color:var(--purple)">🎁 فتحت لعبة جديدة: ${lastUnlocked.map(g=>g.emoji+' '+g.name).join('، ')}!</b>`:''}${chLine}</div>
@@ -1722,7 +1767,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-34';
+const APP_VERSION='2026.11.19-35';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
@@ -1758,7 +1803,7 @@ function startInbox(){if(unwatchInbox){try{unwatchInbox()}catch(e){}unwatchInbox
 function updFrBadge(){const n=inbox.filter(m=>!m.read).length,b=document.querySelector('#viewtg [data-view=friends]');if(b)b.innerHTML=`👫 أصدقائي${n?` <span class="nbadge">${n}</span>`:''}`}
 function msgText(m){const g=m.game?GAMES.find(x=>x.id===m.game):null,gn=g?g.name:'';
   if(m.type==='voice'){const v=VMAP[m.key]||VOICES[0];return {icon:v[1],short:v[2],say:`${m.fromName} يَقول: ${v[3]}`}}
-  if(m.type==='challenge')return {icon:'🏆',short:`تحدّاك في «${gn}» (${'⭐'.repeat(m.score)})`,say:`${m.fromName} يَتَحَدّاك!`};
+  if(m.type==='challenge')return {icon:'🏆',short:`تحدّاك في «${gn}» (${'⭐'.repeat(m.score)}${m.time?` في ${fmtS(m.time)}`:''})`,say:`${m.fromName} يَتَحَدّاك!`};
   if(m.type==='result')return {icon:m.outcome==='win'?'🥇':m.outcome==='lose'?'💪':'🤝',short:m.outcome==='win'?`فاز عليك في «${gn}»!`:m.outcome==='lose'?`خسر أمامك في «${gn}»، أنت البطل!`:`تعادل معك في «${gn}»`,say:m.outcome==='lose'?`مَبْروك! فُزْتَ عَلى ${m.fromName}`:`${m.fromName} لَعِبَ تَحَدّيك`};
   if(m.type==='audio')return {icon:'🎤',short:`رسالة صوتية (${m.dur||1} ث)`,say:''};
   if(m.type==='referral')return {icon:'🎉',short:`سجّل بكود دعوتك! +${REF_BONUS} ⭐`,say:`${m.fromName} سَجَّلَ بِكودِ دَعْوَتِك`};
@@ -1856,22 +1901,44 @@ function openVoice(uid){frTarget=friends.find(f=>f.uid===uid);if(!frTarget)retur
 function openDare(uid){frTarget=friends.find(f=>f.uid===uid);if(!frTarget)return;const k=activeKid(),st=k.stats||{};
   const list=GAMES.filter(g=>isOpen(g));
   $('#vTitle').textContent=`🏆 تحدَّ ${frTarget.name}`;
-  $('#vGrid').innerHTML=list.length?list.map(g=>{const b=(st[g.id]||{}).best||0;return `<button class="vbtn" data-g="${g.id}"><span>${g.emoji}</span>${g.name}<small>${b?'⭐'.repeat(b):'العب أولًا'}</small></button>`}).join(''):'<div class="meta">افتح لعبة أولًا لتتحدى أصدقاءك</div>';
+  $('#vGrid').innerHTML=list.length?list.map(g=>{const b=(st[g.id]||{}).best||0;return `<button class="vbtn" data-g="${g.id}"><span>${g.emoji}</span>${g.name}<small>${b?'⭐'.repeat(b)+((st[g.id]||{}).bt?` · ⏱ ${fmtS(st[g.id].bt)}`:''):'العب أولًا'}</small></button>`}).join(''):'<div class="meta">افتح لعبة أولًا لتتحدى أصدقاءك</div>';
   $('#vGrid').querySelectorAll('.vbtn').forEach(b=>b.onclick=async()=>{const g=b.dataset.g,best=(st[g]||{}).best||0;if(!best){hide('vOv');toast('العب هذه اللعبة أولًا لتسجّل نتيجتك');return openGame(g)}
-    try{await sendTo(frTarget,{type:'challenge',game:g,score:best});hide('vOv');toast(`🏆 أرسلت التحدي إلى ${frTarget.name}`);SFX.ok()}catch(e){toast('⚠️ تعذّر الإرسال')}});
+    try{await sendTo(frTarget,{type:'challenge',game:g,score:best,time:(st[g]||{}).bt||0});hide('vOv');toast(`🏆 أرسلت التحدي إلى ${frTarget.name}`);SFX.ok()}catch(e){toast('⚠️ تعذّر الإرسال')}});
   show('vOv')}
 function acceptDare(id){const m=inbox.find(x=>x.id===id);if(!m)return;const g=GAMES.find(x=>x.id===m.game);if(!g)return;
   B.markMsg(m.id,{read:true}).catch(()=>{});
   if(!isOpen(g)){toast(`افتح «${g.name}» أولًا لتقبل التحدي`);return openLock(g.id)}
-  activeChallenge={id:m.id,from:m.from,fromName:m.fromName,game:m.game,score:m.score};openGame(g.id)}
-function challengeResult(s){
-  if(!activeChallenge||activeChallenge.game!==curId)return '';const c=activeChallenge;activeChallenge=null;
-  const out=s>c.score?'lose':s<c.score?'win':'draw';// outcome from the challenger's point of view
-  const f=friends.find(x=>x.uid===c.from);if(f)sendTo(f,{type:'result',game:c.game,score:s,outcome:out}).catch(()=>{});
+  activeChallenge={id:m.id,from:m.from,fromName:m.fromName,avatar:m.fromAvatar,game:m.game,score:m.score,time:m.time||0};openGame(g.id)}
+function challengeResult(s,secs){
+  if(!activeChallenge||activeChallenge.game!==curId)return '';const c=activeChallenge;activeChallenge=null;const vb=$('#vsBar');if(vb)vb.remove();
+  let out=s>c.score?'lose':s<c.score?'win':'draw';// outcome from the challenger's point of view
+  if(out==='draw'&&s>0&&c.time&&secs&&secs!==c.time)out=secs<c.time?'lose':'win';// same stars: the faster player wins
+  const f=friends.find(x=>x.uid===c.from);if(f)sendTo(f,{type:'result',game:c.game,score:s,time:secs,outcome:out}).catch(()=>{});
   B.markMsg(c.id,{done:true,read:true}).catch(()=>{});
-  return `<br><b style="color:var(--pink)">${out==='lose'?`🏆 فزت على ${esc(c.fromName)}!`:out==='win'?`💪 ${esc(c.fromName)} فاز هذه المرة`:`🤝 تعادلت مع ${esc(c.fromName)}`} (${s}⭐ مقابل ${c.score}⭐)</b>`;
+  return `<br><b style="color:var(--pink)">${out==='lose'?`🏆 فزت على ${esc(c.fromName)}!`:out==='win'?`💪 ${esc(c.fromName)} فاز هذه المرة`:`🤝 تعادلت مع ${esc(c.fromName)}`} (${s}⭐ ⏱ ${fmtS(secs)} مقابل ${c.score}⭐${c.time?` ⏱ ${fmtS(c.time)}`:''})</b>`;
 }
 $('#vClose').onclick=()=>hide('vOv');
+// ---- Challenge VS bar (both players at the two sides + live timer)
+let gameT0=0,vsTimer=null;
+const fmtS=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+function vsStop(){if(vsTimer){clearInterval(vsTimer);vsTimer=null}}
+function renderVs(){vsStop();const old=$('#vsBar');if(old)old.remove();const c=activeChallenge;if(!c||c.game!==curId)return;const k=activeKid();
+  const bar=document.createElement('div');bar.id='vsBar';bar.className='vsbar';
+  bar.innerHTML=`<div class="vsp me"><span class="vav">${AV(k?k.avatar:'b1')}</span><div><b>${esc(k?k.name:'أنت')}</b><small id="vsMe">⏱ 0:00</small></div></div>
+   <div class="vsx">VS</div>
+   <div class="vsp op"><div><b>${esc(c.fromName||'صديقك')}</b><small>${'⭐'.repeat(c.score)||'☆'}${c.time?` · ⏱ ${fmtS(c.time)}`:''}</small></div><span class="vav">${AV(c.avatar||'b1')}</span></div>
+   <div class="vsrace"><i id="vsRun"></i>${c.time?'<span class="flag">🏁</span>':''}</div>`;
+  $('#game .gbar').after(bar);
+  vsTimer=setInterval(()=>{const t=Math.floor((Date.now()-gameT0)/1000),el=$('#vsMe');if(!el)return vsStop();el.textContent='⏱ '+fmtS(t);
+    if(c.time){const r=Math.min(100,t/c.time*100);$('#vsRun').style.width=r+'%';el.classList.toggle('late',t>c.time)}},500)}
+// ---- Nabeeh the animated buddy inside games
+function buddy(mood){const b=$('#buddy');if(!b||!$('#game').classList.contains('show'))return;b.classList.remove('yay','oops','win','cry');void b.offsetWidth;b.classList.add(mood);
+  const say={yay:['رائع!','أحسنت!','ممتاز!','👏','🌟'],oops:['أوه!','حاول!','قريب!','💪'],win:['بطل! 🏆','مذهل! 🎉'],cry:['لا بأس 🌱','مرة أخرى! 💪']}[mood];
+  const bb=$('#buddySay');bb.textContent=say[rnd(0,say.length-1)];bb.classList.remove('show');void bb.offsetWidth;bb.classList.add('show');
+  clearTimeout(buddy.t);buddy.t=setTimeout(()=>b.classList.remove('yay','oops'),1100)}
+(()=>{const _ok=SFX.ok,_no=SFX.no;SFX.ok=function(...a){buddy('yay');return _ok.apply(this,a)};SFX.no=function(...a){buddy('oops');return _no.apply(this,a)}})();
+$('#buddy').innerHTML=OWL();
+
 // ---- Recorded voice notes between friends (max 15s, stored inline, auto-deleted after 3 days)
 const REC_MAX=15;let rec=null,recChunks=[],recBlob=null,recUrl='',recData='',recSecs=0,recTimer=null,recStream=null,curAudio=null;
 function recMime(){const c=['audio/webm;codecs=opus','audio/mp4','audio/webm','audio/ogg;codecs=opus'];try{return c.find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported(t))||''}catch(e){return ''}}
