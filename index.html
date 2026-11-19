@@ -408,6 +408,28 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .pkeq{font-size:21px;color:#FFE27A}.pkeq b{color:#FFC72C}
 .pkbtns{direction:ltr;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;width:100%;max-width:460px;min-height:62px}
 .pkbtn{display:flex;flex-direction:column;align-items:center;padding:8px 4px;font-size:12px;background:#14224f;color:#fff;box-shadow:0 4px 0 #0a1230}.pkbtn b{font-size:15px;line-height:1.3;color:#FFC72C;margin-top:2px}
+.seasonhd{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#3B1E6E,#C2185B 70%,#FF8A00);color:#fff;border-radius:22px;padding:14px 18px;margin-bottom:10px}
+.seasonhd h3{margin:2px 0;font-size:22px}.seasonhd .meta{color:#FFE3F0}.seasonhd small{opacity:.85}.sbig{font-size:46px;animation:chest 2.4s ease-in-out infinite}
+.muted{font-size:12px;color:var(--muted);font-weight:500}
+.sbar{height:12px;background:var(--line);border-radius:8px;overflow:hidden;margin:6px 0 10px}.sbar i{display:block;height:100%;background:linear-gradient(90deg,#FFC72C,#FF6FA8);border-radius:8px;transition:width .6s}
+.tiers{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}.tier{position:relative;flex:0 0 74px;border:2px solid var(--line);background:#fff;border-radius:16px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--ink)}
+.tier .tn{font-size:11px;color:var(--muted);font-weight:800}.tier .ti{height:34px;display:grid;place-items:center;font-size:18px}.tier small{font-size:10px}.tier em{position:absolute;top:-8px;font-style:normal;font-size:9px;background:#C2185B;color:#fff;border-radius:6px;padding:1px 5px}
+.tier.can{border-color:#FFC72C;background:#FFF7D6;animation:okb 1.2s infinite}.tier.got{opacity:.55;background:#EAFBF0;border-color:#22C55E}
+.tegg svg{width:28px;height:34px;display:block}.eggshop .tegg svg{width:36px;height:44px}
+.eggrow{display:flex;gap:12px;align-items:center}.eggbig svg{width:86px;height:104px;display:block}.eggbig.ready{animation:wob 1.6s ease-in-out infinite}
+.eggshop{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.mongrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.moncard{position:relative;border:2px solid var(--line);background:#fff;border-radius:16px;padding:6px 4px 8px;display:flex;flex-direction:column;align-items:center;color:var(--ink)}
+.moncard b{font-size:13px}.moncard small{font-size:10px;color:var(--rc,var(--muted));font-weight:800}.moncard .msvg svg{width:76px;height:84px;display:block}
+.moncard .msvg.q{width:76px;height:84px;display:grid;place-items:center;font-size:40px;color:#C3CBDB;font-weight:900;background:#F1F4F9;border-radius:50%}
+.moncard.locked{opacity:.7}.moncard.lv2{border-color:var(--rc)}.moncard.lv3{border-color:#E0A51E;box-shadow:0 0 14px rgba(224,165,30,.55);background:linear-gradient(#fff,#FFF7DA)}
+.moncard.comp{outline:3px solid #22C55E}.moncard em{position:absolute;top:4px;right:4px;font-style:normal;font-size:9px;background:#22C55E;color:#fff;border-radius:6px;padding:1px 5px}
+.moncard:not(.locked) .msvg{animation:bob 2.2s ease-in-out infinite}
+#hatchBox{text-align:center;position:relative;overflow:hidden;padding-top:6px}.hegg svg{width:150px;height:180px}.hegg.wob{animation:hwob .35s ease-in-out infinite}@keyframes hwob{25%{transform:rotate(-9deg)}75%{transform:rotate(9deg)}}
+.hmsg{font-weight:800;font-size:18px;margin-top:6px}.hmon svg{width:190px;height:205px}.hmon.pop{animation:hpop .7s cubic-bezier(.3,1.7,.5,1) both}@keyframes hpop{from{transform:scale(0) rotate(-20deg)}}
+.hrays{position:absolute;left:50%;top:100px;width:420px;height:420px;margin:-210px 0 0 -210px;background:repeating-conic-gradient(from 0deg,var(--rc) 0 10deg,transparent 10deg 24deg);opacity:.25;animation:spin 8s linear infinite;border-radius:50%;z-index:-1}@keyframes spin{to{transform:rotate(1turn)}}
+.hrar{display:inline-block;color:#fff;border-radius:10px;padding:2px 12px;font-weight:800;font-size:13px;margin-top:4px}#hatchBox h2{margin:6px 0 2px}
+.buddy .spring{animation:sprg .6s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:bottom}@keyframes sprg{to{transform:scaleY(.85) rotate(4deg)}}
+.buddy.yay .marms,.buddy.win .marms{animation:marm .25s ease-in-out 4;transform-box:fill-box;transform-origin:center}@keyframes marm{50%{transform:translateY(-10px)}}
 .toast{position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -447,11 +469,12 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
   <section id="daily" style="padding-bottom:0"><div class="daily" id="dailyBox"></div></section>
 
   <section id="games">
-    <div class="viewtg" id="viewtg"><button data-view="map" class="on">🗺️ الخريطة</button><button data-view="list">📋 الكل</button><button data-view="box">🎁 الصندوق</button><button data-view="shop">🛍️ المتجر</button><button data-view="friends">👫 أصدقائي</button></div>
+    <div class="viewtg" id="viewtg"><button data-view="map" class="on">🗺️ الخريطة</button><button data-view="list">📋 الكل</button><button data-view="box">🎁 الصندوق</button><button data-view="shop">🛍️ المتجر</button><button data-view="mons">🐲 وحوشي</button><button data-view="friends">👫 أصدقائي</button></div>
     <div id="mapView"></div>
     <div id="friendsView" style="display:none"></div>
     <div id="boxView" style="display:none"></div>
     <div id="shopView" style="display:none"></div>
+    <div id="monsView" style="display:none"></div>
     <div class="sec-head" id="listHead">
       <div><h2>🎮 كل الألعاب</h2><p>ألعاب جديدة تُضاف باستمرار</p></div>
       <div class="tabs" id="tabs">
@@ -485,6 +508,9 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 </main>
 
 <footer><div class="footbtns"><button id="shareBtn">📤 شارك الموقع مع أصدقائك</button><button id="instBtn">📲 ثبّت التطبيق</button></div>بوابة الذكاء © 2026 — ألعاب تعليمية عربية<br><small style="opacity:.6" id="footVer"></small></footer>
+
+<!-- Hatch -->
+<div class="ov" id="hatchOv"><div class="modal" id="hatchBox"></div></div>
 
 <!-- Install help -->
 <div class="ov" id="instOv"><div class="modal" style="text-align:center">
@@ -851,7 +877,7 @@ const AV=k=>KID(KIDS[k]?k:'b1');
 
 const AVATARS=['b1','b2','b3','b4','b5','g1','g2','g3','g4','g5'];
 function activeKid(){return profile&&profile.kids.find(k=>k.id===kidId)||null}
-function sync(){owned=new Set(profile?profile.owned||[]:LS.get('bw_guest_owned',[]));const k=activeKid();stars=k?k.stars:guestStars;earned=k?(k.earned??k.stars):LS.get('bw_guest_earned',guestStars);renderHeader();render();renderDaily();if(typeof renderMap==='function')renderMap();if(typeof renderBox==='function')renderBox();if(typeof renderShop==='function'&&view==='shop')renderShop();if(typeof publishPlayer==='function')publishPlayer()}
+function sync(){owned=new Set(profile?profile.owned||[]:LS.get('bw_guest_owned',[]));const k=activeKid();stars=k?k.stars:guestStars;earned=k?(k.earned??k.stars):LS.get('bw_guest_earned',guestStars);renderHeader();render();renderDaily();if(typeof renderMap==='function')renderMap();if(typeof renderBox==='function')renderBox();if(typeof renderShop==='function'&&view==='shop')renderShop();if(typeof renderMons==='function'&&view==='mons')renderMons();if(typeof updMonBadge==='function')updMonBadge();if(typeof publishPlayer==='function')publishPlayer()}
 async function persist(){if(user&&profile){try{await B.save(user.uid,profile)}catch(e){console.warn(e);toast('⚠️ تعذر الحفظ، تحقق من الاتصال')}}}
 let lastLoss=0;
 function recordPlay(gid,s,secs){
@@ -1196,14 +1222,14 @@ function openGame(id){
   const g=GAMES.find(x=>x.id===id);if(!isOpen(g))return openLock(id);
   if(stars<=0){$('#game').classList.remove('show');clearAll();toast('⭐ نفدت نجومك! اشترِ نجومًا لتكمل اللعب');return openBuy(null,50)}
   $('#owlPop').classList.remove('show','talking');clearAll();curId=id;$('#gTitle').textContent=g.emoji+' '+g.name;$('#game').classList.add('show');
-  gameT0=Date.now();$('#buddy').className='buddy';$('#buddy').style.display='';
+  gameT0=Date.now();$('#buddy').className='buddy';$('#buddy').style.display='';$('#buddy').innerHTML=companionSVG();
   ({animals,letters,memory,math,flags,logic,science,code,capitals,puzzle,xo,clock,spelling,simon,islamic,count,shapes,order,opposites,truefalse,riddles,emojiq,whoami,mathriddles,matchpairs,arrange,fillblank,race,penalty})[id]();
   renderVs();
 }
 $('#gBack').onclick=()=>{clearAll();vsStop();const vb=$('#vsBar');if(vb)vb.remove();$('#game').classList.remove('show')};
 function result(score,total,msg){
   clearAll();const r=score/total,s=r>=.9?3:r>=.6?2:r>=.3?1:0;
-  const secs=Math.max(1,Math.round((Date.now()-gameT0)/1000));vsStop();recordPlay(curId,s,secs);const chLine=challengeResult(s,secs);setTimeout(()=>buddy(s>=2?'win':s===0?'cry':'yay'),200);if(s>=2){confetti();SFX.fanfare();setTimeout(()=>SFX.applause(),350);setTimeout(()=>SFX.sayP(s===3?'win3':'win2'),1200)}else if(s===1){SFX.ok();SFX.sayP('one')}else{SFX.sad();popEmoji('😢',true);setTimeout(()=>SFX.sayP('lose'),2300)}
+  const secs=Math.max(1,Math.round((Date.now()-gameT0)/1000));vsStop();recordPlay(curId,s,secs);const chLine=challengeResult(s,secs)+eggEnergy(s);setTimeout(()=>buddy(s>=2?'win':s===0?'cry':'yay'),200);if(s>=2){confetti();SFX.fanfare();setTimeout(()=>SFX.applause(),350);setTimeout(()=>SFX.sayP(s===3?'win3':'win2'),1200)}else if(s===1){SFX.ok();SFX.sayP('one')}else{SFX.sad();popEmoji('😢',true);setTimeout(()=>SFX.sayP('lose'),2300)}
   area.innerHTML=`${s===3?'<img src="img/trophy.png" alt="" style="width:120px;height:120px">':`<div class="resemo">${s===2?'🥳':s===1?'🙂':'😢'}</div>`}<div class="stars">${'⭐'.repeat(s)}${'☆'.repeat(3-s)}</div>
    <h2 style="margin:6px 0">${s===3?'ممتاز! 🏆':s===2?'أحسنت! 👏':s===1?'جيد، حاول مرة أخرى 💪':'لا بأس، جرّب مرة ثانية 🌱'}</h2>
    <div class="q">${msg}<br><small style="color:var(--muted)">${s?`ربحت ${s} ${s===1?'نجمة':'نجوم'}`:`<b style="color:var(--coral)">خسرت ${lastLoss} نجوم</b>`} · رصيدك ${stars} ⭐</small>${stars<=0?`<br><b style="color:var(--coral)">⭐ نفدت نجومك! اشترِ نجومًا لتكمل اللعب</b>`:''}${lastMission?`<br><b style="color:var(--green-d)">✅ مهمة اليوم ${lastMission.n}/${lastMission.total}${lastMission.finished?` · أنجزت كل المهام! +5 ⭐ · 🔥 ${lastMission.streak}`:''}</b>`:''}${lastUnlocked.length?`<br><b style="color:var(--purple)">🎁 فتحت لعبة جديدة: ${lastUnlocked.map(g=>g.emoji+' '+g.name).join('، ')}!</b>`:''}${chLine}</div>
@@ -1628,7 +1654,7 @@ const ZONES=[
  {min:70,max:1e9,name:'🚀 مدينة الفضاء',sub:'آخر محطة للأبطال!',bg:'linear-gradient(180deg,#E4DBFF,#F2EDFF)',path:'#8B5CF6',deco:['🪐','⭐','🛸','🌙']}];
 let view=LS.get('bw_view','map');
 function setView(v){view=v;LS.set('bw_view',v);document.querySelectorAll('#viewtg button').forEach(b=>b.classList.toggle('on',b.dataset.view===v));
-  $('#mapView').style.display=v==='map'?'block':'none';$('#friendsView').style.display=v==='friends'?'block':'none';$('#boxView').style.display=v==='box'?'block':'none';if(v==='box')renderBox();$('#shopView').style.display=v==='shop'?'block':'none';if(v==='shop'){shopPend=null;renderShop()}$('#listHead').style.display=$('#grid').style.display=v==='list'?'':'none';if(v==='map')renderMap();if(v==='friends'){renderFriends();if(user){loadFriends();loadLeague()}}updFrBadge()}
+  $('#mapView').style.display=v==='map'?'block':'none';$('#friendsView').style.display=v==='friends'?'block':'none';$('#boxView').style.display=v==='box'?'block':'none';if(v==='box')renderBox();$('#shopView').style.display=v==='shop'?'block':'none';$('#monsView').style.display=v==='mons'?'block':'none';if(v==='mons'){shopPend=null;renderMons()}if(v==='shop'){shopPend=null;renderShop()}$('#listHead').style.display=$('#grid').style.display=v==='list'?'':'none';if(v==='map')renderMap();if(v==='friends'){renderFriends();if(user){loadFriends();loadLeague()}}updFrBadge()}
 document.querySelectorAll('#viewtg button').forEach(b=>b.onclick=()=>setView(b.dataset.view));
 
 // ---- Treasure box games (not on the map)
@@ -1849,7 +1875,8 @@ const KITS={k_basic:{p:'solid',c1:'#F5F7FA',c2:'#F5F7FA',trim:'#1F2A44',short:'#
  k_sky:{p:'hoops',c1:'#6EC6FF',c2:'#0B2A55',trim:'#0B2A55',short:'#0B2A55',sock:'#6EC6FF',num:'#FFFFFF'},
  k_night:{p:'solid',c1:'#16181F',c2:'#16181F',trim:'#E3B341',short:'#16181F',sock:'#16181F',num:'#E3B341'},
  k_halves:{p:'halves',c1:'#7B2FBF',c2:'#FF8A00',trim:'#FFFFFF',short:'#7B2FBF',sock:'#FF8A00',num:'#FFFFFF'},
- k_legend:{p:'sash',c1:'#FFFFFF',c2:'#D4A017',trim:'#D4A017',short:'#FFFFFF',sock:'#FFFFFF',num:'#B8860B',gold:true}};
+ k_legend:{p:'sash',c1:'#FFFFFF',c2:'#D4A017',trim:'#D4A017',short:'#FFFFFF',sock:'#FFFFFF',num:'#B8860B',gold:true},
+ k_season:{p:'hoops',c1:'#00C2A8',c2:'#0B2A55',trim:'#FFC72C',short:'#0B2A55',sock:'#00C2A8',num:'#FFC72C',gold:true}};
 const GK_KITS={me:{p:'solid',c1:'#22C55E',c2:'#22C55E',trim:'#0B3D1E',short:'#0B3D1E',sock:'#22C55E',num:'#0B3D1E'},op:{p:'solid',c1:'#2B2F3A',c2:'#2B2F3A',trim:'#FF4FA3',short:'#2B2F3A',sock:'#2B2F3A',num:'#FF4FA3'}};
 const BOOTS={b_black:'#1B1B22',b_red:'#E11D48',b_gold:'#D4A017',b_neon:'#3CFF6B'};
 function kitCss(k){if(!k)return '#ccc';return k.p==='stripes'?`repeating-linear-gradient(90deg,${k.c1} 0 7px,${k.c2} 7px 14px)`:k.p==='hoops'?`repeating-linear-gradient(0deg,${k.c1} 0 6px,${k.c2} 6px 12px)`:k.p==='sash'?`linear-gradient(135deg,${k.c1} 38%,${k.c2} 38% 58%,${k.c1} 58%)`:k.p==='halves'?`linear-gradient(90deg,${k.c1} 50%,${k.c2} 50%)`:k.p==='sleeves'?`linear-gradient(90deg,${k.c2} 22%,${k.c1} 22% 78%,${k.c2} 78%)`:k.c1}
@@ -1901,6 +1928,104 @@ function drawPlayer(c,x,y,s,kit,o={}){kit=kit||KITS.k_basic;const skin=o.skin||'
     c.strokeStyle=sh(skin,.6);c.lineWidth=s*.008;c.beginPath();c.arc(0,hy+hr*.32,hr*.28,.2,Math.PI-.2);c.stroke()}
   if(o.label){c.font=`bold ${Math.max(10,s*.065)}px Tajawal,sans-serif`;const tw=c.measureText(o.label).width+12;c.fillStyle='rgba(0,0,0,.55)';const ly=hy-hr-s*.1;c.beginPath();c.roundRect?c.roundRect(-tw/2,ly,tw,s*.075+4,6):c.rect(-tw/2,ly,tw,s*.075+4);c.fill();c.fillStyle='#fff';c.textAlign='center';c.fillText(o.label,0,ly+s*.065)}
   c.restore()}
+// ---- Phase 3: knowledge monsters (collectible felt creatures) + monthly seasons
+function feltDefs(id){return `<defs><filter id="fz${id}" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="${id}" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" result="d"/><feTurbulence type="fractalNoise" baseFrequency="2.4" numOctaves="1" seed="${id+7}" result="f"/><feColorMatrix in="f" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0" result="fa"/><feComposite in="fa" in2="d" operator="in" result="fib"/><feBlend in="d" in2="fib" mode="multiply"/></filter>
+ <radialGradient id="vol${id}" cx="38%" cy="30%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></radialGradient><filter id="sh${id}"><feGaussianBlur stdDeviation="4"/></filter></defs>`}
+function monsterSVG(sp,uid){const id=(sp.seed*7+(uid||0))%9000+10,[c,cd]=sp.pal,eyes=sp.eyes,mouth=sp.mouth,top=sp.top,acc=sp.acc,w=62,h=70,cx=100,cy=112;
+ const st='stroke="#fff" stroke-opacity=".75" stroke-width="2.2" stroke-dasharray="4 4" fill="none" stroke-linecap="round"';
+ let s=`<svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">${feltDefs(id)}<ellipse cx="100" cy="204" rx="${w*.9}" ry="9" fill="#000" opacity=".22" filter="url(#sh${id})"/>`;
+ if(top==='horns')s+=`<g filter="url(#fz${id})"><path d="M${cx-30} ${cy-h+18} q-14 -30 4 -42 q2 22 14 34z" fill="#FFF1D6"/><path d="M${cx+30} ${cy-h+18} q14 -30 -4 -42 q-2 22 -14 34z" fill="#FFF1D6"/></g>`;
+ if(top==='ears')s+=`<g filter="url(#fz${id})"><ellipse cx="${cx-34}" cy="${cy-h+12}" rx="14" ry="22" fill="${cd}" transform="rotate(-25 ${cx-34} ${cy-h+12})"/><ellipse cx="${cx+34}" cy="${cy-h+12}" rx="14" ry="22" fill="${cd}" transform="rotate(25 ${cx+34} ${cy-h+12})"/><ellipse cx="${cx-34}" cy="${cy-h+14}" rx="7" ry="13" fill="#FFB3C7" transform="rotate(-25 ${cx-34} ${cy-h+14})"/><ellipse cx="${cx+34}" cy="${cy-h+14}" rx="7" ry="13" fill="#FFB3C7" transform="rotate(25 ${cx+34} ${cy-h+14})"/></g>`;
+ if(top==='springs')[[-24,'#FFC93C'],[0,'#FF8A3D'],[24,'#FFC93C']].forEach(([dx,col],i)=>{const y0=cy-h+6,y1=y0-34-(i===1?8:0);s+=`<g class="spring"><path d="M${cx+dx} ${y0} q6 -5 0 -9 q-6 -5 0 -9 q6 -5 0 -9 q-6 -4 0 -${y0-y1-27}" stroke="#9AA3B5" stroke-width="1.6" fill="none"/><g filter="url(#fz${id})"><path d="M${cx+dx} ${y1-11} l3.5 7.5 8 1 -6 5.5 1.6 8 -7.1 -4 -7.1 4 1.6 -8 -6 -5.5 8 -1z" fill="${col}"/></g></g>`});
+ if(top==='antenna')s+=`<path d="M${cx} ${cy-h+4} q4 -20 -6 -32" stroke="${cd}" stroke-width="4" fill="none"/><g filter="url(#fz${id})"><circle cx="${cx-6}" cy="${cy-h-30}" r="9" fill="#FFC93C"/></g>`;
+ if(top==='crown')s+=`<g filter="url(#fz${id})"><path d="M${cx-22} ${cy-h+12} l0 -22 11 12 11 -18 11 18 11 -12 0 22z" fill="#FFC93C"/></g><circle cx="${cx}" cy="${cy-h-2}" r="3" fill="#F0506E"/>`;
+ const body=`M${cx} ${cy-h} C${cx+w*1.05} ${cy-h} ${cx+w*1.08} ${cy+h*.95} ${cx} ${cy+h} C${cx-w*1.08} ${cy+h*.95} ${cx-w*1.05} ${cy-h} ${cx} ${cy-h}Z`;
+ s+=`<g class="marms" filter="url(#fz${id})"><ellipse cx="${cx-w+4}" cy="${cy+18}" rx="13" ry="24" fill="${cd}" transform="rotate(30 ${cx-w+4} ${cy+18})"/><ellipse cx="${cx+w-4}" cy="${cy+18}" rx="13" ry="24" fill="${cd}" transform="rotate(-30 ${cx+w-4} ${cy+18})"/></g>
+  <g filter="url(#fz${id})"><ellipse cx="${cx-24}" cy="${cy+h-4}" rx="19" ry="11" fill="${cd}"/><ellipse cx="${cx+24}" cy="${cy+h-4}" rx="19" ry="11" fill="${cd}"/><path d="${body}" fill="${c}"/></g><path d="${body}" fill="url(#vol${id})"/><path d="M${cx} ${cy-h+4} q-2 ${h*.5} 0 ${h*.6}" stroke="${cd}" stroke-width="1.5" fill="none" opacity=".6"/>`;
+ const ey=cy-h*.18,ex=w*.36;
+ const eye=x=>{if(eyes==='x')return `<g filter="url(#fz${id})"><path d="M${x-11} ${ey-11} l22 22 M${x+11} ${ey-11} l-22 22" stroke="#D8283A" stroke-width="11" stroke-linecap="round"/><path d="M${x-11} ${ey-11} l22 22 M${x+11} ${ey-11} l-22 22" stroke="#fff" stroke-width="6" stroke-linecap="round"/></g>`;
+  if(eyes==='button')return `<circle cx="${x}" cy="${ey}" r="11" fill="#20202C"/><circle cx="${x}" cy="${ey}" r="8" fill="none" stroke="#3A3A4C" stroke-width="1.5"/><circle cx="${x-2.5}" cy="${ey-2.5}" r="1.6" fill="#888"/><circle cx="${x+2.5}" cy="${ey-2.5}" r="1.6" fill="#888"/><circle cx="${x-2.5}" cy="${ey+2.5}" r="1.6" fill="#888"/><circle cx="${x+2.5}" cy="${ey+2.5}" r="1.6" fill="#888"/><circle cx="${x-4}" cy="${ey-5}" r="2.5" fill="#fff" opacity=".6"/>`;
+  if(eyes==='sleepy')return `<g filter="url(#fz${id})"><path d="M${x-12} ${ey} q12 10 24 0" stroke="#20202C" stroke-width="5" fill="none" stroke-linecap="round"/></g>`;
+  if(eyes==='star')return `<g filter="url(#fz${id})"><circle cx="${x}" cy="${ey}" r="14" fill="#fff"/><path d="M${x} ${ey-9} l2.6 5.6 6 .8 -4.5 4.2 1.2 6 -5.3 -3 -5.3 3 1.2 -6 -4.5 -4.2 6 -.8z" fill="#FFB800"/></g>`;
+  return `<g class="meye"><g filter="url(#fz${id})"><circle cx="${x}" cy="${ey}" r="14" fill="#fff"/><circle cx="${x+2}" cy="${ey+2}" r="7" fill="#20202C"/></g><circle cx="${x+4}" cy="${ey-1}" r="2.2" fill="#fff"/><circle cx="${x}" cy="${ey}" r="14" ${st} stroke-width="1.4" stroke="#C9C9D6"/></g>`};
+ s+=eye(cx-ex)+eye(cx+ex);const my=cy+h*.22;
+ if(mouth==='open'||eyes==='x')s+=`<g filter="url(#fz${id})"><path d="M${cx-24} ${my-6} q24 -10 48 0 q-4 30 -24 30 q-20 0 -24 -30z" fill="#1B1B24"/><path d="M${cx-16} ${my+12} q16 -10 32 0 q-6 10 -16 10 q-10 0 -16 -10z" fill="#E0394E"/><path d="M${cx-20} ${my-5} q20 -6 40 0 l-2 6 q-18 -4 -36 0z" fill="#fff"/></g>`;
+ else if(mouth==='teeth')s+=`<g filter="url(#fz${id})"><path d="M${cx-22} ${my-4} q22 22 44 0z" fill="#1B1B24"/><path d="M${cx-12} ${my-3} l5 8 5 -8z M${cx+2} ${my-3} l5 8 5 -8z" fill="#fff"/></g>`;
+ else if(mouth==='o')s+=`<g filter="url(#fz${id})"><ellipse cx="${cx}" cy="${my+2}" rx="9" ry="11" fill="#1B1B24"/><ellipse cx="${cx}" cy="${my+6}" rx="5" ry="4" fill="#E0394E"/></g>`;
+ else s+=`<g filter="url(#fz${id})"><path d="M${cx-18} ${my-4} q18 18 36 0" stroke="#1B1B24" stroke-width="6" fill="none" stroke-linecap="round"/></g>`;
+ s+=`<ellipse cx="${cx-ex-8}" cy="${my-8}" rx="8" ry="5" fill="#FF7FA0" opacity=".45"/><ellipse cx="${cx+ex+8}" cy="${my-8}" rx="8" ry="5" fill="#FF7FA0" opacity=".45"/><path d="M${cx-w*.55} ${cy+h*.45} q${w*.55} ${h*.35} ${w*1.1} 0" ${st}/>`;
+ if(acc==='headphones')s+=`<path d="M${cx-w*.92} ${ey+6} C${cx-w*.9} ${cy-h-14} ${cx+w*.9} ${cy-h-14} ${cx+w*.92} ${ey+6}" stroke="#3B3F6B" stroke-width="7" fill="none"/><g filter="url(#fz${id})"><rect x="${cx-w-6}" y="${ey-6}" width="18" height="30" rx="8" fill="#3B3F6B"/><rect x="${cx+w-12}" y="${ey-6}" width="18" height="30" rx="8" fill="#3B3F6B"/></g>`;
+ if(acc==='scarf')s+=`<g filter="url(#fz${id})"><path d="M${cx-w*.78} ${cy+h*.32} q${w*.78} 16 ${w*1.56} 0 l-2 14 q-${w*.76} 14 -${w*1.52} 0z" fill="#F0506E"/><path d="M${cx+14} ${cy+h*.46} l8 34 14 -4 -6 -32z" fill="#F0506E"/></g><path d="M${cx-w*.7} ${cy+h*.4} q${w*.7} 13 ${w*1.4} 0" ${st}/>`;
+ if(acc==='pad')s+=`<g filter="url(#fz${id})"><rect x="${cx-26}" y="${cy+h*.38}" width="52" height="24" rx="12" fill="#6B6F80"/></g><circle cx="${cx-14}" cy="${cy+h*.38+12}" r="4" fill="#2A2A36"/><circle cx="${cx+12}" cy="${cy+h*.38+9}" r="2.6" fill="#FFC93C"/><circle cx="${cx+18}" cy="${cy+h*.38+14}" r="2.6" fill="#3DA5FF"/><circle cx="${cx+6}" cy="${cy+h*.38+14}" r="2.6" fill="#F0506E"/><circle cx="${cx+12}" cy="${cy+h*.38+19}" r="2.6" fill="#8CC63F"/>`;
+ if(acc==='book')s+=`<g filter="url(#fz${id})"><path d="M${cx-24} ${cy+h*.36} l24 6 24 -6 v24 l-24 6 -24 -6z" fill="#FFF6E0"/></g><path d="M${cx} ${cy+h*.36+6} v24" stroke="#C9A36B" stroke-width="2"/>`;
+ return s+'</svg>'}
+const MONS=[
+ {id:'m_zaghlool',n:'زغلول',r:1,d:'يحب الحروف ويغني الأبجدية',seed:1,pal:['#3DA5FF','#2A82D6'],eyes:'felt',mouth:'smile',top:'ears',acc:'none'},
+ {id:'m_faqqous',n:'فقّوس',r:1,d:'نعسان لكنه يعرف كل النباتات',seed:2,pal:['#8CC63F','#6A9E2B'],eyes:'sleepy',mouth:'o',top:'antenna',acc:'none'},
+ {id:'m_battout',n:'بطّوط',r:1,d:'دافئ ويحب الشتاء والقصص',seed:3,pal:['#FF8A3D','#D9682A'],eyes:'button',mouth:'smile',top:'ears',acc:'scarf'},
+ {id:'m_shaloul',n:'شعلول',r:1,d:'سريع كالبرق في السباقات',seed:4,pal:['#FFC93C','#E0A51E'],eyes:'felt',mouth:'teeth',top:'horns',acc:'none'},
+ {id:'m_dodo',n:'دودو',r:1,d:'يعشق البحار والأسماك',seed:5,pal:['#2FB8A6','#1E8C7E'],eyes:'felt',mouth:'open',top:'none',acc:'none'},
+ {id:'m_lulu',n:'لؤلؤ',r:1,d:'تحب الرسم والألوان',seed:6,pal:['#F06AA0','#C94B80'],eyes:'button',mouth:'smile',top:'ears',acc:'none'},
+ {id:'m_raqqoum',n:'رقّوم',r:2,d:'نوابضه أرقام تقفز من الفرح',seed:7,pal:['#7A6FF0','#5A4FD0'],eyes:'felt',mouth:'open',top:'springs',acc:'none'},
+ {id:'m_harfoush',n:'حرفوش',r:2,d:'يقرأ كتابًا كل يوم',seed:8,pal:['#3D7BFF','#2A5FD6'],eyes:'button',mouth:'smile',top:'horns',acc:'book'},
+ {id:'m_kawkab',n:'كوكب',r:2,d:'عالم فضاء يلتقط الإشارات',seed:9,pal:['#22C55E','#15803D'],eyes:'star',mouth:'o',top:'antenna',acc:'headphones'},
+ {id:'m_dawwakh',n:'دوّاخ',r:2,d:'لاعب محترف لكنه يدوخ أحيانًا!',seed:10,pal:['#5B5BB8','#3E3E92'],eyes:'x',mouth:'open',top:'springs',acc:'pad'},
+ {id:'m_thahboon',n:'الملك ذهبون',r:3,d:'ملك الوحوش، لا يظهر إلا للأبطال',seed:11,pal:['#FFC93C','#D9A21E'],eyes:'star',mouth:'open',top:'crown',acc:'none'},
+ {id:'m_najmoon',n:'نجمون',r:3,d:'نجمة الحفلات وصاحبة الإيقاع',seed:12,pal:['#FF5FA8','#D63F86'],eyes:'star',mouth:'smile',top:'crown',acc:'headphones'}];
+const MON=Object.fromEntries(MONS.map(m=>[m.id,m])),RAR=['','عادي','نادر','أسطوري'],RARC=['','#7C8DB5','#7A4FF0','#E0A51E'];
+const EGG_NEED=8,EGGS={egg:{n:'بيضة',w:[70,25,5],p:30,col:['#FFF3D6','#F5C96B']},rare:{n:'بيضة نادرة',w:[45,45,10],p:80,col:['#E9DEFF','#9C7BFF']},legend:{n:'بيضة أسطورية',w:[0,60,40],p:200,col:['#FFF1A8','#E9B92F']}};
+function monData(){const k=activeKid(),d=k?(k.mon||(k.mon={})):LS.get('bw_guest_mon',{});d.c=d.c||{};d.eggs=d.eggs||[];d.e=d.e||0;return d}
+function monSave(d){const k=activeKid();if(k){k.mon=d;persist()}else LS.set('bw_guest_mon',d)}
+const monLvl=n=>n>=5?3:n>=2?2:1;
+function eggSVG(t,cr=0){const [a,b]=EGGS[t].col;return `<svg viewBox="0 0 120 150" xmlns="http://www.w3.org/2000/svg">${feltDefs(77)}<ellipse cx="60" cy="142" rx="34" ry="6" fill="#000" opacity=".18"/>
+  <g filter="url(#fz77)"><path d="M60 8 C95 8 106 70 106 92 C106 122 86 140 60 140 C34 140 14 122 14 92 C14 70 25 8 60 8Z" fill="${a}"/><circle cx="42" cy="70" r="9" fill="${b}"/><circle cx="76" cy="52" r="7" fill="${b}"/><circle cx="72" cy="104" r="11" fill="${b}"/><circle cx="40" cy="112" r="6" fill="${b}"/></g>
+  <path d="M60 8 C95 8 106 70 106 92 C106 122 86 140 60 140 C34 140 14 122 14 92 C14 70 25 8 60 8Z" fill="url(#vol77)"/>${cr?`<path d="M22 78 l14 -10 10 12 12 -14 12 12 12 -12 10 10 12 -8" stroke="#3a2b10" stroke-width="3.5" fill="none" stroke-linejoin="round"/>`:''}</svg>`}
+function rollMon(t){const w=EGGS[t].w,r=Math.random()*100,rar=r<w[0]?1:r<w[0]+w[1]?2:3,list=MONS.filter(m=>m.r===rar);return list[rnd(0,list.length-1)]}
+function eggEnergy(s){if(s<=0)return '';const d=monData(),before=d.e;d.e+=s;let line=`🥚 طاقة البيضة +${s} (${Math.min(d.e,EGG_NEED)}/${EGG_NEED})`;
+  if(d.e>=EGG_NEED){d.e-=EGG_NEED;d.eggs.push('egg');line='🥚✨ بيضتك جاهزة للفقس! افتح «وحوشي»';setTimeout(()=>toast('🥚 لديك بيضة جاهزة للفقس!'),1200)}monSave(d);updMonBadge();
+  return `<br><b style="color:#B07A00">${line}</b>`}
+function updMonBadge(){const n=monData().eggs.length,b=document.querySelector('#viewtg [data-view=mons]');if(b)b.innerHTML=`🐲 وحوشي${n?` <span class="nbadge">${n}</span>`:''}`}
+// season
+const seasonId=()=>{const d=new Date(Date.now()+3*36e5);return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')};
+const MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const TIERS=[[10,'stars',5],[25,'egg','egg'],[45,'stars',10],[70,'egg','egg'],[100,'item','k_season'],[140,'stars',15],[190,'egg','rare'],[250,'item','p_season'],[320,'stars',25],[400,'egg','legend']];
+function season(){const d=monData();if(!d.s||d.s.id!==seasonId())d.s={id:seasonId(),xp:0,cl:[]};return d}
+function addSeasonXp(n){if(n<=0)return;const d=season();d.s.xp+=n;monSave(d)}
+function claimTier(i){const d=season(),[need,type,val]=TIERS[i];if(d.s.xp<need||d.s.cl.includes(i))return;d.s.cl.push(i);
+  if(type==='stars'){const k=activeKid();if(k)k.stars+=val;else{guestStars+=val;LS.set('bw_guest',guestStars)}toast(`🎁 +${val} ⭐`)}
+  if(type==='egg'){d.eggs.push(val);toast(`🎁 حصلت على ${EGGS[val].n}!`)}
+  if(type==='item'){const inv=[...myInv()],eq={...myEq()};if(!inv.includes(val))inv.push(val);eq[SHOP_ITEM[val].slot]=val;saveShop(inv,eq);toast(`🎁 جائزة حصرية: ${SHOP_ITEM[val].n}!`)}
+  monSave(d);confetti();SFX.fanfare();sync();renderMons()}
+function tierIcon(t,v){return t==='stars'?`⭐<b>${v}</b>`:t==='egg'?`<span class="tegg">${eggSVG(v)}</span>`:SHOP_ITEM[v].slot==='kit'?`<span class="sw kitsw" style="background:${kitCss(KITS[SHOP_ITEM[v].v])};width:28px;height:28px"></span>`:`<span class="sw" style="background:${SHOP_ITEM[v].v};width:28px;height:18px"></span>`}
+function renderMons(){const box=$('#monsView');if(!box||view!=='mons')return;const d=season(),own=Object.keys(d.c),k=activeKid();
+  const dleft=(()=>{const n=new Date(Date.now()+3*36e5),e=Date.UTC(n.getUTCFullYear(),n.getUTCMonth()+1,1);return Math.max(1,Math.ceil((e-n.getTime())/864e5))})();
+  const mi=+d.s.id.split('-')[1]-1,nextT=TIERS.findIndex(t=>d.s.xp<t[0]),pct=nextT<0?100:Math.min(100,d.s.xp/TIERS[TIERS.length-1][0]*100);
+  box.innerHTML=`<div class="seasonhd"><div><small>🌟 الموسم الحالي</small><h3>موسم ${MONTHS[mi]}</h3><div class="meta">ينتهي بعد ${dleft} ${dleft<=2?'يوم':'أيام'} · نقاط الموسم <b>${d.s.xp}</b></div></div><div class="sbig">🏆</div></div>
+   <div class="dcard"><h3>🎖️ جوائز الموسم <small class="muted">كل نجمة تربحها = نقطة</small></h3><div class="sbar"><i style="width:${pct}%"></i></div>
+    <div class="tiers">${TIERS.map(([need,t,v],i)=>{const got=d.s.cl.includes(i),can=d.s.xp>=need&&!got;return `<button class="tier ${got?'got':can?'can':''}" data-tier="${i}"><span class="tn">${need}</span><span class="ti">${tierIcon(t,v)}</span><small>${got?'✓ أُخذت':can?'🎁 خذها!':'🔒'}</small>${t==='item'?'<em>حصري</em>':''}</button>`}).join('')}</div></div>
+   <div class="dcard eggcard"><h3>🥚 بيوض الوحوش</h3>
+    <div class="eggrow"><div class="eggbig ${d.eggs.length?'ready':''}">${eggSVG(d.eggs[0]||'egg')}</div><div class="grow">${d.eggs.length?`<b>لديك ${d.eggs.length} ${d.eggs.length===1?'بيضة جاهزة':'بيوض جاهزة'}!</b><button class="btn" id="hatchBtn" style="width:100%;margin-top:8px">✨ افقس الآن</button>`
+      :`<b>طاقة البيضة ${d.e}/${EGG_NEED}</b><div class="sbar"><i style="width:${d.e/EGG_NEED*100}%"></i></div><div class="meta">كل نجمة تربحها في الألعاب تشحن البيضة.</div>`}</div></div>
+    <div class="eggshop">${Object.entries(EGGS).map(([t,e])=>`<button class="sitem ${shopPend==='egg_'+t?'pend':''}" data-egg="${t}"><span class="tegg">${eggSVG(t)}</span><b>${e.n}</b><small>${shopPend==='egg_'+t?'اضغط للتأكيد':`🔒 ${e.p} ⭐`}</small></button>`).join('')}</div></div>
+   <div class="dcard"><h3>🐲 مجموعتي <small class="muted">${own.length}/${MONS.length}</small></h3><div class="mongrid">${MONS.map(m=>{const n=d.c[m.id]||0,lv=monLvl(n);return n?`<button class="moncard lv${lv} ${d.comp===m.id?'comp':''}" data-mon="${m.id}" style="--rc:${RARC[m.r]}"><span class="msvg">${monsterSVG(m)}</span><b>${m.n}</b><small>${RAR[m.r]} · مستوى ${lv}${lv<3?` (${n}/${lv===1?2:5})`:' 👑'}</small>${d.comp===m.id?'<em>رفيقي</em>':''}</button>`
+      :`<div class="moncard locked"><span class="msvg q">?</span><b>???</b><small>${RAR[m.r]}</small></div>`}).join('')}</div>
+    <div class="meta" style="margin-top:8px">💡 اضغط على وحش ليصبح رفيقك في الألعاب. كل نسخة مكررة ترفع مستواه.</div></div>`;
+  box.querySelectorAll('[data-tier]').forEach(b=>b.onclick=()=>claimTier(+b.dataset.tier));
+  const hb=$('#hatchBtn');if(hb)hb.onclick=hatch;
+  box.querySelectorAll('[data-mon]').forEach(b=>b.onclick=()=>{const dd=monData();dd.comp=dd.comp===b.dataset.mon?null:b.dataset.mon;monSave(dd);SFX.ok();toast(dd.comp?`🐲 ${MON[dd.comp].n} صار رفيقك!`:'🦉 نبيه عاد رفيقك');renderMons()});
+  box.querySelectorAll('[data-egg]').forEach(b=>b.onclick=()=>{const t=b.dataset.egg,e=EGGS[t],key='egg_'+t;if(shopPend!==key){shopPend=key;SFX.note(600);return renderMons()}shopPend=null;
+    if(stars<e.p){toast(`تحتاج ${e.p-stars} ⭐ إضافية`);return openBuy(null,Math.ceil((e.p-stars)/10)*10)}const kk=activeKid();if(kk)kk.stars-=e.p;else{guestStars-=e.p;LS.set('bw_guest',guestStars)}
+    const dd=monData();dd.eggs.push(t);monSave(dd);SFX.fanfare();toast(`🥚 اشتريت ${e.n}!`);sync();renderMons()});
+  updMonBadge()}
+function hatch(){const d=monData();if(!d.eggs.length)return;const t=d.eggs.shift(),m=rollMon(t),first=!d.c[m.id];d.c[m.id]=(d.c[m.id]||0)+1;if(!d.comp)d.comp=m.id;monSave(d);
+  const ov=$('#hatchOv');$('#hatchBox').innerHTML=`<div class="hegg wob">${eggSVG(t)}</div><div class="hmsg">✨ البيضة تتحرك...</div>`;show('hatchOv');SFX.note(500);
+  setTimeout(()=>{$('#hatchBox .hegg').innerHTML=eggSVG(t,1);SFX.note(700);$('#hatchBox .hmsg').textContent='💥 إنها تتشقق!'},1300);
+  setTimeout(()=>{const lv=monLvl(d.c[m.id]);$('#hatchBox').innerHTML=`<div class="hrays" style="--rc:${RARC[m.r]}"></div><div class="hmon pop">${monsterSVG(m)}</div>
+     <div class="hrar" style="background:${RARC[m.r]}">${RAR[m.r]}</div><h2>${first?'وحش جديد!':'نسخة مكررة!'} ${m.n}</h2><div class="meta">${m.d}</div>${first?'':`<b style="color:var(--pri)">⬆️ ارتفع مستواه إلى ${lv}</b>`}
+     <div style="display:flex;gap:8px;margin-top:14px"><button class="btn" id="hcomp" style="flex:1">🐲 اجعله رفيقي</button><button class="btn blue" id="hok" style="flex:1">رائع!</button></div>`;
+    confetti();SFX.fanfare();SFX.say(`${first?'وَحْشٌ جَديد':'رائِع'}! ${m.n}`);
+    $('#hcomp').onclick=()=>{const dd=monData();dd.comp=m.id;monSave(dd);hide('hatchOv');toast(`🐲 ${m.n} صار رفيقك في الألعاب!`);renderMons()};$('#hok').onclick=()=>{hide('hatchOv');renderMons()}},2600)}
+function companionSVG(){const d=monData();return d.comp&&MON[d.comp]?monsterSVG(MON[d.comp],1):OWL()}
 // ---- Shop: car upgrades and avatar accessories
 const SHOP={
  paint:{t:'🎨 لون السيارة',items:[['p_blue','أزرق','#1E6BFF',0],['p_red','أحمر ناري','#E8233C',20],['p_green','أخضر','#16A34A',20],['p_orange','برتقالي','#F97316',20],['p_purple','بنفسجي','#9333EA',20],['p_black','أسود لامع','#22252E',60],['p_gold','ذهبي','#D4A017',100]]},
@@ -1909,10 +2034,11 @@ const SHOP={
  flame:{t:'🔥 لون النيترو',items:[['f_blue','لهب أزرق','#29B6FF',40],['f_green','لهب أخضر','#39D353',40],['f_purple','لهب بنفسجي','#B44CFF',40]]},
  kit:{t:'⚽ طقم الفريق',items:[['k_basic','الأبيض الكلاسيكي','k_basic',0],['k_royal','الأزرق الملكي','k_royal',60],['k_gold','الأصفر الذهبي','k_gold',60],['k_tiger','النمر المخطط','k_tiger',80],['k_green','الأخضر بالوشاح','k_green',80],['k_red','الأحمر المخطط','k_red',80],['k_sky','الأطواق السماوية','k_sky',80],['k_night','الليل الذهبي','k_night',100],['k_halves','النصفين','k_halves',100],['k_legend','الأسطوري','k_legend',150]]},
  boots:{t:'👟 الحذاء',items:[['b_black','أسود','b_black',0],['b_red','أحمر سريع','b_red',30],['b_neon','نيون','b_neon',40],['b_gold','ذهبي','b_gold',60]]},
+ season:{t:'🌟 حصري للموسم',hidden:true,items:[['k_season','طقم الموسم','k_season',0],['p_season','لون الموسم','#00C2A8',0]]},
  head:{t:'👑 على الرأس',items:[['h_crown','تاج','👑',80],['h_grad','قبعة التخرج','🎓',60],['h_phones','سماعات','🎧',50]]},
  face:{t:'😎 على الوجه',items:[['f_shades','نظارة شمسية','😎',40],['f_star','نظارة النجوم','🤩',50]]},
  chest:{t:'🏅 أوسمة',items:[['c_medal','ميدالية ذهبية','🏅',30],['c_star','وسام النجمة','⭐',30]]}};
-const SHOP_ITEM={};Object.entries(SHOP).forEach(([slot,s])=>s.items.forEach(([id,n,v,p])=>SHOP_ITEM[id]={id,n,v,p,slot}));
+const SHOP_ITEM={};Object.entries(SHOP).forEach(([slot,s])=>s.items.forEach(([id,n,v,p])=>SHOP_ITEM[id]={id,n,v,p,slot:slot==='season'?(id[0]==='k'?'kit':'paint'):slot,excl:slot==='season'}));
 const CAR_SLOTS=['paint','stripes','neon','flame'],AV_SLOTS=['head','face','chest'],KIT_SLOTS=['kit','boots'];
 function myInv(){const k=activeKid();return k?(k.inv||[]):LS.get('bw_guest_inv',[])}
 function myEq(){const k=activeKid();return k?(k.eq||{}):LS.get('bw_guest_eq',{})}
@@ -1952,13 +2078,13 @@ function drawCarRear(c,cx,by,w,col,o={}){const h=w*.62;
 let shopPend=null,shopTab='car',shopRaf=0;
 function renderShop(){
   const box=$('#shopView');if(!box||view!=='shop')return;const inv=myInv(),eq=myEq(),k=activeKid();
-  const own=id=>SHOP_ITEM[id].p===0||inv.includes(id),slots=shopTab==='car'?CAR_SLOTS:shopTab==='kit'?KIT_SLOTS:AV_SLOTS;
+  const own=id=>(SHOP_ITEM[id].p===0&&!SHOP_ITEM[id].excl)||inv.includes(id),slots=shopTab==='car'?CAR_SLOTS:shopTab==='kit'?KIT_SLOTS:AV_SLOTS;
   box.innerHTML=`<div class="shophead"><div><h3>🛍️ متجر الأبطال</h3><div class="meta">زيّن سيارتك وشخصيتك · معك <b>${stars} ⭐</b></div></div></div>
    <div class="shoptabs"><button class="${shopTab==='car'?'on':''}" data-st="car">🏎️ سيارتي</button><button class="${shopTab==='kit'?'on':''}" data-st="kit">⚽ ملابسي</button><button class="${shopTab==='me'?'on':''}" data-st="me">👤 شخصيتي</button></div>
    <div class="shopprev">${shopTab==='car'?'<canvas id="shopCar" width="560" height="300" style="width:280px;height:150px"></canvas>':shopTab==='kit'?'<canvas id="shopKit" width="560" height="360" style="width:280px;height:180px"></canvas>':`<div class="avbig">${myAV()}</div>`}</div>
-   ${slots.map(sl=>`<div class="dcard"><h3>${SHOP[sl].t}</h3><div class="shopgrid">${SHOP[sl].items.map(([id,n,v,p])=>{const o=own(id),on=eq[sl]===id||(sl==='paint'&&!eq.paint&&id==='p_blue'&&false);
+   ${slots.map(sl=>`<div class="dcard"><h3>${SHOP[sl].t}</h3><div class="shopgrid">${[...SHOP[sl].items,...SHOP.season.items.filter(x=>SHOP_ITEM[x[0]].slot===sl)].map(([id,n,v,p])=>{const o=own(id),on=eq[sl]===id||(sl==='paint'&&!eq.paint&&id==='p_blue'&&false);
       const sw=sl==='kit'?`<span class="sw kitsw" style="background:${kitCss(KITS[v])}"></span>`:sl==='boots'?`<span class="sw" style="background:${BOOTS[v]};border-radius:12px 12px 4px 4px"></span>`:sl==='paint'||sl==='stripes'||sl==='neon'||sl==='flame'?`<span class="sw" style="background:${id==='p_gold'?'linear-gradient(135deg,#FFF1A8,#E9B92F,#8A6410)':v}${sl==='neon'?`;box-shadow:0 0 12px ${v}`:''}"></span>`:`<span class="semo">${v}</span>`;
-      return `<button class="sitem ${on?'on':''} ${o?'own':''} ${shopPend===id?'pend':''}" data-it="${id}">${sw}<b>${n}</b><small>${on?'✓ مُجهّز':o?'اضغط للتجهيز':shopPend===id?`اضغط للتأكيد`:p?`🔒 ${p} ⭐`:'مجاني'}</small></button>`}).join('')}</div></div>`).join('')}
+      return `<button class="sitem ${on?'on':''} ${o?'own':''} ${shopPend===id?'pend':''}" data-it="${id}">${sw}<b>${n}</b><small>${on?'✓ مُجهّز':o?'اضغط للتجهيز':SHOP_ITEM[id].excl?'🌟 جائزة الموسم':shopPend===id?`اضغط للتأكيد`:p?`🔒 ${p} ⭐`:'مجاني'}</small></button>`}).join('')}</div></div>`).join('')}
    <div class="note">💡 كل 10 ⭐ بريال. ما تشتريه يبقى لك دائمًا ويظهر في السباق ولأصدقائك.</div>`;
   box.querySelectorAll('[data-st]').forEach(b=>b.onclick=()=>{shopTab=b.dataset.st;shopPend=null;renderShop()});
   box.querySelectorAll('[data-it]').forEach(b=>b.onclick=()=>shopClick(b.dataset.it));
@@ -1971,7 +2097,7 @@ function renderShop(){
       const g=c.createLinearGradient(0,0,0,150);g.addColorStop(0,'#2a3350');g.addColorStop(1,'#0f1428');c.fillStyle=g;c.fillRect(0,0,280,150);c.fillStyle='#3a4160';c.fillRect(0,118,280,32);
       const boost=((ts-t0)/1000)%3>2;drawCarRear(c,140,132+Math.sin(ts/90)*.8,150,L.col,{gold:L.gold,stripes:L.stripes,neon:L.neon,flame:L.flame,boost,spoiler:true,plate:k?String(k.name).slice(0,6):'بطل'});shopRaf=requestAnimationFrame(loop)};shopRaf=requestAnimationFrame(loop)}
 }
-function shopClick(id){const it=SHOP_ITEM[id];if(!it)return;const inv=[...myInv()],eq={...myEq()},owned=it.p===0||inv.includes(id);
+function shopClick(id){const it=SHOP_ITEM[id];if(!it)return;const inv=[...myInv()],eq={...myEq()},owned=(it.p===0&&!it.excl)||inv.includes(id);if(it.excl&&!owned){toast('🌟 هذه جائزة حصرية من «وحوشي» ← جوائز الموسم');return}
   if(owned){if(eq[it.slot]===id&&it.slot!=='paint')delete eq[it.slot];else eq[it.slot]=id;saveShop(inv,eq);shopPend=null;SFX.ok();sync();return renderShop()}
   if(shopPend!==id){shopPend=id;SFX.note(600);return renderShop()}
   shopPend=null;if(stars<it.p){toast(`تحتاج ${it.p-stars} ⭐ إضافية`);return openBuy(null,Math.ceil((it.p-stars)/10)*10)}
@@ -2225,7 +2351,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-44';
+const APP_VERSION='2026.11.19-45';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
@@ -2289,7 +2415,7 @@ const weekNo=(t=Date.now())=>Math.floor((Math.floor((t+3*36e5)/864e5)-3)/7),week
 const weekEnds=()=>{const n=weekNo();return (n+1)*7+3}; // day number (since epoch) the next week starts
 let leagueRows=[],leagueAt=0;const LPRIZE=[50,30,20];
 function weekXp(k){return k&&k.week===weekId()?k.wxp||0:0}
-function addWeekXp(n){const k=activeKid();if(!k||n<=0)return;if(k.week!==weekId()){k.week=weekId();k.wxp=0}k.wxp+=n;publishLeague()}
+function addWeekXp(n){addSeasonXp(n);const k=activeKid();if(!k||n<=0)return;if(k.week!==weekId()){k.week=weekId();k.wxp=0}k.wxp+=n;publishLeague()}
 let lgSig='';function publishLeague(){if(!user||!profile)return;const k=activeKid();if(!k)return;const d={uid:user.uid,name:String(k.name||'').split(' ')[0].slice(0,14),avatar:k.avatar,eq:Object.fromEntries(AV_SLOTS.filter(s=>(k.eq||{})[s]).map(s=>[s,k.eq[s]])),xp:weekXp(k),week:weekId()};
   const sg=JSON.stringify(d);if(sg===lgSig)return;lgSig=sg;B.saveLeague(weekId()+'_'+user.uid,d).catch(e=>console.warn(e))}
 async function loadLeague(force){if(!user||(!force&&Date.now()-leagueAt<60000))return;leagueAt=Date.now();
@@ -2395,7 +2521,7 @@ function buddy(mood){const b=$('#buddy');if(!b||!$('#game').classList.contains('
   const bb=$('#buddySay');bb.textContent=say[rnd(0,say.length-1)];bb.classList.remove('show');void bb.offsetWidth;bb.classList.add('show');
   clearTimeout(buddy.t);buddy.t=setTimeout(()=>b.classList.remove('yay','oops'),1100)}
 (()=>{const _ok=SFX.ok,_no=SFX.no;SFX.ok=function(...a){buddy('yay');return _ok.apply(this,a)};SFX.no=function(...a){buddy('oops');return _no.apply(this,a)}})();
-$('#buddy').innerHTML=OWL();
+$('#buddy').innerHTML=companionSVG();
 
 // ---- Recorded voice notes between friends (max 15s, stored inline, auto-deleted after 3 days)
 const REC_MAX=15;let rec=null,recChunks=[],recBlob=null,recUrl='',recData='',recSecs=0,recTimer=null,recStream=null,curAudio=null;
