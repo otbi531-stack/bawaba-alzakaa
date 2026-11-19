@@ -64,5 +64,15 @@ service cloud.firestore {
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read', 'done']);
       allow delete: if signedIn() && (resource.data.to == request.auth.uid || resource.data.from == request.auth.uid);
     }
+
+    // دوري الأسبوع: يراه كل المسجّلين، وكل لاعب يكتب نتيجته فقط
+    match /league/{id} {
+      allow read: if signedIn();
+      allow write: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && id == request.resource.data.week + '_' + request.auth.uid
+        && request.resource.data.xp is int
+        && request.resource.data.xp >= 0 && request.resource.data.xp <= 3000;
+    }
   }
 }
