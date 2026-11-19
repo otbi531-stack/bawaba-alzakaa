@@ -1692,7 +1692,7 @@ function fillblank(){quiz2(shuffle(BLANK).slice(0,8).map(([q,a,o,e])=>({show:e,p
 function race(){
   $('#buddy').style.display='none';
   const W=Math.min(area.clientWidth-8,460),H=Math.min(Math.max(430,innerHeight-230),640),DPR=Math.min(2,devicePixelRatio||1);
-  area.innerHTML=`<div class="rq" id="rq">استعد...</div><div class="rwrap"><canvas id="rc" style="width:${W}px;height:${H}px"></canvas><div class="rhud"><span id="rpos">🏁 1/4</span><span id="rlap"></span></div><div class="rmsg" id="rmsg"></div></div>
+  area.innerHTML=`<div class="rq" id="rq">استعد...</div><div class="rwrap"><canvas id="rc" style="width:${W}px;height:${H}px"></canvas><div class="rhud"><span id="rpos">🏁 1/4</span></div><div class="rmsg" id="rmsg"></div></div>
    <div class="rctl"><button class="btn" id="rL">◀ يسار</button><button class="btn" id="rR">يمين ▶</button></div>`;
   const cv=$('#rc'),c=cv.getContext('2d');cv.width=W*DPR;cv.height=H*DPR;c.scale(DPR,DPR);
   // --- track
@@ -1719,7 +1719,7 @@ function race(){
   const mkQ=()=>{const t=rnd(0,2);let a,b,q,ans;
     if(t===0){a=rnd(2,15);b=rnd(1,12);q=`${a} + ${b}`;ans=a+b}else if(t===1){a=rnd(8,20);b=rnd(1,a-1);q=`${a} − ${b}`;ans=a-b}else{a=rnd(2,9);b=rnd(2,9);q=`${a} × ${b}`;ans=a*b}
     const s=new Set([ans]);while(s.size<3){const d=ans+[-1,1,-2,2,-10,10,-3,3][rnd(0,7)];if(d>=0)s.add(d)}return {q,ans,opts:shuffle([...s])}};
-  const newGate=()=>{if(me.z>LEN-110*SEG)return;const Q=mkQ(),gi=Math.floor(me.z/SEG)+105;gate={...Q,seg:gi,hit:false};segs[gi].gate=gate;qn++;$('#rq').innerHTML=`<small>سؤال ${qn}</small> <span dir="ltr">${Q.q} = <b>?</b></span>`};
+  const newGate=()=>{if(me.z>LEN-170*SEG)return;const Q=mkQ(),gi=Math.floor(me.z/SEG)+165;gate={...Q,seg:gi,hit:false};segs[gi].gate=gate;qn++;$('#rq').innerHTML=`<small>سؤال ${qn}</small> <span dir="ltr">${Q.q} = <b>?</b></span>`};
   const move=d=>{if(state!=='race')return;me.lane=Math.max(0,Math.min(2,me.lane+d));SFX.note(380+me.lane*70)};
   $('#rL').onclick=()=>move(-1);$('#rR').onclick=()=>move(1);
   window._race={get gate(){return gate},me};
@@ -1794,10 +1794,15 @@ function race(){
     // player car
     const cw=W*.34,tilt=(LANE[me.lane]-me.x)*-.35+(me.spin>0?Math.sin(me.spin*30)*.25:0)+(base.curve*-.02),bob=Math.sin(performance.now()/60)*(me.v/4000);
     carRear(W/2,H-12+bob,cw,me.col,{tilt,boost:me.boost>0,brake:me.slow>0,spoiler:true,plate:me.name.slice(0,6)});
+    if(gate&&!gate.hit&&state==='race'){const qy=H-12-cw*.62*1.05-14,txt=gate.q+' = ?',dist=Math.max(0,gate.seg*SEG-me.z),pr=1-Math.min(1,dist/(165*SEG));
+      c.save();c.direction='ltr';c.font='bold 30px "Baloo Bhaijaan 2",Tajawal,sans-serif';const tw=Math.max(150,c.measureText(txt).width+40);
+      c.fillStyle='rgba(12,20,48,.9)';rr(W/2-tw/2,qy-46,tw,50,14);c.fill();c.strokeStyle='#FFC72C';c.lineWidth=3;rr(W/2-tw/2,qy-46,tw,50,14);c.stroke();
+      c.fillStyle='#FFC72C';rr(W/2-tw/2+8,qy-5,(tw-16)*pr,4,2);c.fill();
+      c.fillStyle='#fff';c.textAlign='center';c.fillText(txt,W/2,qy-12);c.restore()}
     parts.forEach(p=>{c.globalAlpha=Math.max(0,p.l);c.fillStyle=p.c;c.beginPath();c.arc(p.x,p.y,p.r,0,7);c.fill()});c.globalAlpha=1;
     if(me.boost>0){c.strokeStyle='rgba(255,255,255,.45)';c.lineWidth=2;for(let i=0;i<12;i++){const ang=Math.random()*Math.PI*2,r1=60+Math.random()*80,r2=r1+60+Math.random()*90;c.beginPath();c.moveTo(W/2+Math.cos(ang)*r1,H*.5+Math.sin(ang)*r1*.6);c.lineTo(W/2+Math.cos(ang)*r2,H*.5+Math.sin(ang)*r2*.6);c.stroke()}}
     // speedometer
-    const gx=54,gy=H-46,kmh=Math.round(me.v/40);c.fillStyle='rgba(10,16,36,.7)';c.beginPath();c.arc(gx,gy,40,0,7);c.fill();c.strokeStyle='rgba(255,255,255,.25)';c.lineWidth=5;c.beginPath();c.arc(gx,gy,32,Math.PI*.75,Math.PI*2.25);c.stroke();
+    const gx=W-62,gy=78,kmh=Math.round(me.v/40);c.fillStyle='rgba(10,16,36,.7)';c.beginPath();c.arc(gx,gy,40,0,7);c.fill();c.strokeStyle='rgba(255,255,255,.25)';c.lineWidth=5;c.beginPath();c.arc(gx,gy,32,Math.PI*.75,Math.PI*2.25);c.stroke();
     c.strokeStyle=me.boost>0?'#FF9A1F':'#4FC3FF';c.beginPath();c.arc(gx,gy,32,Math.PI*.75,Math.PI*.75+Math.PI*1.5*Math.min(1,kmh/260));c.stroke();
     c.fillStyle='#fff';c.font='bold 20px "Baloo Bhaijaan 2",sans-serif';c.textAlign='center';c.fillText(kmh,gx,gy+6);c.font='10px Tajawal,sans-serif';c.fillText('كم/س',gx,gy+20);
     // progress strip
@@ -1819,7 +1824,7 @@ function race(){
       if(gate&&!gate.hit&&me.z>=gate.seg*SEG){gate.hit=true;const ok=gate.opts[me.lane]===gate.ans;
         if(ok){right++;me.boost=2.4;SFX.ok();msg('🔥 نيترو!','#FFC72C');for(let i=0;i<16;i++)parts.push({x:W/2+(Math.random()-.5)*W*.3,y:H-30,vx:(Math.random()-.5)*160,vy:-40-Math.random()*90,r:2+Math.random()*4,l:1,c:['#FFC72C','#FF7A1F','#fff'][i%3]})}
         else{me.slow=1.8;me.spin=.6;shake=12;SFX.no();msg(`✖ الجواب ${gate.ans}`,'#FF5A5A');for(let i=0;i<12;i++)parts.push({x:W/2+(Math.random()-.5)*W*.3,y:H-40,vx:(Math.random()-.5)*90,vy:-30-Math.random()*40,r:6+Math.random()*8,l:1,c:'rgba(120,120,130,.8)'})}
-        later(newGate,450);if(me.z>LEN-110*SEG)$('#rq').innerHTML='🏁 انطلق نحو خط النهاية!'}
+        later(newGate,450);if(me.z>LEN-170*SEG)$('#rq').innerHTML='🏁 انطلق نحو خط النهاية!'}
       parts.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.r*=1+dt*.6;p.l-=dt*1.3});parts=parts.filter(p=>p.l>0);
       if(eng){const f=60+me.v/40*1.1;eng.o.frequency.value=f;eng.o2.frequency.value=f*.5;eng.f.frequency.value=500+me.v/12;eng.g.gain.value=state==='end'?Math.max(0,eng.g.gain.value-dt*.05):.035}
       if(!me.fin&&me.z>=LEN){finished.push(me);me.fin=finished.length;state='end';const place=me.fin,s=Math.max(0,4-place);
@@ -1828,7 +1833,7 @@ function race(){
       const rp=$('#rpos');if(rp)rp.textContent=`🏁 المركز ${me.fin||rank()}/4`;stat(`${Math.min(100,Math.round(me.z/LEN*100))}%`,right);
     }
     render();requestAnimationFrame(step)}
-  requestAnimationFrame(step);
+  stat('0%',0);requestAnimationFrame(step);
 }
 function renderBox(){
   const box=$('#boxView');if(!box||view!=='box')return;const list=GAMES.filter(g=>g.box&&g.ready),own=list.filter(isOpen).length;
@@ -1918,7 +1923,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-39';
+const APP_VERSION='2026.11.19-40';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
