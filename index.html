@@ -463,6 +463,7 @@ body.kidon .clouds{display:none}.clouds{transform:scaleY(.5);transform-origin:bo
 .trophies{grid-template-columns:repeat(4,1fr);gap:6px}.trophy{border-radius:14px;padding:8px 4px}.trophy .i{font-size:26px}.trophy b{font-size:12px;display:block}.trophy small{font-size:10px}
 #trophies .sec-head img{width:38px!important;height:38px!important}#trophies h2{font-size:18px}#trophies .sec-head p{font-size:12px;margin:0}
 .steps{gap:8px}.step{padding:12px;border-radius:16px}.step h3{font-size:15px}.step p{font-size:13px}
+.addin{padding:10px 12px}.addin .fradd{display:flex;gap:8px}.addin .fradd input{flex:1;min-width:0}.addin .mycodebox{margin-top:8px;padding:6px}
 .frlist.slim{padding:10px 14px}.league{padding:10px 14px}.league h3{font-size:16px;margin:0 0 2px}.league .frrow{padding:4px 0}.league .fav svg,.frlist .fav svg{width:28px;height:28px}.frtoggle.sm{font-size:13px;justify-content:center;color:var(--pri);margin-top:4px}
 .invrow{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#FFF5D6,#FFE3F0);border-radius:16px;padding:8px 12px;margin-bottom:10px}.invrow>span{font-size:22px}.invrow small{display:block;font-size:11px;color:var(--muted)}.invrow .grow{flex:1}
 .frtoggle{width:100%;border:0;background:none;display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:17px;color:var(--ink);padding:2px 0}.frtoggle span{font-size:13px;color:var(--pri)}
@@ -509,9 +510,8 @@ body.kidon .clouds{display:none}.clouds{transform:scaleY(.5);transform-origin:bo
   <section id="daily" style="padding-bottom:0"><div class="daily" id="dailyBox"></div></section>
 
   <section id="games">
-    <div class="viewtg" id="viewtg"><button data-view="map" class="on">🗺️ الخريطة</button><button data-view="list">📋 الكل</button><button data-view="box">🎁 الصندوق</button><button data-view="shop">🛍️ المتجر</button><button data-view="friends">👫 أصدقائي</button></div>
+    <div class="viewtg" id="viewtg"><button data-view="map" class="on">🗺️ الخريطة</button><button data-view="list">📋 الكل</button><button data-view="box">🎁 الصندوق</button><button data-view="shop">🛍️ المتجر</button></div>
     <div id="mapView"></div>
-    <div id="friendsView" style="display:none"></div>
     <div id="boxView" style="display:none"></div>
     <div id="shopView" style="display:none"></div>
     <div class="sec-head" id="listHead">
@@ -544,6 +544,12 @@ body.kidon .clouds{display:none}.clouds{transform:scaleY(.5);transform-origin:bo
 </main>
 
 <footer><div class="footbtns"><button id="shareBtn">📤 شارك الموقع مع أصدقائك</button><button id="instBtn">📲 ثبّت التطبيق</button></div>بوابة الذكاء © 2026 — ألعاب تعليمية عربية<br><small style="opacity:.6" id="footVer"></small></footer>
+
+<!-- Friends panel -->
+<div class="game" id="frPanel">
+  <div class="gbar"><button class="back" id="frBack">→ رجوع</button><b>👫 أصدقائي</b><span style="width:60px"></span></div>
+  <div class="dwrap" id="friendsView"></div>
+</div>
 
 <!-- Add friend -->
 <div class="ov" id="addOv"><div class="modal" style="text-align:center">
@@ -1692,9 +1698,9 @@ const ZONES=[
  {min:30,max:49,name:'🏔️ جبل الكلمات',sub:'اصعد وتعلّم كلمات جديدة',bg:'linear-gradient(180deg,#E6EEFF,#F4F7FF)',path:'#3D8BFF',deco:['⛰️','❄️','🦅','☁️']},
  {min:50,max:69,name:'🏜️ واحة المعرفة',sub:'اكتشف العالم وحلّ الألغاز',bg:'linear-gradient(180deg,#FFF0CC,#FFF8E6)',path:'#FFA62B',deco:['🌵','🐪','🌴','☀️']},
  {min:70,max:1e9,name:'🚀 مدينة الفضاء',sub:'آخر محطة للأبطال!',bg:'linear-gradient(180deg,#E4DBFF,#F2EDFF)',path:'#8B5CF6',deco:['🪐','⭐','🛸','🌙']}];
-let view=LS.get('bw_view','map');if(view==='mons')view='box';if(!['map','list','box','shop','friends'].includes(view))view='map';
+let view=LS.get('bw_view','map');if(view==='mons')view='box';if(!['map','list','box','shop'].includes(view))view='map';
 function setView(v){view=v;LS.set('bw_view',v);document.querySelectorAll('#viewtg button').forEach(b=>b.classList.toggle('on',b.dataset.view===v));
-  $('#mapView').style.display=v==='map'?'block':'none';$('#friendsView').style.display=v==='friends'?'block':'none';$('#boxView').style.display=v==='box'?'block':'none';if(v==='box')renderBox();$('#shopView').style.display=v==='shop'?'block':'none';if(v==='shop'){shopPend=null;renderShop()}$('#listHead').style.display=$('#grid').style.display=v==='list'?'':'none';if(v==='map')renderMap();if(v==='friends'){renderFriends();if(user){loadFriends();loadLeague()}}updFrBadge()}
+  $('#mapView').style.display=v==='map'?'block':'none';$('#boxView').style.display=v==='box'?'block':'none';if(v==='box')renderBox();$('#shopView').style.display=v==='shop'?'block':'none';if(v==='shop'){shopPend=null;renderShop()}$('#listHead').style.display=$('#grid').style.display=v==='list'?'':'none';if(v==='map')renderMap();updFrBadge()}
 document.querySelectorAll('#viewtg button').forEach(b=>b.onclick=()=>setView(b.dataset.view));
 
 // ---- Treasure box games (not on the map)
@@ -2763,7 +2769,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-62';
+const APP_VERSION='2026.11.19-63';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
@@ -2852,35 +2858,36 @@ let stripSel=null;const QUICK=[['hi','👋'],['bravo','👏'],['play','🎮'],['
 function renderStrip(){try{renderStrip0()}catch(e){}}
 function renderStrip0(){const el=$('#frStrip');if(!el)return;const k=activeKid&&activeKid();
   if(!user||!profile||!k){el.innerHTML=`<div class="strip"><span class="sti">👫</span><div class="grow"><b>العب مع أصدقائك!</b><small>رسائل وتحديات بين الأصدقاء</small></div><button class="sbtn pri" id="stLogin">سجّل الآن</button></div>`;$('#stLogin').onclick=()=>openAuth('up','أنشئ حسابًا لتضيف أصدقاءك');return}
-  if(!friends.length){el.innerHTML=`<div class="strip"><span class="sti">👫</span><div class="grow"><b>أضف أصدقاءك</b><small>كودك: <b dir="ltr">${profile.code||'...'}</b></small></div><button class="sbtn pri" id="stAdd">➕ أضف صديقًا</button></div>`;$('#stAdd').onclick=openAddFriend;return}
+  if(!friends.length){el.innerHTML=`<div class="strip"><span class="sti">👫</span><div class="grow"><b>أضف أصدقاءك</b><small>كودك: <b dir="ltr">${profile.code||'...'}</b></small></div><button class="sbtn pri" id="stAdd">➕ أضف صديقًا</button></div>`;$('#stAdd').onclick=openFriends;return}
   if(!stripSel||!friends.find(f=>f.uid===stripSel))stripSel=friends[0].uid;const sel=friends.find(f=>f.uid===stripSel);
   const unread=inbox.filter(m=>!m.read),lastM=[...inbox].sort((a,b)=>tsOf(b)-tsOf(a))[0];
   el.innerHTML=`<div class="strip col"><div class="strow"><span class="sti">👫</span><div class="stav">${friends.map(f=>{const n=inbox.filter(m=>!m.read&&m.from===f.uid).length;return `<button class="fav2 ${f.uid===stripSel?'on':''}" data-sf="${f.uid}" title="${esc(f.name)}">${AVX(f.avatar||'b1',f.eq)}${n?`<i>${n}</i>`:''}<small>${esc(String(f.name).split(' ')[0])}</small></button>`}).join('')}
       <button class="fav2 add" id="stMore" title="أصدقائي">➕<small>المزيد</small></button></div></div>
     <div class="strow"><div class="qemo">${QUICK.map(([key,e])=>`<button data-q="${key}" title="${VMAP[key][2]}">${e}</button>`).join('')}</div><small class="muted">إلى ${esc(String(sel.name).split(' ')[0])}</small></div>
     ${lastM?`<div class="stmsg ${lastM.read?'':'new'}" id="stLast"><span>${msgText(lastM).icon}</span><b>${esc(lastM.fromName||'')}:</b> ${msgText(lastM).short}${unread.length>1?` <em>+${unread.length-1}</em>`:''}<span class="play">🔊</span></div>`:''}</div>`;
-  el.querySelectorAll('[data-sf]').forEach(b=>b.onclick=()=>{stripSel=b.dataset.sf;renderStrip()});$('#stMore').onclick=()=>setView('friends');
+  el.querySelectorAll('[data-sf]').forEach(b=>b.onclick=()=>{stripSel=b.dataset.sf;renderStrip()});$('#stMore').onclick=openFriends;
   el.querySelectorAll('[data-q]').forEach(b=>b.onclick=async()=>{const f=friends.find(x=>x.uid===stripSel);if(!f)return;const v=VMAP[b.dataset.q];b.classList.add('sent');SFX.say(v[3]);
     try{await sendTo(f,{type:'voice',key:v[0]});toast(`📨 أرسلت ${v[1]} إلى ${f.name}`)}catch(e){toast('⚠️ تعذّر الإرسال')}setTimeout(()=>b.classList.remove('sent'),600)});
   const lm=$('#stLast');if(lm)lm.onclick=()=>{if(lastM.type==='audio')playAudio(lastM.audio);else SFX.say(msgText(lastM).say);if(!lastM.read)B.markMsg(lastM.id,{read:true}).catch(()=>{});if(lastM.type==='challenge'&&!lastM.done)acceptDare(lastM.id)}}
 function tidyHome(){const k=activeKid&&activeKid(),h=document.querySelector('.hero');document.body.classList.toggle('kidon',!!k);if(h)h.classList.toggle('mini',!!k);const how=$('#how');if(how)how.style.display=k?'none':''}
 function sendTo(f,data){const k=activeKid();return B.sendMsg({from:user.uid,to:f.uid,fromName:k?k.name:(user.name||''),fromAvatar:k?k.avatar:'b1',read:false,done:false,...data})}
 function renderFriends(){
-  const box=$('#friendsView');if(!box||view!=='friends')return;
+  const box=$('#friendsView');if(!box||!$('#frPanel').classList.contains('show'))return;
   if(!user||!profile||!activeKid()){box.innerHTML=`<div class="dcard" style="text-align:center"><div style="font-size:56px">👫</div><h3>العب مع أصدقائك!</h3><div class="meta" style="margin:6px 0 14px">أضف أصدقاءك بكود خاص، وأرسل لهم رسائل صوتية وتحديات.</div><button class="btn blue" id="frLogin">👤 سجّل حسابك أولًا</button></div>`;
     $('#frLogin').onclick=()=>openAuth('up','أنشئ حسابًا لتضيف أصدقاءك');return}
   const k=activeKid(),me={uid:user.uid,name:k.name,avatar:k.avatar,eq:k.eq,earned:k.earned??k.stars,me:true};
   const board=[me,...friends].sort((a,b)=>(b.earned||0)-(a.earned||0));const medal=i=>['🥇','🥈','🥉'][i]||`${i+1}`;
   const msgs=[...inbox].sort((a,b)=>tsOf(b)-tsOf(a)).slice(0,15);
   box.innerHTML=`
+   <div class="dcard addin"><div class="fradd"><input id="frIn2" maxlength="6" dir="ltr" placeholder="➕ كود صديقك" autocomplete="off"><button class="btn blue" id="frAdd2">أضف</button></div><div class="err" id="frErr2"></div>
+     <div class="mycodebox"><small>كودي</small><b dir="ltr">${profile.code||'...'}</b><button class="sbtn" id="frCopy2">📋 انسخ</button></div></div>
    ${friends.length?`<div class="dcard frlist slim"><button class="frtoggle" id="frTog">👫 أصدقائي (${friends.length}) <span>${frOpen?'▴ إخفاء':'▾ عرض'}</span></button><div style="display:${frOpen?'block':'none'}">${[...friends].sort((a,b)=>(b.earned||0)-(a.earned||0)).map(f=>`<div class="frcard"><span class="fav big">${AVX(f.avatar||'b1',f.eq)}</span><div class="grow"><b>${esc(f.name)}</b><small>⭐ ${f.earned||0} نجمة</small></div>
       <div class="kact" style="margin:0"><button class="sbtn pri" data-rec="${f.uid}">🎤 سجّل</button><button class="sbtn" data-voice="${f.uid}">💬</button><button class="sbtn" data-dare="${f.uid}">🏆 تحدَّ</button><button class="sbtn del" data-unf="${f.uid}">${delFr===f.uid?'⚠️ تأكيد':'🗑'}</button></div></div>`).join('')}</div></div>`:''}
    ${msgs.length?`<div class="dcard"><h3>📬 رسائلي</h3>${msgs.map(m=>{const t=msgText(m);return `<div class="frmsg ${m.read?'':'unread'}"><span class="fav">${AV(m.fromAvatar||'b1')}</span><div class="grow"><b>${esc(m.fromName||'')}</b> <span>${t.icon} ${t.short}</span><small>${fmtD(tsOf(m))}</small></div>
       <div class="kact" style="margin:0">${m.type==='voice'||m.type==='added'||m.type==='result'||m.type==='audio'?`<button class="sbtn" data-play-msg="${m.id}">🔊</button>`:''}${m.type==='challenge'&&!m.done?`<button class="sbtn pri" data-acc="${m.id}">▶ اقبل</button>`:''}<button class="sbtn" data-del-msg="${m.id}">✕</button></div></div>`}).join('')}</div>`:''}
 ${leagueCard()}
-   <div class="invrow"><span>🎁</span><div class="grow"><b>ادعُ صديقك</b><small>+${REF_BONUS} ⭐ لكل واحد منكما</small></div><button class="sbtn pri" id="invShare">📤 أرسل</button><button class="sbtn" id="invCopy">📋</button></div>
    <div class="note" style="margin-bottom:10px">🛡️ الرسائل الصوتية تصل لأصدقائك المضافين فقط وتُحذف تلقائيًا بعد 3 أيام. لا تذكر عنوانك أو رقمك، وإذا أزعجك أحد احذفه من أصدقائك وأخبر أهلك.</div>`;
-  $('#invCopy').onclick=()=>copyTxt(inviteLink());$('#invShare').onclick=()=>{const t=`🦉 تعال العب معي في «بوابة الذكاء»! سجّل من هذا الرابط أو بكودي ${profile.code} لنربح ${REF_BONUS} ⭐ كلنا`,u=inviteLink();if(navigator.share)navigator.share({title:'بوابة الذكاء',text:t,url:u}).catch(()=>{});else window.open('https://wa.me/?text='+encodeURIComponent(t+'\n'+u),'_blank')};
+  $('#frCopy2').onclick=()=>copyTxt(profile.code||'');$('#frAdd2').onclick=()=>addFriendByCode('frIn2','frErr2');$('#frIn2').onkeydown=e=>{if(e.key==='Enter')addFriendByCode('frIn2','frErr2')};
 
   const tg=$('#frTog');if(tg)tg.onclick=()=>{frOpen=!frOpen;renderFriends()};const lt=$('#lgTog');if(lt)lt.onclick=()=>{lgOpen=!lgOpen;renderFriends()};
   box.querySelectorAll('[data-rec]').forEach(b=>b.onclick=()=>openRec(b.dataset.rec));
@@ -2894,8 +2901,10 @@ ${leagueCard()}
 }
 function openAddFriend(){if(!user||!profile)return openAuth('up','أنشئ حسابًا لتضيف أصدقاءك');$('#addCode').textContent=profile.code||'...';$('#frIn').value='';$('#frErr').textContent='';show('addOv');setTimeout(()=>{try{$('#frIn').focus()}catch(e){}},200)}
 $('#addCopy').onclick=()=>copyTxt(profile&&profile.code||'');$('#frAdd').onclick=()=>addFriendByCode();$('#frIn').onkeydown=e=>{if(e.key==='Enter')addFriendByCode()};
-async function addFriendByCode(){
-  const c=($('#frIn').value||'').trim().toUpperCase(),err=$('#frErr');err.textContent='';
+function openFriends(){show('frPanel');frOpen=true;renderFriends();if(user){loadFriends();loadLeague()}}
+$('#frBack').onclick=()=>{hide('frPanel');renderStrip()};
+async function addFriendByCode(inId='frIn',errId='frErr'){
+  const c=($('#'+inId).value||'').trim().toUpperCase(),err=$('#'+errId);err.textContent='';
   if(c.length!==6)return err.textContent='الكود 6 حروف وأرقام';
   if(c===profile.code)return err.textContent='هذا كودك أنت 😄';
   try{const uid=await B.findCode(c);if(!uid)return err.textContent='لم نجد هذا الكود، تأكد منه';
