@@ -2734,8 +2734,9 @@ async function applyApproved(reqs){if(applying||!profile)return;applying=true;
   }}finally{applying=false}}
 function reqLine(r){const g=r.game?GAMES.find(x=>x.id===r.game):null,st=r.status==='pending'?'⏳ بانتظار التأكيد':r.status==='approved'?'✅ تمت الموافقة':'❌ مرفوض';
   return `<div class="rqm"><span>${r.kind==='game'?'🎮 '+(g?g.name:''):`⭐ ${r.stars} نجمة`} · ${r.price} ريال</span><span class="rref2" dir="ltr">${esc(r.ref||'')}</span><b class="rst ${r.status}">${st}</b></div>`}
-function myReqsCard(){if(!myReqs.length)return '';const list=[...myReqs].sort((a,b)=>tsOf(b)-tsOf(a)).slice(0,6);
-  return `<div class="dcard"><h3>🧾 طلباتي</h3>${list.map(reqLine).join('')}<div class="meta" style="margin-top:6px">تُضاف النجوم تلقائيًا بعد التأكد من وصول التحويل.</div></div>`}
+function myReqsCard(){const hid=new Set(LS.get('bw_req_hidden',[])),vis=myReqs.filter(r=>!hid.has(r.id));if(!vis.length)return '';const list=[...vis].sort((a,b)=>tsOf(b)-tsOf(a)).slice(0,6),fin=vis.filter(r=>r.status!=='pending'&&(r.status!=='approved'||r.applied));
+  setTimeout(()=>{const b=$('#reqHide');if(b)b.onclick=()=>{LS.set('bw_req_hidden',[...hid,...fin.map(r=>r.id)].slice(-200));openDash()}},0);
+  return `<div class="dcard"><h3 style="display:flex;align-items:center;gap:8px">🧾 طلباتي${fin.length?'<button class="sbtn" id="reqHide" style="margin-inline-start:auto">🗑️ مسح المكتملة</button>':''}</h3>${list.map(reqLine).join('')}<div class="meta" style="margin-top:6px">تُضاف النجوم تلقائيًا بعد التأكد من وصول التحويل.</div></div>`}
 function adminGamesHtml(){const notes=LS.get('bw_admin_notes',{}),row=g=>`<div class="admg"><span class="ae">${g.emoji}</span><div class="grow"><b>${g.name}</b><small>${g.box?'🎁 الصندوق':'🗺️ الخريطة'}${notes[g.id]?' · 📝 '+esc(notes[g.id]).slice(0,40):''}</small></div><button class="sbtn pri" data-agp="${g.id}">▶ جرّب</button><button class="sbtn" data-agn="${g.id}">📝</button></div>`,
   list=GAMES.filter(g=>g.ready);return `<div class="dcard"><h3>🎮 معاينة الألعاب (${list.length})</h3><div class="meta" style="margin-bottom:8px">كل الألعاب مفتوحة لك للمراجعة بدون نجوم. اكتب ملاحظاتك على أي لعبة بزر 📝 لتتذكر ما يحتاج تعديلًا.</div>
    <div class="admsec">🗺️ ألعاب الخريطة</div>${list.filter(g=>!g.box).map(row).join('')}<div class="admsec">🎁 ألعاب الصندوق</div>${list.filter(g=>g.box).map(row).join('')}</div>`}
@@ -2758,18 +2759,22 @@ async function openAdmin(){
     <div class="meta" dir="ltr" style="text-align:right">${esc(r.email||'')}</div>
     <div class="rref" dir="ltr">${esc(r.ref||'')}</div>
     <div class="meta">💰 <b>${r.price} ريال</b> · ${fmtD(tsOf(r))}${g&&r.kind!=='game'?` · لفتح «${g.name}»`:''}</div>
-    ${r.status==='pending'?`<div class="kact"><button class="sbtn pri" data-ok="${r.id}">✅ وصل التحويل، موافقة</button><button class="sbtn del" data-no="${r.id}">❌ رفض وحذف</button></div>`:`<b class="rst ${r.status}">${r.status==='approved'?'✅ موافق عليه':'❌ مرفوض'}</b>`}</div>`};
+    ${r.status==='pending'?`<div class="kact"><button class="sbtn pri" data-ok="${r.id}">✅ وصل التحويل، موافقة</button><button class="sbtn del" data-no="${r.id}">❌ رفض وحذف</button></div>`:`<div class="kact"><b class="rst ${r.status}">${r.status==='approved'?'✅ موافق عليه':'❌ مرفوض'}${r.status==='approved'&&!r.applied?' · ⏳ لم تصل للاعب بعد':''}</b><button class="sbtn del" data-rdel="${r.id}" data-ap="${r.applied?1:0}">🗑️ حذف</button></div>`}</div>`};
   body.innerHTML=`<div class="dcard"><h3>📊 ملخص</h3><div class="meta">طلبات معلّقة: <b>${pend.length}</b> · المبالغ الموافق عليها (آخر ${done.length} طلب): <b>${sum} ريال</b></div>
      <div class="meta" style="margin-top:6px">قارن <b>الرمز المرجعي</b> بملاحظة التحويل في تطبيق STC Bank قبل الموافقة.</div></div>
     <h3 style="margin:16px 4px 8px">⏳ بانتظار التأكيد (${pend.length})</h3>${pend.length?pend.map(card).join(''):'<div class="meta" style="padding:0 6px">لا توجد طلبات معلّقة 👍</div>'}
-    <h3 style="margin:18px 4px 8px">🗂️ آخر الطلبات الموافق عليها</h3>${done.slice(0,20).map(card).join('')||'<div class="meta" style="padding:0 6px">لا يوجد بعد</div>'}`+'<div style="height:14px"></div>'+adminGamesHtml();bindAdminGames(body);
+    <h3 style="margin:18px 4px 8px;display:flex;align-items:center;gap:8px">🗂️ آخر الطلبات الموافق عليها${done.some(r=>r.applied)?`<button class="sbtn del" id="rdelAll" style="margin-inline-start:auto">🧹 حذف المكتملة (${done.filter(r=>r.applied).length})</button>`:''}</h3>${done.slice(0,20).map(card).join('')||'<div class="meta" style="padding:0 6px">لا يوجد بعد</div>'}`+'<div style="height:14px"></div>'+adminGamesHtml();bindAdminGames(body);
+  body.querySelectorAll('[data-rdel]').forEach(b=>b.onclick=async()=>{if(!confirm(b.dataset.ap==='1'?'حذف هذا الطلب من السجل؟':'⚠️ النجوم لم تصل للاعب بعد (لم يفتح الموقع). إذا حذفته الآن لن تصله. متأكد؟'))return;
+    b.disabled=true;try{await B.removeRequest(b.dataset.rdel);toast('🗑️ تم حذف الطلب');openAdmin()}catch(e){console.warn(e);toast('⚠️ تعذّر الحذف');b.disabled=false}});
+  if($('#rdelAll'))$('#rdelAll').onclick=async()=>{const ids=done.filter(r=>r.applied).map(r=>r.id);if(!confirm(`حذف ${ids.length} طلب مكتمل (وصلت نجومها للاعبين)؟`))return;
+    $('#rdelAll').disabled=true;let n=0;for(const id of ids){try{await B.removeRequest(id);n++}catch(e){console.warn(e)}}toast(`🧹 تم حذف ${n} طلب`);openAdmin()};
   body.querySelectorAll('[data-ok],[data-no]').forEach(b=>b.onclick=async()=>{const id=b.dataset.ok||b.dataset.no,st=b.dataset.ok?'approved':'rejected';
     b.disabled=true;try{if(st==='approved')await B.decide(id,st);else await B.removeRequest(id);toast(st==='approved'?'✅ تمت الموافقة، ستصل النجوم للاعب':'🗑️ تم رفض الطلب وحذفه');openAdmin()}catch(e){console.warn(e);toast('⚠️ تعذّر الحفظ');b.disabled=false}});
 }
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-63';
+const APP_VERSION='2026.11.19-64';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
