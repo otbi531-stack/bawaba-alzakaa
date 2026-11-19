@@ -430,6 +430,14 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .hrar{display:inline-block;color:#fff;border-radius:10px;padding:2px 12px;font-weight:800;font-size:13px;margin-top:4px}#hatchBox h2{margin:6px 0 2px}
 .buddy .spring{animation:sprg .6s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:bottom}@keyframes sprg{to{transform:scaleY(.85) rotate(4deg)}}
 .buddy.yay .marms,.buddy.win .marms{animation:marm .25s ease-in-out 4;transform-box:fill-box;transform-origin:center}@keyframes marm{50%{transform:translateY(-10px)}}
+.aq{background:#1F2A55;color:#fff;border-radius:16px;padding:8px 14px;font-size:16px;font-weight:800;margin-bottom:8px;box-shadow:0 4px 0 #111a3a;display:flex;align-items:center;gap:10px;justify-content:center;text-align:center;min-height:52px;width:100%;max-width:460px;line-height:1.5}
+.aqe{font-size:30px;flex-shrink:0}
+.ahud{position:absolute;top:8px;right:8px;left:8px;display:flex;justify-content:space-between;pointer-events:none}.ahud span{background:rgba(0,0,0,.45);color:#fff;border-radius:10px;padding:3px 9px;font-weight:800;font-size:13px}
+.aopts{width:100%;max-width:460px;margin-top:10px;display:grid;grid-template-columns:1fr;gap:8px}
+.abtn{border:0;border-radius:16px;padding:12px;font-size:16px;font-weight:800;color:#fff;background:linear-gradient(135deg,#6A3FA0,#3B1E6E);box-shadow:0 4px 0 #24124a;animation:popIn .35s both}
+.abtn:nth-child(2){animation-delay:.07s}.abtn:nth-child(3){animation-delay:.14s}.abtn:active{transform:translateY(3px);box-shadow:0 1px 0 #24124a}
+.crates{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.crate{border:0;border-radius:12px;padding:10px 12px;font-size:17px;font-weight:800;background:#C98A4B;color:#fff;box-shadow:0 4px 0 #8A5A2B;animation:popIn .35s both}
+.crate.used{visibility:hidden}.crate.bad{background:#E53935;animation:shk .35s}
 .toast{position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -721,13 +729,13 @@ const GAMES=[
  {id:'order',name:'ترتيب الأعداد',emoji:'🔢',age:'all',skill:'مقارنة الأعداد',price:3,color:'linear-gradient(135deg,#E9DCFF,#CDB5FF)',ready:true,isNew:true},
  {id:'opposites',name:'الأضداد',emoji:'↔️',age:'all',skill:'المفردات واللغة',price:3,color:'linear-gradient(135deg,#FFF1C2,#FFDC7A)',ready:true,isNew:true},
  {id:'truefalse',name:'صح أم خطأ؟',emoji:'⚡',age:'10-14',skill:'سرعة البديهة',price:3,color:'linear-gradient(135deg,#D6F5E1,#9BE8B9)',ready:true,isNew:true},
- {id:'riddles',name:'ألغاز وأحاجي',emoji:'🧩',age:'all',skill:'التفكير والذكاء',box:true,cost:80,desc:'ألغاز عربية ممتعة: من يحلّها أولًا؟',color:'linear-gradient(135deg,#FFE0B5,#FFB86B)',ready:true,isNew:true},
- {id:'emojiq',name:'ألغاز الإيموجي',emoji:'😎',age:'all',skill:'الملاحظة والربط',box:true,cost:80,desc:'خمّن الكلمة من الرموز التعبيرية',color:'linear-gradient(135deg,#FFF3B0,#FFD84D)',ready:true,isNew:true},
- {id:'whoami',name:'من أنا؟',emoji:'🕵️',age:'all',skill:'المعلومات العامة',box:true,cost:80,desc:'اقرأ الأدلة واكتشف من أنا',color:'linear-gradient(135deg,#DCD3FF,#B7A6FF)',ready:true,isNew:true},
- {id:'mathriddles',name:'ألغاز الحساب',emoji:'🧮',age:'all',skill:'الحساب الذهني',box:true,cost:80,desc:'مسائل قصيرة تحتاج تفكيرًا ذكيًا',color:'linear-gradient(135deg,#C9F2E6,#7EDDC2)',ready:true,isNew:true},
- {id:'matchpairs',name:'طابق الكلمات',emoji:'🔗',age:'all',skill:'الإنجليزية والذاكرة',box:true,cost:80,desc:'صِل الكلمة الإنجليزية بمعناها بأسرع وقت',color:'linear-gradient(135deg,#D3ECFF,#8EC9FF)',ready:true,isNew:true},
- {id:'arrange',name:'رتّب الجملة',emoji:'🧱',age:'all',skill:'القراءة وبناء الجمل',box:true,cost:80,desc:'اضغط الكلمات بالترتيب الصحيح',color:'linear-gradient(135deg,#FFDCE8,#FF9EC0)',ready:true,isNew:true},
- {id:'fillblank',name:'أكمل الفراغ',emoji:'✍️',age:'all',skill:'اللغة والفهم',box:true,cost:80,desc:'اختر الكلمة التي تكمل الجملة',color:'linear-gradient(135deg,#E2F7C8,#B4E57F)',ready:true,isNew:true},
+ {id:'riddles',name:'ألغاز وأحاجي',emoji:'🧩',age:'all',skill:'التفكير والذكاء',box:true,cost:80,desc:'⚔️ معركة الوحوش: كل لغز تحلّه ضربة سحرية!',color:'linear-gradient(135deg,#FFE0B5,#FFB86B)',ready:true,isNew:true},
+ {id:'emojiq',name:'ألغاز الإيموجي',emoji:'😎',age:'all',skill:'الملاحظة والربط',box:true,cost:80,desc:'🎈 فرقع بالون الإجابة قبل أن يطير!',color:'linear-gradient(135deg,#FFF3B0,#FFD84D)',ready:true,isNew:true},
+ {id:'whoami',name:'من أنا؟',emoji:'🕵️',age:'all',skill:'المعلومات العامة',box:true,cost:80,desc:'⚔️ اهزم الوحوش بمعرفة من أنا!',color:'linear-gradient(135deg,#DCD3FF,#B7A6FF)',ready:true,isNew:true},
+ {id:'mathriddles',name:'ألغاز الحساب',emoji:'🧮',age:'all',skill:'الحساب الذهني',box:true,cost:80,desc:'🚀 دمّر النيزك الذي يحمل الجواب!',color:'linear-gradient(135deg,#C9F2E6,#7EDDC2)',ready:true,isNew:true},
+ {id:'matchpairs',name:'طابق الكلمات',emoji:'🔗',age:'all',skill:'الإنجليزية والذاكرة',box:true,cost:80,desc:'🚀 أطلق الليزر على الكلمة الإنجليزية الصحيحة!',color:'linear-gradient(135deg,#D3ECFF,#8EC9FF)',ready:true,isNew:true},
+ {id:'arrange',name:'رتّب الجملة',emoji:'🧱',age:'all',skill:'القراءة وبناء الجمل',box:true,cost:80,desc:'🚂 حمّل القطار بالكلمات بالترتيب!',color:'linear-gradient(135deg,#FFDCE8,#FF9EC0)',ready:true,isNew:true},
+ {id:'fillblank',name:'أكمل الفراغ',emoji:'✍️',age:'all',skill:'اللغة والفهم',box:true,cost:80,desc:'🎈 فرقع البالون الذي يكمل الجملة!',color:'linear-gradient(135deg,#E2F7C8,#B4E57F)',ready:true,isNew:true},
  {id:'code',name:'روبوت المتاهة',emoji:'🤖',img:'img/robot.png',age:'10-14',skill:'مبادئ البرمجة',price:3,color:'linear-gradient(135deg,#FFE0D1,#FFB38F)',ready:true},
 ];
 const NEED={penalty:0,race:0,letters:0,memory:0,xo:0,islamic:0,count:0,shapes:5,order:20,opposites:35,truefalse:45,simon:10,puzzle:15,math:25,spelling:30,flags:40,capitals:50,logic:60,clock:70,science:85,code:100};
@@ -1673,18 +1681,174 @@ const MATHR=[['معك 3 تفاحات، وأخذت 2 أُخريين. كم تفا�
  ['ما العدد الذي إذا ضربته في نفسه صار 49؟',7],['كم دقيقة في ساعة ونصف؟',90],['اشتريت 3 أقلام، سعر القلم ريالان. كم ريالًا دفعت؟',6],['معي 20 ريالًا، صرفت منها 7. كم بقي معي؟',13],
  ['ما العدد الذي إذا أضفت إليه 5 صار 12؟',7],['كم ضلعًا لمثلثين معًا؟',6],['ما نصف العدد 18؟',9],['في المزرعة 4 دجاجات وخروفان. كم رِجلًا في المزرعة؟',16],
  ['الساعة الآن 3، كم ستكون بعد 5 ساعات؟',8],['عندي 4 علب، في كل علبة 5 أقلام. كم قلمًا عندي؟',20]];
+// ===== Box arcade: every treasure-box game is now an action game =====
+function arena(hMin){$('#buddy').style.display='none';
+  const W=Math.min(area.clientWidth-8,460),H=Math.min(Math.max(hMin||420,innerHeight-270),600),DPR=Math.min(2,devicePixelRatio||1);
+  area.innerHTML=`<div class="aq" id="aq"></div><div class="rwrap"><canvas id="ac" style="width:${W}px;height:${H}px"></canvas><div class="ahud"><span id="ahp"></span><span id="asc"></span></div><div class="rmsg" id="amsg"></div></div><div class="aopts" id="aopts"></div>`;
+  const cv=$('#ac'),c=cv.getContext('2d');cv.width=W*DPR;cv.height=H*DPR;c.scale(DPR,DPR);const gid=curId;
+  const A={W,H,c,cv,alive:()=>document.body.contains(cv)&&curId===gid&&$('#game').classList.contains('show'),
+    msg(t,col){const m=$('#amsg');if(!m)return;m.textContent=t;m.style.color=col||'#fff';m.style.fontSize=t.length>16?'22px':'';m.classList.remove('show');void m.offsetWidth;m.classList.add('show')},
+    hud(hp,max,txt){const a=$('#ahp'),b=$('#asc');if(a)a.textContent='❤️'.repeat(Math.max(0,hp))+'🤍'.repeat(Math.max(0,max-hp));if(b)b.textContent=txt},
+    rr(x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()},
+    wrap(t,mw,font){c.font=font;const ws=String(t).split(' '),out=[];let cur='';ws.forEach(w=>{const tt=cur?cur+' '+w:w;if(c.measureText(tt).width>mw&&cur){out.push(cur);cur=w}else cur=tt});out.push(cur);return out.slice(0,3)},
+    parts:[],burst(x,y,n,cols,sp=180,sz=5){for(let i=0;i<n;i++){const a=Math.random()*7,v=sp*(.3+Math.random());A.parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,s:sz*(.5+Math.random()),l:1,c:cols[i%cols.length]})}},
+    stepParts(dt,g=300){A.parts.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=g*dt;p.l-=dt*1.3});A.parts=A.parts.filter(p=>p.l>0);A.parts.forEach(p=>{c.globalAlpha=Math.max(0,p.l);c.fillStyle=p.c;c.beginPath();c.arc(p.x,p.y,p.s,0,7);c.fill()});c.globalAlpha=1},
+    end(right,total,txt){$('#buddy').style.display='';result(right,total,txt)}};
+  return A}
+function boxItems(id){const P=(l,n)=>shuffle(l.slice()).slice(0,n),others=(l,a,n)=>shuffle(l.filter(x=>x!==a)).slice(0,n);
+  if(id==='riddles')return P(RIDDLES,8).map(([q,a])=>({q,show:'🧩',ans:a,opts:shuffle([a,...others(RIDDLES.map(x=>x[1]),a,2)])}));
+  if(id==='whoami')return P(WHOAMI,8).map(([q,a])=>({q:q+' من أنا؟',show:'🕵️',ans:a,opts:shuffle([a,...others(WHOAMI.map(x=>x[1]),a,2)])}));
+  if(id==='emojiq')return P(EMOJIQ,8).map(([e,a])=>({q:'ماذا تعني هذه الرموز؟',show:e,ans:a,opts:shuffle([a,...others(EMOJIQ.map(x=>x[1]),a,3)])}));
+  if(id==='fillblank')return P(BLANK,8).map(([q,a,o,e])=>({q:q.replace('___','____'),show:e,ans:a,opts:shuffle([a,...o])}));
+  if(id==='mathriddles')return P(MATHR,8).map(([q,a])=>{const s=new Set([a]);while(s.size<3){const d=a+rnd(-4,4);if(d>=0)s.add(d)}return {q,show:'🧮',ans:a,opts:shuffle([...s])}});
+  if(id==='matchpairs')return P(EN,8).map(([en,ar])=>({q:`ما معنى «${ar}» بالإنجليزية؟`,show:'🔤',ans:en,opts:shuffle([en,...others(EN.map(x=>x[0]),en,2)])}));
+  return []}
+// ---------- A) Balloon pop (emoji puzzles, fill the blank)
+function balloonGame(items,title){
+  const A=arena(460),{W,H,c}=A;let i=0,right=0,hp=3,combo=0,balloons=[],last=0,state='go',clouds=[...Array(5)].map((_,k)=>({x:Math.random()*W,y:20+k*45,s:.6+Math.random()*.6})),birds=[];
+  const COLS=['#FF4D6D','#3D7BFF','#22C55E','#FFB020','#A855F7','#06B6D4'];
+  const next=()=>{if(i>=items.length||hp<=0)return finish();const it=items[i];$('#aq').innerHTML=`<span class="aqe">${it.show}</span><span>${it.q}</span>`;
+    balloons=it.opts.map((o,k)=>({t:o,ok:o===it.ans,x:W*(k+.5)/it.opts.length+(Math.random()-.5)*16,y:H+45+k*30,v:52+Math.random()*12+i*3,ph:Math.random()*7,col:COLS[(k+i)%COLS.length],pop:0}));state='go'};
+  const finish=()=>{state='end';A.msg(hp>0?'🎈 أحسنت!':'💔 انتهت القلوب','#FFC72C');later(()=>A.end(right,items.length,`فرقعت ${right} بالونات صحيحة من ${items.length}${combo>2?` · أعلى سلسلة 🔥`:''}`),1300)};
+  const hit=(b)=>{if(state!=='go'||b.pop)return;b.pop=1;
+    if(b.ok){right++;combo++;SFX.ok();A.burst(b.x,b.y,30,[b.col,'#fff','#FFC72C'],220,5);A.msg(combo>=3?`🔥 سلسلة ×${combo}!`:'💥 صحيح!','#FFC72C');state='wait';balloons.forEach(x=>{if(x!==b)x.fly=1});i++;later(next,900)}
+    else{hp--;combo=0;SFX.no();A.burst(b.x,b.y,22,['#444','#777','#222'],140,6);A.msg('✖ خطأ!','#FF6B6B');if(hp<=0){state='wait';later(finish,600)}}};
+  window._arc={get balloons(){return balloons},hit:b=>hit(b)};
+  A.cv.addEventListener('pointerdown',e=>{const r=A.cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let best=null,bd=1e9;balloons.forEach(b=>{const d=Math.hypot(b.x-x,b.y-y);if(!b.pop&&d<52&&d<bd){bd=d;best=b}});if(best)hit(best)});
+  function balloon(b,ts){const sw=Math.sin(ts/600+b.ph)*6,x=b.x+sw,y=b.y,R=40;
+    c.strokeStyle='rgba(80,80,80,.6)';c.lineWidth=1.2;c.beginPath();c.moveTo(x,y+R+6);c.quadraticCurveTo(x+8,y+R+30,x-2,y+R+58);c.stroke();
+    const g=c.createRadialGradient(x-R*.35,y-R*.4,4,x,y,R*1.1);g.addColorStop(0,'#fff');g.addColorStop(.18,b.col);g.addColorStop(1,'rgba(0,0,0,.35)');c.fillStyle=b.col;
+    c.beginPath();c.ellipse(x,y,R*.9,R,0,0,7);c.fill();c.fillStyle=g;c.globalAlpha=.55;c.fill();c.globalAlpha=1;c.fillStyle=b.col;c.beginPath();c.moveTo(x-6,y+R-2);c.lineTo(x+6,y+R-2);c.lineTo(x,y+R+7);c.fill();
+    c.fillStyle='rgba(255,255,255,.7)';c.beginPath();c.ellipse(x-R*.38,y-R*.42,R*.13,R*.24,-.5,0,7);c.fill();
+    const lines=A.wrap(b.t,R*1.55,'bold 15px Tajawal,sans-serif');c.fillStyle='#fff';c.textAlign='center';c.strokeStyle='rgba(0,0,0,.35)';c.lineWidth=3;lines.forEach((l,j)=>{const ly=y+5+(j-(lines.length-1)/2)*16;c.strokeText(l,x,ly);c.fillText(l,x,ly)})}
+  function frame(ts){if(!A.alive())return;const dt=Math.min(.05,(ts-(last||ts))/1000);last=ts;
+    const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#5EC2FF');g.addColorStop(1,'#D9F2FF');c.fillStyle=g;c.fillRect(0,0,W,H);
+    c.fillStyle='rgba(255,236,150,.9)';c.beginPath();c.arc(W*.85,H*.12,30,0,7);c.fill();
+    clouds.forEach(k=>{k.x+=dt*12*k.s;if(k.x>W+80)k.x=-80;c.fillStyle='rgba(255,255,255,.85)';[[0,0,22],[20,-8,26],[44,0,20]].forEach(([dx,dy,r])=>{c.beginPath();c.arc(k.x+dx*k.s,k.y+dy*k.s,r*k.s,0,7);c.fill()})});
+    c.fillStyle='#7BCB5A';c.beginPath();c.moveTo(0,H);for(let x=0;x<=W;x+=20)c.lineTo(x,H-26-Math.sin(x/50)*8);c.lineTo(W,H);c.fill();
+    if(Math.random()<dt*.3)birds.push({x:-20,y:40+Math.random()*H*.3,v:50+Math.random()*30});birds.forEach(b=>{b.x+=b.v*dt;c.strokeStyle='#334';c.lineWidth=2;const f=Math.sin(ts/120)*5;c.beginPath();c.moveTo(b.x-8,b.y-f);c.quadraticCurveTo(b.x-4,b.y-2,b.x,b.y);c.quadraticCurveTo(b.x+4,b.y-2,b.x+8,b.y-f);c.stroke()});birds=birds.filter(b=>b.x<W+30);
+    balloons.forEach(b=>{if(b.pop)return;b.y-=b.v*(b.fly?4:1)*dt;balloon(b,ts)});
+    if(state==='go'){const esc=balloons.find(b=>b.ok&&!b.pop&&b.y<-60);if(esc){esc.pop=1;hp--;combo=0;SFX.no();A.msg('🎈 هرب البالون الصحيح!','#FF6B6B');state='wait';i++;later(next,800)}}
+    A.stepParts(dt);A.hud(hp,3,`🎈 ${Math.min(i+1,items.length)}/${items.length} · ✔ ${right}`);stat(`${Math.min(i+1,items.length)}/${items.length}`,right);requestAnimationFrame(frame)}
+  next();requestAnimationFrame(frame)}
+// ---------- B) Space shooter (math riddles, English words)
+function shooterGame(items){
+  const A=arena(460),{W,H,c}=A;let i=0,right=0,hp=3,rocks=[],shots=[],last=0,fireT=0,state='go',sx=W/2,tx=W/2,stars=[...Array(70)].map(()=>({x:Math.random()*W,y:Math.random()*H,z:.3+Math.random()})),shield=0;
+  const next=()=>{if(i>=items.length||hp<=0)return finish();const it=items[i];$('#aq').innerHTML=`<span class="aqe">${it.show}</span><span>${it.q}</span>`;
+    const n=it.opts.length;rocks=it.opts.map((o,k)=>({t:o,ok:o===it.ans,x:W*(k+.5)/n,y:-20-k*24-Math.random()*16,v:44+i*3,r:38,rot:Math.random()*7,vr:(Math.random()-.5)*1.5,dead:0}));state='go'};
+  const finish=()=>{state='end';A.msg(hp>0?'🚀 المهمة نجحت!':'💥 تحطمت الدروع','#FFC72C');later(()=>A.end(right,items.length,`دمّرت ${right} نيازك صحيحة من ${items.length}`),1300)};
+  let aim=null;const tapAt=(x,y)=>{let best=null,bd=1e9;rocks.forEach(r=>{if(r.dead)return;const d=Math.hypot(r.x-x,r.y-y);if(d<r.r+30&&d<bd){bd=d;best=r}});tx=Math.max(24,Math.min(W-24,best?best.x:x));aim=best};
+  A.cv.addEventListener('pointerdown',e=>{const r=A.cv.getBoundingClientRect();tapAt(e.clientX-r.left,e.clientY-r.top)});
+  window._arc={get rocks(){return rocks},tap:r=>{tx=r.x;aim=r}};
+  function ship(x,y,ts){c.save();c.translate(x,y);const fl=10+Math.random()*10;const g=c.createLinearGradient(0,14,0,30+fl);g.addColorStop(0,'#fff');g.addColorStop(.4,'#4FC3FF');g.addColorStop(1,'rgba(0,80,255,0)');c.fillStyle=g;c.beginPath();c.moveTo(-8,14);c.lineTo(0,30+fl);c.lineTo(8,14);c.fill();
+    c.fillStyle='#C9D3E8';c.beginPath();c.moveTo(0,-30);c.quadraticCurveTo(14,-10,14,14);c.lineTo(-14,14);c.quadraticCurveTo(-14,-10,0,-30);c.fill();
+    c.fillStyle='#E8233C';c.beginPath();c.moveTo(-14,0);c.lineTo(-30,18);c.lineTo(-12,16);c.fill();c.beginPath();c.moveTo(14,0);c.lineTo(30,18);c.lineTo(12,16);c.fill();
+    c.fillStyle='#4FC3FF';c.beginPath();c.ellipse(0,-8,6,10,0,0,7);c.fill();c.fillStyle='rgba(255,255,255,.6)';c.beginPath();c.ellipse(-2,-12,2,4,0,0,7);c.fill();
+    if(shield>0){c.strokeStyle=`rgba(255,80,80,${shield})`;c.lineWidth=4;c.beginPath();c.arc(0,-4,40,0,7);c.stroke()}c.restore()}
+  function rock(r,ts){c.save();c.translate(r.x,r.y);c.rotate(r.rot);const g=c.createRadialGradient(-r.r*.3,-r.r*.3,4,0,0,r.r);g.addColorStop(0,'#B08D6E');g.addColorStop(1,'#5B4433');c.fillStyle=g;
+    c.beginPath();for(let k=0;k<10;k++){const a=k/10*7,rr=r.r*(.85+((k*37)%7)/40);c.lineTo(Math.cos(a)*rr,Math.sin(a)*rr)}c.closePath();c.fill();c.fillStyle='rgba(0,0,0,.25)';[[-10,-8,7],[12,6,9],[-4,14,5]].forEach(([x,y,s])=>{c.beginPath();c.arc(x,y,s,0,7);c.fill()});c.restore();
+    c.save();c.strokeStyle='rgba(255,140,0,.35)';c.lineWidth=6;c.beginPath();c.moveTo(r.x,r.y-r.r);c.lineTo(r.x,r.y-r.r-28);c.stroke();c.restore();
+    const lines=A.wrap(r.t,r.r*2.1,'bold 16px "Baloo Bhaijaan 2",Tajawal,sans-serif');const bw=Math.max(...lines.map(l=>c.measureText(l).width))+14;c.fillStyle='rgba(10,16,40,.85)';A.rr(r.x-bw/2,r.y-11*lines.length,bw,22*lines.length,9);c.fill();
+    c.fillStyle='#FFE27A';c.textAlign='center';lines.forEach((l,j)=>c.fillText(l,r.x,r.y+6-11*(lines.length-1)+j*22))}
+  function frame(ts){if(!A.alive())return;const dt=Math.min(.05,(ts-(last||ts))/1000);last=ts;
+    c.fillStyle='#070B22';c.fillRect(0,0,W,H);const neb=c.createRadialGradient(W*.2,H*.3,10,W*.2,H*.3,W*.7);neb.addColorStop(0,'rgba(140,60,255,.35)');neb.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=neb;c.fillRect(0,0,W,H);
+    c.fillStyle='#E9B',c.globalAlpha=.9;c.beginPath();c.arc(W*.82,H*.2,26,0,7);c.fill();c.globalAlpha=1;c.strokeStyle='rgba(255,220,240,.5)';c.lineWidth=3;c.beginPath();c.ellipse(W*.82,H*.2,42,10,-.3,0,7);c.stroke();
+    stars.forEach(s=>{s.y+=s.z*60*dt;if(s.y>H)s.y=0;c.fillStyle=`rgba(255,255,255,${s.z})`;c.fillRect(s.x,s.y,s.z*2,s.z*2)});
+    sx+=(tx-sx)*Math.min(1,dt*16);fireT-=dt;if(state==='go'&&aim&&!aim.dead&&Math.abs(sx-aim.x)<6&&fireT<=0){fireT=.5;shots.push({x:sx,y:H-70,tg:aim});aim=null;SFX.note(900)}
+    shots.forEach(s=>{s.y-=620*dt;if(s.tg&&!s.tg.dead)s.x+=(s.tg.x-s.x)*Math.min(1,dt*10);c.fillStyle='#7CFFB2';c.shadowColor='#7CFFB2';c.shadowBlur=8;c.fillRect(s.x-2,s.y-10,4,14);c.shadowBlur=0});
+    rocks.forEach(r=>{if(r.dead)return;r.y+=r.v*(r.flee?-6:1)*dt;r.rot+=r.vr*dt;rock(r,ts)});
+    if(state==='go')shots.forEach(s=>rocks.forEach(r=>{if(!r.dead&&!s.used&&Math.hypot(s.x-r.x,s.y-r.y)<r.r){s.used=1;r.dead=1;
+      if(r.ok){right++;SFX.ok();A.burst(r.x,r.y,40,['#FFB020','#FF5A1F','#fff'],260,5);A.msg('💥 إصابة صحيحة!','#FFC72C');rocks.forEach(x=>x.flee=1);state='wait';i++;later(next,900)}
+      else{hp--;shield=1;SFX.no();A.burst(r.x,r.y,24,['#888','#555'],160,6);A.msg('✖ نيزك خاطئ!','#FF6B6B');if(hp<=0){state='wait';later(finish,500)}}}}));
+    shots=shots.filter(s=>s.y>-20&&!s.used);
+    if(state==='go'){const miss=rocks.find(r=>r.ok&&!r.dead&&r.y>H-60);if(miss){miss.dead=1;hp--;shield=1;SFX.no();A.msg(`☄️ فاتك! الجواب ${miss.t}`,'#FF6B6B');state='wait';rocks.forEach(x=>x.flee=1);i++;later(next,1000)}}
+    shield=Math.max(0,shield-dt*1.5);ship(sx,H-50,ts);A.stepParts(dt,40);
+    A.hud(hp,3,`🚀 ${Math.min(i+1,items.length)}/${items.length} · ✔ ${right}`);stat(`${Math.min(i+1,items.length)}/${items.length}`,right);requestAnimationFrame(frame)}
+  next();requestAnimationFrame(frame)}
+// ---------- C) Monster battle (riddles, who am I)
+function battleGame(items){
+  const A=arena(380),{W,H,c}=A;let i=0,right=0,hp=3,boss=null,stage=0,last=0,state='go',fx=null,pShake=0,bShake=0,pJump=0,dmg=[];
+  const toImg=svg=>{const im=new Image();im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);return im};
+  const d=monData(),comp=d.comp&&MON[d.comp]?MON[d.comp]:MONS[0],pImg=toImg(monsterSVG(comp,3));
+  const BOSSES=[{n:'غول النسيان',pal:['#4A3F6B','#2E2648'],eyes:'felt',mouth:'teeth',top:'horns',acc:'none',seed:31,hp:3},{n:'تنين الجهل',pal:['#B3261E','#7A1712'],eyes:'star',mouth:'teeth',top:'horns',acc:'none',seed:32,hp:3},{n:'ملك الضباب',pal:['#37474F','#1F2A30'],eyes:'x',mouth:'open',top:'crown',acc:'none',seed:33,hp:4}];
+  const spawn=()=>{const b=BOSSES[stage%BOSSES.length];boss={...b,max:b.hp,cur:b.hp,img:toImg(monsterSVG(b,9+stage)),in:0}};spawn();
+  const showQ=()=>{if(i>=items.length||hp<=0)return finish();const it=items[i];$('#aq').innerHTML=`<span class="aqe">${it.show}</span><span>${it.q}</span>`;
+    $('#aopts').innerHTML=it.opts.map((o,k)=>`<button class="abtn" data-k="${k}">⚔️ ${esc(String(o))}</button>`).join('');$('#aopts').querySelectorAll('.abtn').forEach(b=>b.onclick=()=>answer(+b.dataset.k));state='go'};
+  window._arc={get item(){return items[i]},answer:k=>answer(k)};
+  const answer=k=>{if(state!=='go')return;const it=items[i],ok=it.opts[k]===it.ans;state='anim';$('#aopts').innerHTML='';
+    if(ok){right++;pJump=1;fx={t:0,from:'p',ok:true};SFX.ok()}else{fx={t:0,from:'b',ok:false};SFX.no();A.msg(`الجواب: ${it.ans}`,'#FFB3B3')}};
+  const finish=()=>{state='end';later(()=>A.end(right,items.length,`هزمت ${stage} ${stage===1?'وحشًا':'وحوش'} · أجبت صحيحًا على ${right} من ${items.length}`),1200)};
+  function bar(x,y,w,v,max,col,label){c.fillStyle='rgba(0,0,0,.45)';A.rr(x,y,w,14,7);c.fill();c.fillStyle=col;A.rr(x+2,y+2,(w-4)*Math.max(0,v/max),10,5);c.fill();c.fillStyle='#fff';c.font='bold 12px Tajawal,sans-serif';c.textAlign='center';c.fillText(label,x+w/2,y-4)}
+  function frame(ts){if(!A.alive())return;const dt=Math.min(.05,(ts-(last||ts))/1000);last=ts;
+    const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#2B1650');g.addColorStop(.6,'#6A3FA0');g.addColorStop(1,'#2E7D32');c.fillStyle=g;c.fillRect(0,0,W,H);
+    c.fillStyle='rgba(255,255,255,.08)';for(let k=0;k<5;k++){c.beginPath();c.moveTo(k*W/4-20,H*.62);c.lineTo(k*W/4+30,H*.3-(k%2)*30);c.lineTo(k*W/4+80,H*.62);c.fill()}
+    c.fillStyle='#3E8E41';c.beginPath();c.ellipse(W*.25,H*.86,W*.22,18,0,0,7);c.fill();c.beginPath();c.ellipse(W*.74,H*.58,W*.22,18,0,0,7);c.fill();
+    for(let k=0;k<20;k++){const x=(k*53+ts/40)%W,y=(k*97)%H;c.fillStyle=`rgba(255,240,170,${.3+.3*Math.sin(ts/300+k)})`;c.beginPath();c.arc(x,y,1.6,0,7);c.fill()}
+    // boss
+    boss.in=Math.min(1,boss.in+dt*1.5);const bs=Math.min(W*.44,H*.5),bx=W*.74+(bShake>0?Math.sin(ts/20)*8:0),by=H*.58-bs*.95+(1-boss.in)*-H*.6+Math.sin(ts/500)*4;
+    if(boss.cur>0||bShake>0){c.globalAlpha=boss.cur<=0?Math.max(0,bShake):1;c.drawImage(boss.img,bx-bs/2,by,bs,bs*1.1);c.globalAlpha=1}
+    bar(W*.56,52,W*.38,boss.cur,boss.max,'#EF4444',boss.n);
+    // player
+    pJump=Math.max(0,pJump-dt*2);const ps=Math.min(W*.36,H*.42),px=W*.25+(pShake>0?Math.sin(ts/20)*8:0),py=H*.86-ps*1.02-Math.sin(pJump*Math.PI)*40;c.drawImage(pImg,px-ps/2,py,ps,ps*1.1);
+    bar(W*.06,52,W*.38,hp,3,'#22C55E',comp.n+' (أنت)');
+    // attacks
+    if(fx){fx.t+=dt*1.6;const p=Math.min(1,fx.t),fxp=fx.from==='p'?[px,py+ps*.4,bx,by+bs*.5]:[bx,by+bs*.5,px,py+ps*.5];const x=fxp[0]+(fxp[2]-fxp[0])*p,y=fxp[1]+(fxp[3]-fxp[1])*p-Math.sin(p*Math.PI)*60;
+      const col=fx.from==='p'?['#7CFFB2','#4FC3FF','#fff']:['#FF5A1F','#FFB020','#fff'];for(let k=0;k<3;k++)A.parts.push({x,y,vx:(Math.random()-.5)*40,vy:(Math.random()-.5)*40,s:4+Math.random()*4,l:.6,c:col[k]});
+      c.fillStyle=col[0];c.shadowColor=col[0];c.shadowBlur=20;c.beginPath();c.arc(x,y,12,0,7);c.fill();c.shadowBlur=0;
+      if(p>=1){A.burst(x,y,30,col,220,5);if(fx.from==='p'){boss.cur--;bShake=.5;dmg.push({x:bx,y:by,t:1,v:'-1 💥'});A.msg(boss.cur<=0?'🏆 هزمت الوحش!':'⚡ ضربة قوية!','#FFC72C');
+          if(boss.cur<=0){stage++;SFX.fanfare();later(()=>{spawn()},900)}}
+        else{hp--;pShake=.5;dmg.push({x:px,y:py,t:1,v:'-❤️'})}
+        fx=null;i++;later(showQ,boss.cur<=0?1300:800)}}
+    bShake=Math.max(0,bShake-dt);pShake=Math.max(0,pShake-dt);
+    dmg.forEach(d=>{d.t-=dt;d.y-=40*dt;c.globalAlpha=Math.max(0,d.t);c.fillStyle='#FFE27A';c.font='bold 26px Tajawal,sans-serif';c.textAlign='center';c.fillText(d.v,d.x,d.y);c.globalAlpha=1});dmg=dmg.filter(d=>d.t>0);
+    A.stepParts(dt,60);A.hud(hp,3,`⚔️ ${Math.min(i+1,items.length)}/${items.length} · 👹 ${stage}`);stat(`${Math.min(i+1,items.length)}/${items.length}`,right);requestAnimationFrame(frame)}
+  showQ();requestAnimationFrame(frame)}
+// ---------- D) Word train (arrange the sentence)
+function trainGame(){
+  const A=arena(300),{W,H,c}=A,list=shuffle(SENT.slice()).slice(0,6);let i=0,right=0,hp=3,last=0,state='in',tx=W+40,words=[],loaded=[],chips=[],steam=[],wheel=0,mistakes=0;
+  let WG=78;const LOCO=96;let stopX=0;
+  const setup=()=>{if(i>=list.length||hp<=0)return finish();const [s,e]=list[i];words=s.split(' ');loaded=[];mistakes=0;WG=Math.max(46,Math.min(78,(W-LOCO-24)/words.length-6));stopX=Math.max(8,W-LOCO-14-words.length*(WG+6));let ch=shuffle(words.map((w,k)=>({w,k})));if(ch.every((x,k)=>x.k===k))ch.reverse();chips=ch;
+    $('#aq').innerHTML=`<span class="aqe">${e}</span><span>حمّل الكلمات على القطار بالترتيب الصحيح!</span>`;state='in';tx=W+40;drawChips()};
+  const drawChips=()=>{$('#aopts').innerHTML=`<div class="crates">${chips.map((x,k)=>`<button class="crate ${x.used?'used':''}" data-c="${k}">📦 ${x.w}</button>`).join('')}</div>`;
+    $('#aopts').querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>pick(+b.dataset.c,b))};
+  window._arc={get words(){return words},get chips(){return chips},pick:k=>pick(k)};
+  const pick=(k,el)=>{if(state!=='load'&&state!=='in')return;const ch=chips[k];if(ch.used)return;const want=words[loaded.length];
+    if(ch.w===want){ch.used=1;loaded.push(ch.w);SFX.note(500+loaded.length*70);drawChips();if(loaded.length===words.length){state='go';if(!mistakes)right++;SFX.ok();A.msg(mistakes?'🚂 انطلق القطار!':'🚂 ممتاز! بدون أخطاء','#FFC72C');
+        try{SFX.note(1200);setTimeout(()=>SFX.note(1500),150)}catch(e){}}}
+    else{mistakes++;hp--;SFX.no();if(el){el.classList.add('bad');setTimeout(()=>el.classList.remove('bad'),400)}A.msg(`✖ الكلمة التالية: «${want}»`,'#FF6B6B');if(hp<=0){state='wait';later(finish,700)}}};
+  const finish=()=>{state='end';later(()=>A.end(right,list.length,`أوصلت ${right} من ${list.length} قطارات بدون أخطاء`),900)};
+  function frame(ts){if(!A.alive())return;const dt=Math.min(.05,(ts-(last||ts))/1000);last=ts;
+    const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#FFB36B');g.addColorStop(.5,'#FFE0B0');g.addColorStop(1,'#FFE0B0');c.fillStyle=g;c.fillRect(0,0,W,H);
+    c.fillStyle='#E9A86A';c.beginPath();c.moveTo(0,H*.62);for(let x=0;x<=W;x+=10)c.lineTo(x,H*.55-Math.sin(x/70+1)*18);c.lineTo(W,H*.62);c.fill();
+    c.fillStyle='#C88550';c.beginPath();c.moveTo(0,H*.68);for(let x=0;x<=W;x+=10)c.lineTo(x,H*.62-Math.sin(x/45)*10);c.lineTo(W,H*.68);c.fill();
+    c.fillStyle='#8A6A4A';c.fillRect(0,H*.68,W,H*.32);const ry=H*.8;c.fillStyle='#5D4330';for(let x=(-(ts/8)%22)*(state==='go'?1:0);x<W;x+=22)c.fillRect(x,ry-2,12,10);c.fillStyle='#B0B7C3';c.fillRect(0,ry-6,W,4);c.fillRect(0,ry+6,W,3);
+    if(state==='in'){tx+=(stopX-tx)*Math.min(1,dt*2.5);if(Math.abs(tx-stopX)<2){state='load';tx=stopX}}
+    if(state==='go'){tx-=220*dt;wheel+=dt*12;if(tx<-WG*words.length-LOCO-40){i++;setup()}}
+    // locomotive (faces left)
+    const ly=ry-56;c.save();c.translate(tx,ly);c.fillStyle='#E8233C';A.rr(0,10,LOCO,40,8);c.fill();c.fillStyle='#1F2A44';A.rr(LOCO-36,-14,36,30,6);c.fill();c.fillStyle='#BFE3FF';c.fillRect(LOCO-28,-8,20,14);
+    c.fillStyle='#333';c.fillRect(14,-12,14,24);c.fillStyle='#FFC72C';c.beginPath();c.arc(-2,30,7,0,7);c.fill();c.fillStyle='#333';c.beginPath();c.moveTo(-10,50);c.lineTo(8,38);c.lineTo(8,50);c.fill();
+    [18,52,80].forEach(x=>{c.fillStyle='#222';c.beginPath();c.arc(x,52,10,0,7);c.fill();c.strokeStyle='#999';c.lineWidth=2;c.beginPath();c.moveTo(x,52);c.lineTo(x+Math.cos(wheel)*8,52+Math.sin(wheel)*8);c.stroke()});c.restore();
+    if(state!=='load'||Math.random()<.3)if(Math.random()<dt*(state==='go'?18:5))steam.push({x:tx+21,y:ly-14,r:6,l:1});steam.forEach(s=>{s.y-=30*dt;s.x+=(state==='go'?60:8)*dt;s.r+=10*dt;s.l-=dt*.7;c.fillStyle=`rgba(255,255,255,${Math.max(0,s.l)*.8})`;c.beginPath();c.arc(s.x,s.y,s.r,0,7);c.fill()});steam=steam.filter(s=>s.l>0);
+    // wagons behind (to the right of loco = reading order right-to-left)
+    loaded.forEach((w,k)=>{const wx=tx+LOCO+8+(words.length-1-k)*(WG+6);c.fillStyle=['#3D7BFF','#22C55E','#FFB020','#A855F7','#06B6D4','#F06AA0'][k%6];A.rr(wx,ly+14,WG,34,6);c.fill();c.fillStyle='rgba(255,255,255,.9)';A.rr(wx+5,ly+19,WG-10,24,5);c.fill();
+      c.fillStyle='#1F2A44';c.font=`bold ${WG<60?12:14}px Tajawal,sans-serif`;c.textAlign='center';c.fillText(w,wx+WG/2,ly+36);[14,WG-14].forEach(x=>{c.fillStyle='#222';c.beginPath();c.arc(wx+x,ry-4,8,0,7);c.fill()});c.fillStyle='#444';c.fillRect(wx-6,ly+34,6,4)});
+    // reading arrow
+    if(state==='load'){c.fillStyle='rgba(31,42,68,.75)';A.rr(W/2-90,18,180,26,13);c.fill();c.fillStyle='#fff';c.font='bold 13px Tajawal,sans-serif';c.textAlign='center';c.fillText(`الكلمة ${loaded.length+1} من ${words.length}`,W/2,36)}
+    A.stepParts(dt);A.hud(hp,3,`🚂 ${Math.min(i+1,list.length)}/${list.length} · ✔ ${right}`);stat(`${Math.min(i+1,list.length)}/${list.length}`,right);requestAnimationFrame(frame)}
+  setup();requestAnimationFrame(frame)}
+
 function boxQuiz(list,mk){const ans=list.map(x=>x[1]);quiz2(shuffle(list).slice(0,8).map(([q,a])=>mk(q,a,shuffle(ans.filter(x=>x!==a)).slice(0,3))),{hearts:3})}
-function riddles(){boxQuiz(RIDDLES,(q,a,o)=>({show:'🧩',prompt:q,ans:a,opts:[a,...o],txt:true,reveal:`الجواب: ${a}`}))}
-function emojiq(){boxQuiz(EMOJIQ,(q,a,o)=>({show:q,prompt:'ماذا تعني هذه الرموز؟',ans:a,opts:[a,...o],txt:true,reveal:`${q} = ${a}`}))}
-function whoami(){boxQuiz(WHOAMI,(q,a,o)=>({show:'🕵️',prompt:q+'<br><b>من أنا؟</b>',ans:a,opts:[a,...o],txt:true,reveal:`أنا ${a}`}))}
-function mathriddles(){quiz2(shuffle(MATHR).slice(0,8).map(([q,a])=>{const s=new Set([a]);while(s.size<4){const d=a+rnd(-4,4);if(d>=0)s.add(d)}
-  return {show:'🧮',prompt:q,ans:a,opts:[...s],reveal:`الجواب: ${a}`}}),{hearts:3})}
+function riddles(){battleGame(boxItems('riddles'))}
+function emojiq(){balloonGame(boxItems('emojiq'))}
+function whoami(){battleGame(boxItems('whoami'))}
+function mathriddles(){shooterGame(boxItems('mathriddles'))}
 
 // ---- Lesson-style box games (match pairs, build the sentence, fill the blank)
 const EN=[['cat','قطة'],['dog','كلب'],['apple','تفاحة'],['sun','شمس'],['moon','قمر'],['book','كتاب'],['water','ماء'],['house','بيت'],['car','سيارة'],['tree','شجرة'],
  ['fish','سمكة'],['bird','طائر'],['milk','حليب'],['door','باب'],['school','مدرسة'],['red','أحمر'],['blue','أزرق'],['one','واحد'],['two','اثنان'],['three','ثلاثة'],
  ['mother','أم'],['father','أب'],['pen','قلم'],['ball','كرة'],['chair','كرسي'],['star','نجمة'],['bread','خبز'],['egg','بيضة'],['hand','يد'],['eye','عين']];
-function matchpairs(){
+function matchpairs(){shooterGame(boxItems('matchpairs'))}
+function matchpairsOld(){
   const pool=shuffle(EN);let round=0,miss=0,done=0,pick=null,t0=Date.now();const R=3,N=5;
   const play=()=>{
     if(round>=R){const sec=Math.round((Date.now()-t0)/1000);return result(Math.max(0,R*N-miss),R*N,`طابقت ${R*N} كلمة في ${sec} ثانية، مع ${miss} ${miss===1?'خطأ':'أخطاء'}`)}
@@ -1703,7 +1867,8 @@ function matchpairs(){
 const SENT=[['أغسل يدي قبل الأكل','🧼'],['الشمس تشرق في الصباح','🌅'],['أشرب الماء عندما أعطش','💧'],['أحب أن أقرأ القصص كل يوم','📚'],['ذهبت مع أبي إلى السوق','🛒'],
  ['القطة تشرب الحليب','🐱'],['النظافة من الإيمان','✨'],['من جدّ وجد ومن زرع حصد','🌱'],['أساعد أمي في البيت','🏠'],['العقل السليم في الجسم السليم','💪'],
  ['الرياض عاصمة المملكة العربية السعودية','🇸🇦'],['نلعب الكرة في الحديقة','⚽']];
-function arrange(){
+function arrange(){trainGame()}
+function arrangeOld(){
   const list=shuffle(SENT).slice(0,6);let i=0,score=0;
   const next=()=>{
     if(i>=list.length)return result(score,list.length,`رتّبت ${score} من ${list.length} جمل صحيحة`);
@@ -1727,7 +1892,7 @@ const BLANK=[['يسبح السمك في ___','الماء',['الشجرة','ال�
  ['جمع كلمة «كتاب» هو ___','كتب',['كتابان','مكتبة','كاتب'],'📚'],['مثنّى كلمة «قلم» هو ___','قلمان',['أقلام','قليم','أقلمة'],'✏️'],['النحلة تصنع ___','العسل',['الحليب','الحرير','الزبدة'],'🐝'],
  ['نسمع بـ ___','الأذنين',['العينين','الأنف','اليدين'],'👂'],['أبرد فصول السنة هو ___','الشتاء',['الصيف','الربيع','الخريف'],'❄️'],['نركب ___ لنطير إلى مدينة بعيدة','الطائرة',['الدراجة','القارب','الحصان'],'✈️'],
  ['الطبيب يعمل في ___','المستشفى',['المخبز','المزرعة','المصنع'],'🩺']];
-function fillblank(){quiz2(shuffle(BLANK).slice(0,8).map(([q,a,o,e])=>({show:e,prompt:q.replace('___','<mark>____</mark>'),ans:a,opts:[a,...o],txt:true,reveal:q.replace('___',a)})),{hearts:3})}
+function fillblank(){balloonGame(boxItems('fillblank'))}
 
 // ---- Racing game (pseudo-3D): steer into the gate with the right answer to get nitro
 function race(){
@@ -1931,7 +2096,7 @@ function feltDefs(id){return `<defs><filter id="fz${id}" x="-20%" y="-20%" width
  <radialGradient id="vol${id}" cx="38%" cy="30%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></radialGradient><filter id="sh${id}"><feGaussianBlur stdDeviation="4"/></filter></defs>`}
 function monsterSVG(sp,uid){const id=(sp.seed*7+(uid||0))%9000+10,[c,cd]=sp.pal,eyes=sp.eyes,mouth=sp.mouth,top=sp.top,acc=sp.acc,w=62,h=70,cx=100,cy=112;
  const st='stroke="#fff" stroke-opacity=".75" stroke-width="2.2" stroke-dasharray="4 4" fill="none" stroke-linecap="round"';
- let s=`<svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">${feltDefs(id)}<ellipse cx="100" cy="204" rx="${w*.9}" ry="9" fill="#000" opacity=".22" filter="url(#sh${id})"/>`;
+ let s=`<svg viewBox="0 0 200 220" width="200" height="220" xmlns="http://www.w3.org/2000/svg">${feltDefs(id)}<ellipse cx="100" cy="204" rx="${w*.9}" ry="9" fill="#000" opacity=".22" filter="url(#sh${id})"/>`;
  if(top==='horns')s+=`<g filter="url(#fz${id})"><path d="M${cx-30} ${cy-h+18} q-14 -30 4 -42 q2 22 14 34z" fill="#FFF1D6"/><path d="M${cx+30} ${cy-h+18} q14 -30 -4 -42 q-2 22 -14 34z" fill="#FFF1D6"/></g>`;
  if(top==='ears')s+=`<g filter="url(#fz${id})"><ellipse cx="${cx-34}" cy="${cy-h+12}" rx="14" ry="22" fill="${cd}" transform="rotate(-25 ${cx-34} ${cy-h+12})"/><ellipse cx="${cx+34}" cy="${cy-h+12}" rx="14" ry="22" fill="${cd}" transform="rotate(25 ${cx+34} ${cy-h+12})"/><ellipse cx="${cx-34}" cy="${cy-h+14}" rx="7" ry="13" fill="#FFB3C7" transform="rotate(-25 ${cx-34} ${cy-h+14})"/><ellipse cx="${cx+34}" cy="${cy-h+14}" rx="7" ry="13" fill="#FFB3C7" transform="rotate(25 ${cx+34} ${cy-h+14})"/></g>`;
  if(top==='springs')[[-24,'#FFC93C'],[0,'#FF8A3D'],[24,'#FFC93C']].forEach(([dx,col],i)=>{const y0=cy-h+6,y1=y0-34-(i===1?8:0);s+=`<g class="spring"><path d="M${cx+dx} ${y0} q6 -5 0 -9 q-6 -5 0 -9 q6 -5 0 -9 q-6 -4 0 -${y0-y1-27}" stroke="#9AA3B5" stroke-width="1.6" fill="none"/><g filter="url(#fz${id})"><path d="M${cx+dx} ${y1-11} l3.5 7.5 8 1 -6 5.5 1.6 8 -7.1 -4 -7.1 4 1.6 -8 -6 -5.5 8 -1z" fill="${col}"/></g></g>`});
@@ -1945,7 +2110,7 @@ function monsterSVG(sp,uid){const id=(sp.seed*7+(uid||0))%9000+10,[c,cd]=sp.pal,
   if(eyes==='button')return `<circle cx="${x}" cy="${ey}" r="11" fill="#20202C"/><circle cx="${x}" cy="${ey}" r="8" fill="none" stroke="#3A3A4C" stroke-width="1.5"/><circle cx="${x-2.5}" cy="${ey-2.5}" r="1.6" fill="#888"/><circle cx="${x+2.5}" cy="${ey-2.5}" r="1.6" fill="#888"/><circle cx="${x-2.5}" cy="${ey+2.5}" r="1.6" fill="#888"/><circle cx="${x+2.5}" cy="${ey+2.5}" r="1.6" fill="#888"/><circle cx="${x-4}" cy="${ey-5}" r="2.5" fill="#fff" opacity=".6"/>`;
   if(eyes==='sleepy')return `<g filter="url(#fz${id})"><path d="M${x-12} ${ey} q12 10 24 0" stroke="#20202C" stroke-width="5" fill="none" stroke-linecap="round"/></g>`;
   if(eyes==='star')return `<g filter="url(#fz${id})"><circle cx="${x}" cy="${ey}" r="14" fill="#fff"/><path d="M${x} ${ey-9} l2.6 5.6 6 .8 -4.5 4.2 1.2 6 -5.3 -3 -5.3 3 1.2 -6 -4.5 -4.2 6 -.8z" fill="#FFB800"/></g>`;
-  return `<g class="meye"><g filter="url(#fz${id})"><circle cx="${x}" cy="${ey}" r="14" fill="#fff"/><circle cx="${x+2}" cy="${ey+2}" r="7" fill="#20202C"/></g><circle cx="${x+4}" cy="${ey-1}" r="2.2" fill="#fff"/><circle cx="${x}" cy="${ey}" r="14" ${st} stroke-width="1.4" stroke="#C9C9D6"/></g>`};
+  return `<g class="meye"><g filter="url(#fz${id})"><circle cx="${x}" cy="${ey}" r="14" fill="#fff"/><circle cx="${x+2}" cy="${ey+2}" r="7" fill="#20202C"/></g><circle cx="${x+4}" cy="${ey-1}" r="2.2" fill="#fff"/><circle cx="${x}" cy="${ey}" r="14" stroke="#C9C9D6" stroke-opacity=".75" stroke-width="1.4" stroke-dasharray="4 4" fill="none"/></g>`};
  s+=eye(cx-ex)+eye(cx+ex);const my=cy+h*.22;
  if(mouth==='open'||eyes==='x')s+=`<g filter="url(#fz${id})"><path d="M${cx-24} ${my-6} q24 -10 48 0 q-4 30 -24 30 q-20 0 -24 -30z" fill="#1B1B24"/><path d="M${cx-16} ${my+12} q16 -10 32 0 q-6 10 -16 10 q-10 0 -16 -10z" fill="#E0394E"/><path d="M${cx-20} ${my-5} q20 -6 40 0 l-2 6 q-18 -4 -36 0z" fill="#fff"/></g>`;
  else if(mouth==='teeth')s+=`<g filter="url(#fz${id})"><path d="M${cx-22} ${my-4} q22 22 44 0z" fill="#1B1B24"/><path d="M${cx-12} ${my-3} l5 8 5 -8z M${cx+2} ${my-3} l5 8 5 -8z" fill="#fff"/></g>`;
@@ -2353,7 +2518,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-48';
+const APP_VERSION='2026.11.19-50';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
