@@ -463,6 +463,10 @@ body.kidon .clouds{display:none}.clouds{transform:scaleY(.5);transform-origin:bo
 .trophies{grid-template-columns:repeat(4,1fr);gap:6px}.trophy{border-radius:14px;padding:8px 4px}.trophy .i{font-size:26px}.trophy b{font-size:12px;display:block}.trophy small{font-size:10px}
 #trophies .sec-head img{width:38px!important;height:38px!important}#trophies h2{font-size:18px}#trophies .sec-head p{font-size:12px;margin:0}
 .steps{gap:8px}.step{padding:12px;border-radius:16px}.step h3{font-size:15px}.step p{font-size:13px}
+.frtoggle{width:100%;border:0;background:none;display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:17px;color:var(--ink);padding:2px 0}.frtoggle span{font-size:13px;color:var(--pri)}
+.frtop{display:flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--line);border-radius:16px;padding:8px 10px;margin-bottom:10px}.frtop .meta{flex:1}.mycode{color:var(--pri);letter-spacing:2px;font-size:15px}
+#addOv .fradd{display:flex;gap:8px}#addOv .fradd input{width:auto!important;min-width:0;flex:1;margin:0}#addOv .fradd .btn{flex:none;width:auto;padding:10px 18px}
+.mycodebox{display:flex;align-items:center;gap:8px;justify-content:center;background:var(--bg);border-radius:14px;padding:8px;margin-top:12px}.mycodebox b{font-size:20px;letter-spacing:3px;color:var(--pri)}.mycodebox small{color:var(--muted)}
 .toast{position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -538,6 +542,16 @@ body.kidon .clouds{display:none}.clouds{transform:scaleY(.5);transform-origin:bo
 </main>
 
 <footer><div class="footbtns"><button id="shareBtn">📤 شارك الموقع مع أصدقائك</button><button id="instBtn">📲 ثبّت التطبيق</button></div>بوابة الذكاء © 2026 — ألعاب تعليمية عربية<br><small style="opacity:.6" id="footVer"></small></footer>
+
+<!-- Add friend -->
+<div class="ov" id="addOv"><div class="modal" style="text-align:center">
+  <button class="x" data-close="addOv">✕</button>
+  <h3>👫 أضف صديقًا</h3>
+  <div class="fradd" style="margin-top:10px"><input id="frIn" maxlength="6" dir="ltr" placeholder="كود صديقك" autocomplete="off"><button class="btn blue" id="frAdd">أضف</button></div>
+  <div class="err" id="frErr"></div>
+  <div class="mycodebox"><small>أو أرسل كودك لصديقك</small><b dir="ltr" id="addCode"></b><button class="sbtn" id="addCopy">📋 انسخ</button></div>
+  <div class="meta" style="margin-top:8px;font-size:12px">🔒 أعطِ كودك فقط لمن تعرفهم في الواقع.</div>
+</div></div>
 
 <!-- Hatch -->
 <div class="ov" id="hatchOv"><div class="modal" id="hatchBox"></div></div>
@@ -2747,7 +2761,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-59';
+const APP_VERSION='2026.11.19-61';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
@@ -2756,7 +2770,7 @@ const VOICES=[['hi','👋','مرحبًا!','مَرْحَبًا!'],['bravo','👏
 const VMAP=Object.fromEntries(VOICES.map(v=>[v[0],v]));
 const CODE_CH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const pairId=(a,b)=>a<b?a+'_'+b:b+'_'+a;
-let friends=[],inbox=[],unwatchInbox=null,seenMsg=new Set(),activeChallenge=null,frTarget=null,delFr=null,pubSig='';
+let frOpen=false,friends=[],inbox=[],unwatchInbox=null,seenMsg=new Set(),activeChallenge=null,frTarget=null,delFr=null,pubSig='';
 async function ensureSocial(){
   if(!user||!profile||!activeKid())return;
   if(!profile.code){for(let t=0;t<5;t++){const c=[...Array(6)].map(()=>CODE_CH[rnd(0,CODE_CH.length-1)]).join('');try{if(await B.claimCode(c,user.uid)){profile.code=c;await persist();break}}catch(e){console.warn(e);break}}}
@@ -2835,7 +2849,7 @@ let stripSel=null;const QUICK=[['hi','👋'],['bravo','👏'],['play','🎮'],['
 function renderStrip(){try{renderStrip0()}catch(e){}}
 function renderStrip0(){const el=$('#frStrip');if(!el)return;const k=activeKid&&activeKid();
   if(!user||!profile||!k){el.innerHTML=`<div class="strip"><span class="sti">👫</span><div class="grow"><b>العب مع أصدقائك!</b><small>رسائل وتحديات بين الأصدقاء</small></div><button class="sbtn pri" id="stLogin">سجّل الآن</button></div>`;$('#stLogin').onclick=()=>openAuth('up','أنشئ حسابًا لتضيف أصدقاءك');return}
-  if(!friends.length){el.innerHTML=`<div class="strip"><span class="sti">👫</span><div class="grow"><b>أضف أصدقاءك</b><small>كودك: <b dir="ltr">${profile.code||'...'}</b></small></div><button class="sbtn pri" id="stAdd">➕ أضف صديقًا</button></div>`;$('#stAdd').onclick=()=>setView('friends');return}
+  if(!friends.length){el.innerHTML=`<div class="strip"><span class="sti">👫</span><div class="grow"><b>أضف أصدقاءك</b><small>كودك: <b dir="ltr">${profile.code||'...'}</b></small></div><button class="sbtn pri" id="stAdd">➕ أضف صديقًا</button></div>`;$('#stAdd').onclick=openAddFriend;return}
   if(!stripSel||!friends.find(f=>f.uid===stripSel))stripSel=friends[0].uid;const sel=friends.find(f=>f.uid===stripSel);
   const unread=inbox.filter(m=>!m.read),lastM=[...inbox].sort((a,b)=>tsOf(b)-tsOf(a))[0];
   el.innerHTML=`<div class="strip col"><div class="strow"><span class="sti">👫</span><div class="stav">${friends.map(f=>{const n=inbox.filter(m=>!m.read&&m.from===f.uid).length;return `<button class="fav2 ${f.uid===stripSel?'on':''}" data-sf="${f.uid}" title="${esc(f.name)}">${AVX(f.avatar||'b1',f.eq)}${n?`<i>${n}</i>`:''}<small>${esc(String(f.name).split(' ')[0])}</small></button>`}).join('')}
@@ -2856,9 +2870,7 @@ function renderFriends(){
   const board=[me,...friends].sort((a,b)=>(b.earned||0)-(a.earned||0));const medal=i=>['🥇','🥈','🥉'][i]||`${i+1}`;
   const msgs=[...inbox].sort((a,b)=>tsOf(b)-tsOf(a)).slice(0,15);
   box.innerHTML=`
-   <div class="dcard frcode"><div class="meta">كودي الخاص</div><div class="codebig" dir="ltr">${profile.code||'...'}</div>
-     <button class="sbtn pri" id="frCopy">📋 انسخ الكود</button><div class="meta" style="margin-top:8px">🔒 أعطِ كودك فقط لأصدقائك الذين تعرفهم في الواقع، مثل زملاء المدرسة والأقارب.</div></div>
-   <div class="dcard"><h3>➕ أضف صديقًا</h3><div class="fradd"><input id="frIn" maxlength="6" dir="ltr" placeholder="اكتب كود صديقك" autocomplete="off"><button class="btn blue" id="frAdd">أضف</button></div><div class="err" id="frErr"></div></div>
+   <div class="frtop"><button class="sbtn pri" id="frOpenAdd">➕ أضف صديقًا</button><span class="meta">كودي: <b dir="ltr" class="mycode">${profile.code||'...'}</b></span><button class="sbtn" id="frCopy">📋</button></div>
    ${msgs.length?`<div class="dcard"><h3>📬 رسائلي</h3>${msgs.map(m=>{const t=msgText(m);return `<div class="frmsg ${m.read?'':'unread'}"><span class="fav">${AV(m.fromAvatar||'b1')}</span><div class="grow"><b>${esc(m.fromName||'')}</b> <span>${t.icon} ${t.short}</span><small>${fmtD(tsOf(m))}</small></div>
       <div class="kact" style="margin:0">${m.type==='voice'||m.type==='added'||m.type==='result'||m.type==='audio'?`<button class="sbtn" data-play-msg="${m.id}">🔊</button>`:''}${m.type==='challenge'&&!m.done?`<button class="sbtn pri" data-acc="${m.id}">▶ اقبل</button>`:''}<button class="sbtn" data-del-msg="${m.id}">✕</button></div></div>`}).join('')}</div>`:''}
 ${leagueCard()}
@@ -2866,12 +2878,13 @@ ${leagueCard()}
      <div class="kact" style="margin-top:10px"><button class="sbtn pri" id="invShare">📤 أرسل رابط الدعوة</button><button class="sbtn" id="invCopy">📋 انسخ الرابط</button></div></div>
    <div class="dcard"><h3>👫 أبطال أصدقائي</h3>${board.map((p,i)=>`<div class="frrow ${p.me?'me':''}"><b class="rk">${medal(i)}</b><span class="fav">${AVX(p.avatar||'b1',p.eq)}</span><b class="grow">${esc(p.name)}${p.me?' (أنت)':''}</b><span>⭐ ${p.earned||0}</span></div>`).join('')}
      ${friends.length?'':'<div class="meta" style="margin-top:8px">أضف أصدقاءك ليظهروا هنا وتتنافسوا!</div>'}</div>
-   ${friends.length?`<div class="dcard"><h3>👫 أصدقائي (${friends.length})</h3>${friends.map(f=>`<div class="frcard"><span class="fav big">${AVX(f.avatar||'b1',f.eq)}</span><div class="grow"><b>${esc(f.name)}</b><small>⭐ ${f.earned||0} نجمة</small></div>
-      <div class="kact" style="margin:0"><button class="sbtn pri" data-rec="${f.uid}">🎤 سجّل</button><button class="sbtn" data-voice="${f.uid}">💬</button><button class="sbtn" data-dare="${f.uid}">🏆 تحدَّ</button><button class="sbtn del" data-unf="${f.uid}">${delFr===f.uid?'⚠️ تأكيد':'🗑'}</button></div></div>`).join('')}</div>`:''}
+   ${friends.length?`<div class="dcard frlist"><button class="frtoggle" id="frTog">👫 أصدقائي (${friends.length}) <span>${frOpen?'▴ إخفاء':'▾ عرض'}</span></button><div style="display:${frOpen?'block':'none'}">${friends.map(f=>`<div class="frcard"><span class="fav big">${AVX(f.avatar||'b1',f.eq)}</span><div class="grow"><b>${esc(f.name)}</b><small>⭐ ${f.earned||0} نجمة</small></div>
+      <div class="kact" style="margin:0"><button class="sbtn pri" data-rec="${f.uid}">🎤 سجّل</button><button class="sbtn" data-voice="${f.uid}">💬</button><button class="sbtn" data-dare="${f.uid}">🏆 تحدَّ</button><button class="sbtn del" data-unf="${f.uid}">${delFr===f.uid?'⚠️ تأكيد':'🗑'}</button></div></div>`).join('')}</div></div>`:''}
    <div class="note" style="margin-bottom:10px">🛡️ الرسائل الصوتية تصل لأصدقائك المضافين فقط وتُحذف تلقائيًا بعد 3 أيام. لا تذكر عنوانك أو رقمك، وإذا أزعجك أحد احذفه من أصدقائك وأخبر أهلك.</div>`;
   $('#frCopy').onclick=()=>copyTxt(profile.code||'');
   $('#invCopy').onclick=()=>copyTxt(inviteLink());$('#invShare').onclick=()=>{const t=`🦉 تعال العب معي في «بوابة الذكاء»! سجّل من هذا الرابط أو بكودي ${profile.code} لنربح ${REF_BONUS} ⭐ كلنا`,u=inviteLink();if(navigator.share)navigator.share({title:'بوابة الذكاء',text:t,url:u}).catch(()=>{});else window.open('https://wa.me/?text='+encodeURIComponent(t+'\n'+u),'_blank')};
-  $('#frAdd').onclick=addFriendByCode;$('#frIn').onkeydown=e=>{if(e.key==='Enter')addFriendByCode()};
+  $('#frOpenAdd').onclick=openAddFriend;
+  const tg=$('#frTog');if(tg)tg.onclick=()=>{frOpen=!frOpen;renderFriends()};
   box.querySelectorAll('[data-rec]').forEach(b=>b.onclick=()=>openRec(b.dataset.rec));
   box.querySelectorAll('[data-voice]').forEach(b=>b.onclick=()=>openVoice(b.dataset.voice));
   box.querySelectorAll('[data-dare]').forEach(b=>b.onclick=()=>openDare(b.dataset.dare));
@@ -2881,6 +2894,8 @@ ${leagueCard()}
   box.querySelectorAll('[data-acc]').forEach(b=>b.onclick=()=>acceptDare(b.dataset.acc));
   msgs.filter(m=>!m.read&&m.type!=='challenge').forEach(m=>B.markMsg(m.id,{read:true}).catch(()=>{}));
 }
+function openAddFriend(){if(!user||!profile)return openAuth('up','أنشئ حسابًا لتضيف أصدقاءك');$('#addCode').textContent=profile.code||'...';$('#frIn').value='';$('#frErr').textContent='';show('addOv');setTimeout(()=>{try{$('#frIn').focus()}catch(e){}},200)}
+$('#addCopy').onclick=()=>copyTxt(profile&&profile.code||'');$('#frAdd').onclick=()=>addFriendByCode();$('#frIn').onkeydown=e=>{if(e.key==='Enter')addFriendByCode()};
 async function addFriendByCode(){
   const c=($('#frIn').value||'').trim().toUpperCase(),err=$('#frErr');err.textContent='';
   if(c.length!==6)return err.textContent='الكود 6 حروف وأرقام';
@@ -2888,7 +2903,7 @@ async function addFriendByCode(){
   try{const uid=await B.findCode(c);if(!uid)return err.textContent='لم نجد هذا الكود، تأكد منه';
     if(friends.some(f=>f.uid===uid))return err.textContent='هذا صديقك بالفعل 👍';
     await B.addFriendship(pairId(user.uid,uid),[user.uid,uid]);await loadFriends();const f=friends.find(x=>x.uid===uid);
-    if(f){sendTo(f,{type:'added'}).catch(()=>{});toast(`🎉 أصبح ${f.name} صديقك!`);SFX.fanfare();confetti()}
+    if(f){sendTo(f,{type:'added'}).catch(()=>{});toast(`🎉 أصبح ${f.name} صديقك!`);SFX.fanfare();confetti();hide('addOv')}
   }catch(e){console.warn(e);err.textContent='تعذّر الإضافة، حاول مرة أخرى'}
 }
 function openVoice(uid){frTarget=friends.find(f=>f.uid===uid);if(!frTarget)return;
