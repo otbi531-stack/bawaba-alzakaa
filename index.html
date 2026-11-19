@@ -3,6 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1F5BD6">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="img/icon-192.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="بوابة الذكاء">
+<meta name="description" content="ألعاب تعليمية عربية ممتعة من 6 إلى 14 سنة: حروف، حساب، ألغاز، علوم وبرمجة.">
 <title>بوابة الذكاء — ألعاب تعليمية عربية</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@600;800&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
@@ -331,6 +339,10 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .chip{border:2px solid var(--line);background:#fff;border-radius:12px;padding:9px 13px;font-size:18px;font-weight:800;color:var(--ink);box-shadow:0 3px 0 var(--line)}
 .chip.on{background:#EAF2FF;border-color:var(--pri)}.chip.used{visibility:hidden}
 #sChk:disabled{opacity:.5}
+.giftbar{display:flex;align-items:center;gap:10px;width:100%;border:0;border-radius:16px;padding:10px 12px;margin-top:12px;background:linear-gradient(135deg,#FFE27A,#FFB347);color:#5a3a00;font-weight:800;font-size:15px;box-shadow:0 4px 0 #d9952a;text-align:right}
+.giftbar .gi{font-size:30px;animation:chest 1.6s ease-in-out infinite}.giftbar.got{background:#F3F6FB;color:var(--muted);box-shadow:none}.giftbar.got .gi{animation:none;filter:grayscale(1)}
+.hearts{letter-spacing:1px}
+.footbtns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}.footbtns button{border:0;border-radius:14px;padding:9px 14px;font-weight:800;font-size:14px;background:#fff;color:var(--pri);box-shadow:0 3px 0 var(--line)}
 .toast{position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -406,7 +418,15 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 </div>
 </main>
 
-<footer>بوابة الذكاء © 2026 — ألعاب تعليمية عربية<br><small style="opacity:.6">الإصدار 2026.11.18-24</small></footer>
+<footer><div class="footbtns"><button id="shareBtn">📤 شارك الموقع مع أصدقائك</button><button id="instBtn">📲 ثبّت التطبيق</button></div>بوابة الذكاء © 2026 — ألعاب تعليمية عربية<br><small style="opacity:.6" id="footVer"></small></footer>
+
+<!-- Install help -->
+<div class="ov" id="instOv"><div class="modal" style="text-align:center">
+  <button class="x" id="instClose">✕</button>
+  <div style="width:90px;margin:0 auto" id="instOwl"></div>
+  <h3>📲 ثبّت بوابة الذكاء على جوالك</h3>
+  <div class="note" id="instBody" style="text-align:right;line-height:2"></div>
+</div></div>
 
 <!-- Voice settings -->
 <div class="ov" id="vsOv"><div class="modal">
@@ -826,9 +846,11 @@ function renderDaily(){
   box.innerHTML=`<div class="dhead"><div class="owlw">${OWL()}</div><div class="bubble2"><b>نبيه 🦉</b><div>${msg}</div></div>
     <div class="streak ${sk?'on':''}"><span class="fl">🔥</span><b>${sk}</b><small>${sk===1?'يوم':'أيام متتالية'}</small></div></div>
    <div class="dprog"><i style="width:${T?n/T*100:0}%"></i></div>
+   ${giftDay()===today()?'<button class="giftbar got" disabled><span class="gi">🎁</span><span>أخذت هدية اليوم ✓ ارجع غدًا لهدية جديدة</span></button>':'<button class="giftbar" id="giftBtn"><span class="gi">🎁</span><span>صندوق هدية اليوم! اضغط لتفتحه وتربح نجومًا</span></button>'}
    <div class="meta" style="margin:6px 2px 12px">مهمة اليوم ${n}/${T} · أنجزها كلها واربح 5 نجوم إضافية ⭐</div>
    <div class="mlist">${st.list.map((id,i)=>{const g=GAMES.find(x=>x.id===id);if(!g)return '';const d=st.done.includes(id);
      return `<button class="mcard ${d?'done':''}" data-play="${id}"><span class="mi">${g.img?`<img src="${g.img}" alt="">`:g.svg?A(g.svg):g.emoji}</span><span class="mt"><b>${i+1}. ${g.name}</b><small>${d?'✅ تم':'🎯 '+g.skill}</small></span></button>`}).join('')}</div>`;
+  const gb=$('#giftBtn');if(gb)gb.onclick=claimGift;
 }
 
 // ---- Unlock by stars, or buy for 3 SAR
@@ -1205,18 +1227,20 @@ function math(){
 }
 
 // Generic quiz with per-question options
-function quiz2(items){
-  let i=0,score=0;
+function quiz2(items,o={}){
+  let i=0,score=0,hearts=o.hearts||0;const H=()=>hearts?`<span class="hearts">${'❤️'.repeat(hearts)}${'🤍'.repeat((o.hearts||0)-hearts)}</span> `:'';
+  const st2=(a,b)=>{stat(a,b);if(o.hearts)$('#gProg').innerHTML=H()+a};
   const next=()=>{
-    if(i>=items.length)return result(score,items.length,`أجبت صحيحًا على ${score} من ${items.length}`);
+    if(o.hearts&&hearts<=0)return result(score,items.length,`💔 انتهت القلوب! أجبت صحيحًا على ${score} من ${items.length}`);
+    if(i>=items.length)return result(score,items.length,`أجبت صحيحًا على ${score} من ${items.length}${o.hearts?` · بقي ${'❤️'.repeat(hearts)}`:''}`);
     const it=items[i],ans=String(it.ans),opts=shuffle(it.opts.map(String));
-    stat(`${i+1}/${items.length}`,score);
+    st2(`${i+1}/${items.length}`,score);
     area.innerHTML=`${it.show?`<div class="${it.showCls||'big'}">${it.show}</div>`:''}<div class="q">${it.prompt}</div>
       <div class="opts">${opts.map(o=>`<button class="opt ${it.txt?'txt':''} ${it.emo?'emo':''}">${o}</button>`).join('')}</div><div class="reveal" id="rv"></div>`;
     area.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
       if(busy)return;busy=true;const ok=b.textContent===ans;
       if(ok){score++;b.classList.add('ok');SFX.ok(true);popEmoji(HAPPY[rnd(0,HAPPY.length-1)])}else{b.classList.add('no');SFX.no();popEmoji('😢');[...area.querySelectorAll('.opt')].find(x=>x.textContent===ans).classList.add('ok')}
-      $('#rv').textContent=(ok?'✔ ':'')+(it.reveal||'');stat(`${i+1}/${items.length}`,score);
+      if(!ok&&o.hearts)hearts--;$('#rv').textContent=(ok?'✔ ':'')+(it.reveal||'');st2(`${i+1}/${items.length}`,score);
       later(()=>{busy=false;i++;next()},1400);
     });
   };next();
@@ -1548,12 +1572,12 @@ const MATHR=[['معك 3 تفاحات، وأخذت 2 أُخريين. كم تفا�
  ['ما العدد الذي إذا ضربته في نفسه صار 49؟',7],['كم دقيقة في ساعة ونصف؟',90],['اشتريت 3 أقلام، سعر القلم ريالان. كم ريالًا دفعت؟',6],['معي 20 ريالًا، صرفت منها 7. كم بقي معي؟',13],
  ['ما العدد الذي إذا أضفت إليه 5 صار 12؟',7],['كم ضلعًا لمثلثين معًا؟',6],['ما نصف العدد 18؟',9],['في المزرعة 4 دجاجات وخروفان. كم رِجلًا في المزرعة؟',16],
  ['الساعة الآن 3، كم ستكون بعد 5 ساعات؟',8],['عندي 4 علب، في كل علبة 5 أقلام. كم قلمًا عندي؟',20]];
-function boxQuiz(list,mk){const ans=list.map(x=>x[1]);quiz2(shuffle(list).slice(0,8).map(([q,a])=>mk(q,a,shuffle(ans.filter(x=>x!==a)).slice(0,3))))}
+function boxQuiz(list,mk){const ans=list.map(x=>x[1]);quiz2(shuffle(list).slice(0,8).map(([q,a])=>mk(q,a,shuffle(ans.filter(x=>x!==a)).slice(0,3))),{hearts:3})}
 function riddles(){boxQuiz(RIDDLES,(q,a,o)=>({show:'🧩',prompt:q,ans:a,opts:[a,...o],txt:true,reveal:`الجواب: ${a}`}))}
 function emojiq(){boxQuiz(EMOJIQ,(q,a,o)=>({show:q,prompt:'ماذا تعني هذه الرموز؟',ans:a,opts:[a,...o],txt:true,reveal:`${q} = ${a}`}))}
 function whoami(){boxQuiz(WHOAMI,(q,a,o)=>({show:'🕵️',prompt:q+'<br><b>من أنا؟</b>',ans:a,opts:[a,...o],txt:true,reveal:`أنا ${a}`}))}
 function mathriddles(){quiz2(shuffle(MATHR).slice(0,8).map(([q,a])=>{const s=new Set([a]);while(s.size<4){const d=a+rnd(-4,4);if(d>=0)s.add(d)}
-  return {show:'🧮',prompt:q,ans:a,opts:[...s],reveal:`الجواب: ${a}`}}))}
+  return {show:'🧮',prompt:q,ans:a,opts:[...s],reveal:`الجواب: ${a}`}}),{hearts:3})}
 
 // ---- Lesson-style box games (match pairs, build the sentence, fill the blank)
 const EN=[['cat','قطة'],['dog','كلب'],['apple','تفاحة'],['sun','شمس'],['moon','قمر'],['book','كتاب'],['water','ماء'],['house','بيت'],['car','سيارة'],['tree','شجرة'],
@@ -1602,7 +1626,7 @@ const BLANK=[['يسبح السمك في ___','الماء',['الشجرة','ال�
  ['جمع كلمة «كتاب» هو ___','كتب',['كتابان','مكتبة','كاتب'],'📚'],['مثنّى كلمة «قلم» هو ___','قلمان',['أقلام','قليم','أقلمة'],'✏️'],['النحلة تصنع ___','العسل',['الحليب','الحرير','الزبدة'],'🐝'],
  ['نسمع بـ ___','الأذنين',['العينين','الأنف','اليدين'],'👂'],['أبرد فصول السنة هو ___','الشتاء',['الصيف','الربيع','الخريف'],'❄️'],['نركب ___ لنطير إلى مدينة بعيدة','الطائرة',['الدراجة','القارب','الحصان'],'✈️'],
  ['الطبيب يعمل في ___','المستشفى',['المخبز','المزرعة','المصنع'],'🩺']];
-function fillblank(){quiz2(shuffle(BLANK).slice(0,8).map(([q,a,o,e])=>({show:e,prompt:q.replace('___','<mark>____</mark>'),ans:a,opts:[a,...o],txt:true,reveal:q.replace('___',a)})))}
+function fillblank(){quiz2(shuffle(BLANK).slice(0,8).map(([q,a,o,e])=>({show:e,prompt:q.replace('___','<mark>____</mark>'),ans:a,opts:[a,...o],txt:true,reveal:q.replace('___',a)})),{hearts:3})}
 function renderBox(){
   const box=$('#boxView');if(!box||view!=='box')return;const list=GAMES.filter(g=>g.box&&g.ready),own=list.filter(isOpen).length;
   box.innerHTML=`<div class="boxhead"><div class="chest">🎁</div><div><h3>صندوق الكنوز</h3><div class="meta">ألعاب مميزة غير موجودة في الخريطة · معك <b>${stars} ⭐</b> · فتحت ${own} من ${list.length}</div></div></div>
@@ -1691,7 +1715,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-32';
+const APP_VERSION='2026.11.19-33';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
@@ -1850,6 +1874,26 @@ function renderVoiceSet(){
 $('#vsOn').onclick=()=>{const v=SFX.toggle();$('#sndBtn').textContent=v?'🔊':'🔇';renderVoiceSet();if(v){SFX.ok();SFX.say(VSAMPLE())}};
 $('#vsTest').onclick=()=>SFX.say(VSAMPLE(),true);
 $('#vsClose').onclick=()=>hide('vsOv');
+// ---- Daily gift chest
+const GIFTS=[1,1,2,2,2,3,3,5];
+function giftDay(){const k=activeKid();return k?k.giftDay:LS.get('bw_gift_day','')}
+function claimGift(){if(giftDay()===today())return;const n=GIFTS[rnd(0,GIFTS.length-1)],k=activeKid();
+  if(k){k.giftDay=today();k.stars+=n;k.earned=(k.earned??k.stars)+n;persist()}else{LS.set('bw_gift_day',today());guestStars+=n;LS.set('bw_guest',guestStars);LS.set('bw_guest_earned',LS.get('bw_guest_earned',0)+n)}
+  sync();confetti();SFX.fanfare();popEmoji('🎁',true);toast(`🎁 هدية اليوم: +${n} ⭐`);SFX.say(`هَدِيَّةُ اليَوْم: ${n===1?'نَجْمَةٌ واحِدَة':n===2?'نَجْمَتان':n+' نُجوم'}!`)}
+// ---- Share & install
+function shareSite(){const url=location.href.split('#')[0].split('?')[0],t='🦉 جرّب «بوابة الذكاء»: ألعاب تعليمية عربية ممتعة، وابدأ بهدية 100 ⭐';
+  if(navigator.share)navigator.share({title:'بوابة الذكاء',text:t,url}).catch(()=>{});else window.open('https://wa.me/?text='+encodeURIComponent(t+'\n'+url),'_blank')}
+let installEvt=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;const b=$('#instBtn');if(b)b.style.display=''});
+const standalone=()=>window.matchMedia&&matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+function installApp(){if(installEvt){installEvt.prompt();installEvt.userChoice.finally(()=>{installEvt=null});return}
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  $('#instBody').innerHTML=ios?'1. اضغط زر المشاركة <b>⬆️</b> أسفل Safari أو أعلاه.<br>2. اختر <b>«إضافة إلى الشاشة الرئيسية»</b>.<br>3. اضغط <b>«إضافة»</b>، وستجد نبيه 🦉 على شاشتك.'
+   :'1. افتح قائمة المتصفح <b>⋮</b> أعلى الشاشة.<br>2. اختر <b>«تثبيت التطبيق»</b> أو <b>«إضافة إلى الشاشة الرئيسية»</b>.<br>3. اضغط <b>«تثبيت»</b>.';show('instOv')}
+if(standalone()){const b=$('#instBtn');if(b)b.style.display='none'}
+$('#instBtn').onclick=installApp;$('#shareBtn').onclick=shareSite;$('#instClose').onclick=()=>hide('instOv');$('#instOwl').innerHTML=OWL();
+$('#footVer').textContent='الإصدار '+APP_VERSION;
+try{if('serviceWorker' in navigator&&location.protocol==='https:'&&/github\.io$/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
+
 render();
 (async()=>{
   try{await B.init()}catch(e){console.warn(e);B=LocalBackend;toast('تعذر الاتصال بـ Firebase، تم التشغيل بالوضع التجريبي')}
