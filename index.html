@@ -721,13 +721,13 @@ const GAMES=[
  {id:'order',name:'ترتيب الأعداد',emoji:'🔢',age:'all',skill:'مقارنة الأعداد',price:3,color:'linear-gradient(135deg,#E9DCFF,#CDB5FF)',ready:true,isNew:true},
  {id:'opposites',name:'الأضداد',emoji:'↔️',age:'all',skill:'المفردات واللغة',price:3,color:'linear-gradient(135deg,#FFF1C2,#FFDC7A)',ready:true,isNew:true},
  {id:'truefalse',name:'صح أم خطأ؟',emoji:'⚡',age:'10-14',skill:'سرعة البديهة',price:3,color:'linear-gradient(135deg,#D6F5E1,#9BE8B9)',ready:true,isNew:true},
- {id:'riddles',name:'ألغاز وأحاجي',emoji:'🧩',age:'all',skill:'التفكير والذكاء',box:true,cost:200,desc:'ألغاز عربية ممتعة: من يحلّها أولًا؟',color:'linear-gradient(135deg,#FFE0B5,#FFB86B)',ready:true,isNew:true},
- {id:'emojiq',name:'ألغاز الإيموجي',emoji:'😎',age:'all',skill:'الملاحظة والربط',box:true,cost:200,desc:'خمّن الكلمة من الرموز التعبيرية',color:'linear-gradient(135deg,#FFF3B0,#FFD84D)',ready:true,isNew:true},
- {id:'whoami',name:'من أنا؟',emoji:'🕵️',age:'all',skill:'المعلومات العامة',box:true,cost:200,desc:'اقرأ الأدلة واكتشف من أنا',color:'linear-gradient(135deg,#DCD3FF,#B7A6FF)',ready:true,isNew:true},
- {id:'mathriddles',name:'ألغاز الحساب',emoji:'🧮',age:'all',skill:'الحساب الذهني',box:true,cost:200,desc:'مسائل قصيرة تحتاج تفكيرًا ذكيًا',color:'linear-gradient(135deg,#C9F2E6,#7EDDC2)',ready:true,isNew:true},
- {id:'matchpairs',name:'طابق الكلمات',emoji:'🔗',age:'all',skill:'الإنجليزية والذاكرة',box:true,cost:200,desc:'صِل الكلمة الإنجليزية بمعناها بأسرع وقت',color:'linear-gradient(135deg,#D3ECFF,#8EC9FF)',ready:true,isNew:true},
- {id:'arrange',name:'رتّب الجملة',emoji:'🧱',age:'all',skill:'القراءة وبناء الجمل',box:true,cost:200,desc:'اضغط الكلمات بالترتيب الصحيح',color:'linear-gradient(135deg,#FFDCE8,#FF9EC0)',ready:true,isNew:true},
- {id:'fillblank',name:'أكمل الفراغ',emoji:'✍️',age:'all',skill:'اللغة والفهم',box:true,cost:200,desc:'اختر الكلمة التي تكمل الجملة',color:'linear-gradient(135deg,#E2F7C8,#B4E57F)',ready:true,isNew:true},
+ {id:'riddles',name:'ألغاز وأحاجي',emoji:'🧩',age:'all',skill:'التفكير والذكاء',box:true,cost:80,desc:'ألغاز عربية ممتعة: من يحلّها أولًا؟',color:'linear-gradient(135deg,#FFE0B5,#FFB86B)',ready:true,isNew:true},
+ {id:'emojiq',name:'ألغاز الإيموجي',emoji:'😎',age:'all',skill:'الملاحظة والربط',box:true,cost:80,desc:'خمّن الكلمة من الرموز التعبيرية',color:'linear-gradient(135deg,#FFF3B0,#FFD84D)',ready:true,isNew:true},
+ {id:'whoami',name:'من أنا؟',emoji:'🕵️',age:'all',skill:'المعلومات العامة',box:true,cost:80,desc:'اقرأ الأدلة واكتشف من أنا',color:'linear-gradient(135deg,#DCD3FF,#B7A6FF)',ready:true,isNew:true},
+ {id:'mathriddles',name:'ألغاز الحساب',emoji:'🧮',age:'all',skill:'الحساب الذهني',box:true,cost:80,desc:'مسائل قصيرة تحتاج تفكيرًا ذكيًا',color:'linear-gradient(135deg,#C9F2E6,#7EDDC2)',ready:true,isNew:true},
+ {id:'matchpairs',name:'طابق الكلمات',emoji:'🔗',age:'all',skill:'الإنجليزية والذاكرة',box:true,cost:80,desc:'صِل الكلمة الإنجليزية بمعناها بأسرع وقت',color:'linear-gradient(135deg,#D3ECFF,#8EC9FF)',ready:true,isNew:true},
+ {id:'arrange',name:'رتّب الجملة',emoji:'🧱',age:'all',skill:'القراءة وبناء الجمل',box:true,cost:80,desc:'اضغط الكلمات بالترتيب الصحيح',color:'linear-gradient(135deg,#FFDCE8,#FF9EC0)',ready:true,isNew:true},
+ {id:'fillblank',name:'أكمل الفراغ',emoji:'✍️',age:'all',skill:'اللغة والفهم',box:true,cost:80,desc:'اختر الكلمة التي تكمل الجملة',color:'linear-gradient(135deg,#E2F7C8,#B4E57F)',ready:true,isNew:true},
  {id:'code',name:'روبوت المتاهة',emoji:'🤖',img:'img/robot.png',age:'10-14',skill:'مبادئ البرمجة',price:3,color:'linear-gradient(135deg,#FFE0D1,#FFB38F)',ready:true},
 ];
 const NEED={penalty:0,race:0,letters:0,memory:0,xo:0,islamic:0,count:0,shapes:5,order:20,opposites:35,truefalse:45,simon:10,puzzle:15,math:25,spelling:30,flags:40,capitals:50,logic:60,clock:70,science:85,code:100};
@@ -2353,7 +2353,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-46';
+const APP_VERSION='2026.11.19-47';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
