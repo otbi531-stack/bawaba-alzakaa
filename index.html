@@ -404,9 +404,9 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .sw{width:38px;height:24px;border-radius:8px;border:2px solid rgba(0,0,0,.12)}.semo{font-size:28px}
 .viewtg{overflow-x:auto;max-width:520px}.viewtg button{font-size:13px;padding:9px 6px;white-space:nowrap}
 .pkq{background:#0B1430;color:#fff;border-radius:16px;padding:8px 14px;font-size:15px;font-weight:800;margin-bottom:8px;box-shadow:0 4px 0 #050a1c;text-align:center;line-height:1.6;min-width:240px}
-.pkeq{font-family:'Baloo Bhaijaan 2',Tajawal,sans-serif;font-size:28px}.pkeq b{color:#FFC72C}
+.pkeq{font-size:21px;color:#FFE27A}.pkeq b{color:#FFC72C}
 .pkbtns{direction:ltr;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;width:100%;max-width:460px;min-height:62px}
-.pkbtn{display:flex;flex-direction:column;align-items:center;padding:8px 4px;font-size:12px;background:#14224f;color:#fff;box-shadow:0 4px 0 #0a1230}.pkbtn b{font-size:24px;font-family:'Baloo Bhaijaan 2',sans-serif;color:#FFC72C}
+.pkbtn{display:flex;flex-direction:column;align-items:center;padding:8px 4px;font-size:12px;background:#14224f;color:#fff;box-shadow:0 4px 0 #0a1230}.pkbtn b{font-size:15px;line-height:1.3;color:#FFC72C;margin-top:2px}
 .toast{position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -675,7 +675,7 @@ function A(k){
 
 
 const GAMES=[
- {id:'penalty',name:'ركلات الأبطال',emoji:'⚽',age:'all',skill:'الحساب تحت الضغط',desc:'سدّد وتصدَّ أمام جماهير الملعب!',color:'linear-gradient(135deg,#C8F7D1,#3BC46A)',ready:true,isNew:true},
+ {id:'penalty',name:'ركلات الأبطال',emoji:'⚽',age:'all',skill:'التاريخ والجغرافيا',desc:'سدّد وتصدَّ أمام جماهير الملعب!',color:'linear-gradient(135deg,#C8F7D1,#3BC46A)',ready:true,isNew:true},
  {id:'race',name:'سباق العباقرة',emoji:'🏎️',age:'all',skill:'الحساب السريع',desc:'ادخل البوابة الصحيحة واحصل على نيترو!',color:'linear-gradient(135deg,#FFD1D1,#FF7A7A)',ready:true,isNew:true},
  {id:'letters',name:'مغامرة الحروف',emoji:'🔤',age:'6-9',skill:'القراءة والحروف',price:0,color:'linear-gradient(135deg,#C9F2D6,#8FE3AE)',ready:true},
  {id:'memory',name:'ذاكرة الحيوانات',emoji:'🐼',svg:'panda',age:'6-9',skill:'التركيز والذاكرة',price:0,color:'linear-gradient(135deg,#FFD6E8,#FFA8CB)',ready:true},
@@ -1908,6 +1908,22 @@ function shopClick(id){const it=SHOP_ITEM[id];if(!it)return;const inv=[...myInv(
   shopPend=null;if(stars<it.p){toast(`تحتاج ${it.p-stars} ⭐ إضافية`);return openBuy(null,Math.ceil((it.p-stars)/10)*10)}
   const k=activeKid();if(k)k.stars-=it.p;else{guestStars-=it.p;LS.set('bw_guest',guestStars)}inv.push(id);eq[it.slot]=id;saveShop(inv,eq);
   confetti();SFX.fanfare();toast(`🎉 اشتريت «${it.n}»!`);sync();renderShop()}
+const PKQ=[['ما عاصمة المملكة العربية السعودية؟','الرياض','جدة','الدمام'],['ما عاصمة مصر؟','القاهرة','الإسكندرية','الأقصر'],['ما عاصمة الإمارات؟','أبوظبي','دبي','الشارقة'],
+ ['ما عاصمة قطر؟','الدوحة','الوكرة','الخور'],['ما عاصمة الأردن؟','عمّان','العقبة','إربد'],['ما عاصمة المغرب؟','الرباط','مراكش','طنجة'],['ما عاصمة فرنسا؟','باريس','ليون','مرسيليا'],
+ ['ما عاصمة اليابان؟','طوكيو','أوساكا','كيوتو'],['ما أكبر قارة في العالم؟','آسيا','أفريقيا','أوروبا'],['ما أكبر محيط في العالم؟','الهادئ','الأطلسي','الهندي'],
+ ['ما أطول نهر في أفريقيا؟','النيل','الكونغو','النيجر'],['ما أعلى جبل في العالم؟','إيفرست','كليمنجارو','مون بلان'],['في أي مدينة الكعبة المشرّفة؟','مكة المكرمة','المدينة المنورة','الطائف'],
+ ['في أي مدينة المسجد النبوي؟','المدينة المنورة','مكة المكرمة','تبوك'],['ما البحر الذي يقع غرب السعودية؟','البحر الأحمر','الخليج العربي','بحر العرب'],
+ ['ما أكبر صحراء رملية في السعودية؟','الربع الخالي','النفود','الدهناء'],['كم عدد قارات العالم؟','7','5','6'],['ما أكبر دولة عربية مساحةً؟','الجزائر','السعودية','مصر'],
+ ['في أي دولة الأهرامات؟','مصر','العراق','الأردن'],['برج إيفل في أي دولة؟','فرنسا','إيطاليا','إسبانيا'],['برج خليفة في أي مدينة؟','دبي','الرياض','الدوحة'],
+ ['ما عملة السعودية؟','الريال','الدينار','الدرهم'],['سور الصين العظيم في أي دولة؟','الصين','اليابان','الهند'],
+ ['من أول خليفة للمسلمين؟','أبو بكر الصديق','عمر بن الخطاب','علي بن أبي طالب'],['من الصحابي الملقب بالفاروق؟','عمر بن الخطاب','عثمان بن عفان','أبو بكر الصديق'],
+ ['من مؤسس المملكة العربية السعودية الحديثة؟','الملك عبدالعزيز','الملك فيصل','الملك خالد'],['في أي عام توحّدت المملكة العربية السعودية؟','1932','1950','1900'],
+ ['متى يوم التأسيس السعودي؟','22 فبراير','23 سبتمبر','1 يناير'],['متى اليوم الوطني السعودي؟','23 سبتمبر','22 فبراير','15 مارس'],
+ ['إلى أين هاجر النبي ﷺ من مكة؟','المدينة المنورة','الطائف','الشام'],['أين نزل الوحي على النبي ﷺ أول مرة؟','غار حراء','غار ثور','جبل أُحد'],
+ ['ما أول مسجد بُني في الإسلام؟','مسجد قباء','المسجد الأقصى','مسجد القبلتين'],['من بنى الأهرامات؟','الفراعنة','الرومان','الفرس'],
+ ['من أول إنسان مشى على سطح القمر؟','نيل آرمسترونغ','يوري غاغارين','باز ألدرين'],['من أول رائد فضاء عربي؟','سلطان بن سلمان','هزاع المنصوري','محمد فارس'],
+ ['من العالم المسلم الذي أسّس علم الجبر؟','الخوارزمي','ابن سينا','ابن بطوطة'],['من الرحّالة المسلم الذي جاب العالم؟','ابن بطوطة','الخوارزمي','ابن خلدون'],
+ ['أين تقع مدائن صالح (الحِجر)؟','العُلا','نجران','الأحساء'],['ما أكبر جزيرة في العالم؟','غرينلاند','مدغشقر','بريطانيا']];
 // ---- Penalty shootout: answer to pick the corner — attack and defend, with a live stadium
 function penalty(){
   $('#buddy').style.display='none';
@@ -1919,15 +1935,13 @@ function penalty(){
   const OPP=[['الصقور','#F2F2F2','#1B5E20'],['النمور','#FF8F00','#3E2723'],['النجوم','#7B1FA2','#FFD54A'],['البحّارة','#0277BD','#FFFFFF']][rnd(0,3)];
   const me={name:kid?String(kid.name).split(' ')[0]:'بطل',col:myCol,col2:'#FFFFFF'},op={name:OPP[0],col:OPP[1],col2:OPP[2]};
   const GX0=W*.17,GX1=W*.83,GT=H*.36,GB=H*.57,GW=GX1-GX0,GH=GB-GT,SPOT={x:W/2,y:H*.86};
-  const TG=[{x:GX0+GW*.16,y:GT+GH*.32},{x:W/2,y:GT+GH*.26},{x:GX1-GW*.16,y:GT+GH*.32}];
+  const TG=[{x:GX0+GW*.17,y:GT+GH*.42},{x:W/2,y:GT+GH*.2},{x:GX1-GW*.17,y:GT+GH*.42}];
   let turn=0,mine=[],opps=[],state='intro',st0=0,q=null,pick=-1,tl=0,ball=null,keeper={x:W/2,dir:0,t:0},kick=0,excite=.3,flash=[],parts=[],msgT=0,sudden=false,last=0,done=false,audio=null;
   const ROUNDS=5;
   // crowd
   const crowd=[];for(let r=0;r<9;r++){const y=H*.07+r*H*.033,n=Math.floor(W/9)+2;for(let i=0;i<n;i++){const home=(i/n)<.55;crowd.push({x:i*9+(r%2)*4.5-4,y,r,ph:Math.random()*7,
     c:Math.random()<.7?(home?(Math.random()<.5?me.col:'#FFFFFF'):(Math.random()<.5?op.col:op.col2)):['#F4C9A0','#C68642','#8D5524','#FFDBAC'][rnd(0,3)],skin:['#F4C9A0','#C68642','#8D5524','#FFDBAC','#E0AC69'][rnd(0,4)],flag:Math.random()<.04,scarf:Math.random()<.15})}}
-  const mkQ=()=>{const t=rnd(0,2);let a,b,qq,ans;
-    if(t===0){a=rnd(3,20);b=rnd(2,15);qq=`${a} + ${b}`;ans=a+b}else if(t===1){a=rnd(10,30);b=rnd(1,a-2);qq=`${a} − ${b}`;ans=a-b}else{a=rnd(2,10);b=rnd(2,9);qq=`${a} × ${b}`;ans=a*b}
-    const s=new Set([ans]);while(s.size<3){const d=ans+[-1,1,-2,2,-10,10,-3,3,5,-5][rnd(0,9)];if(d>=0)s.add(d)}return {q:qq,ans,opts:shuffle([...s])}};
+  const pool=shuffle(PKQ.slice());const mkQ=()=>{if(!pool.length)pool.push(...shuffle(PKQ.slice()));const [qq,ans,d1,d2]=pool.pop();return {q:qq,ans,opts:shuffle([ans,d1,d2])}};
   const attacking=()=>turn%2===0;
   const msg=(t,col)=>{const m=$('#pmsg');if(!m)return;m.textContent=t;m.style.color=col;m.classList.remove('show');void m.offsetWidth;m.classList.add('show')};
   // --- audio: crowd ambience, roar, whistle, drums
@@ -1939,10 +1953,10 @@ function penalty(){
   const drums=()=>{[0,.25,.5].forEach(t=>tone(90,.18,'triangle',.25,t))};
   const audioStop=()=>{if(audio){try{audio.a.close()}catch(e){}audio=null}};
   // --- buttons
-  const showBtns=()=>{const b=$('#pkb');if(!b)return;b.innerHTML=q?q.opts.map((o,i)=>`<button class="btn pkbtn" data-i="${i}">${['↖ يسار','⬆ وسط','↗ يمين'][i]}<b>${o}</b></button>`).join(''):'';
+  const showBtns=()=>{const b=$('#pkb');if(!b)return;b.innerHTML=q?q.opts.map((o,i)=>`<button class="btn pkbtn" data-i="${i}">${['↖ يسار','⬆ وسط','↗ يمين'][i]}<b>${esc(String(o))}</b></button>`).join(''):'';
     b.querySelectorAll('[data-i]').forEach(x=>x.onclick=()=>choose(+x.dataset.i))};
   const newTurn=()=>{q=mkQ();pick=-1;tl=8;state='ask';st0=performance.now();keeper={x:W/2,dir:0,t:0};ball=null;kick=0;
-    $('#pkq').innerHTML=`${attacking()?'⚽ دورك في التسديد! اختر الزاوية الصحيحة':'🧤 الخصم سيسدّد! اقفز للزاوية الصحيحة'}<br><span dir="ltr" class="pkeq">${q.q} = <b>?</b></span>`;showBtns();excite=.45;roar(.12,1.5)};
+    $('#pkq').innerHTML=`${attacking()?'⚽ دورك في التسديد! اختر الزاوية الصحيحة':'🧤 الخصم سيسدّد! اقفز للزاوية الصحيحة'}<br><span class="pkeq">${q.q}</span>`;showBtns();excite=.45;roar(.12,1.5)};
   function choose(i){if(state!=='ask')return;pick=i;state='shoot';st0=performance.now();const b=$('#pkb');if(b)b.innerHTML='';
     const ok=i>=0&&q.opts[i]===q.ans;
     if(attacking()){const tgt=i<0?{x:W/2+(Math.random()<.5?-1:1)*GW*.7,y:GT-20}:TG[i];
@@ -1952,6 +1966,7 @@ function penalty(){
     kick=1;drums();tone(160,.08,'square',.12,.55)}
   // --- drawing
   function rr(x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+  function wrap(t,mw){c.font='bold 13px Tajawal,sans-serif';const ws=t.split(' '),out=[];let cur='';ws.forEach(w=>{const tt=cur?cur+' '+w:w;if(c.measureText(tt).width>mw&&cur){out.push(cur);cur=w}else cur=tt});out.push(cur);return out.slice(0,2)}
   function stadium(ts){
     const sky=c.createLinearGradient(0,0,0,H*.4);sky.addColorStop(0,'#05081a');sky.addColorStop(1,'#1b2550');c.fillStyle=sky;c.fillRect(0,0,W,H);
     // floodlights
@@ -2006,12 +2021,13 @@ function penalty(){
     // keeper
     let kx=W/2,ky=GB-2,rot=0,arms=0;const s=GH*.62;
     if(state==='ask'){kx+=Math.sin(ts/300)*GW*.06;arms=.15+Math.abs(Math.sin(ts/200))*.1}
-    if(keeper.dive&&ball){const p=Math.max(0,Math.min(1,(ball.t-keeper.late)/(.85-keeper.late)));kx=W/2+keeper.dir*GW*.32*p;ky=GB-2-Math.sin(p*Math.PI)*GH*.25*(keeper.dir?1:1.4);rot=keeper.dir*p*1.15;arms=.6*p}
+    if(keeper.dive&&ball){const p=Math.max(0,Math.min(1,(ball.t-keeper.late)/(.85-keeper.late)));kx=W/2+keeper.dir*GW*.24*p;ky=GB-2-Math.sin(p*Math.PI)*GH*.25*(keeper.dir?1:1.4);rot=keeper.dir*p*1.15;arms=.6*p}
     person(kx,ky,s,gk.col2==='#FFFFFF'?'#263238':gk.col2,gk.col,{rot,arms,gloves:true,label:atk?'الحارس':'أنت 🧤'});
     // targets
     if(state==='ask'&&q){const tt=(performance.now()-st0)/1000;q.opts.forEach((o,i)=>{const t=TG[i],pulse=1+Math.sin(ts/200+i)*.06;c.save();c.translate(t.x,t.y);c.scale(pulse,pulse);
-      c.fillStyle='rgba(255,199,44,.25)';c.beginPath();c.arc(0,0,26,0,7);c.fill();c.fillStyle='#14224f';c.beginPath();c.arc(0,0,20,0,7);c.fill();c.strokeStyle='#FFC72C';c.lineWidth=3;c.stroke();
-      c.fillStyle='#fff';c.font='bold 17px "Baloo Bhaijaan 2",sans-serif';c.textAlign='center';c.fillText(o,0,6);c.restore()});
+      const lines=wrap(String(o),GW*.3),lh=15,bw=Math.min(GW*.33,Math.max(...lines.map(l=>c.measureText(l).width))+16),bh=lines.length*lh+12;
+      c.fillStyle='rgba(255,199,44,.28)';rr(-bw/2-4,-bh/2-4,bw+8,bh+8,14);c.fill();c.fillStyle='#14224f';rr(-bw/2,-bh/2,bw,bh,11);c.fill();c.strokeStyle='#FFC72C';c.lineWidth=2.5;rr(-bw/2,-bh/2,bw,bh,11);c.stroke();
+      c.fillStyle='#fff';c.textAlign='center';lines.forEach((l,j)=>c.fillText(l,0,-bh/2+6+lh*(j+.8)));c.restore()});
       const left=Math.max(0,tl-tt);c.fillStyle='rgba(0,0,0,.4)';rr(W*.2,GT-28,W*.6,8,4);c.fill();c.fillStyle=left<3?'#EF4444':'#FFC72C';rr(W*.2,GT-28,W*.6*(left/tl),8,4);c.fill();
       if(left<=0)choose(-1)}
     // kicker
@@ -2139,7 +2155,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-42';
+const APP_VERSION='2026.11.19-43';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
