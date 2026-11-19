@@ -719,19 +719,12 @@ const GAMES=[
  {id:'math',name:'تحدي الرياضيات',emoji:'🚀',img:'img/abacus.png',age:'all',skill:'الحساب الذهني',price:3,color:'linear-gradient(135deg,#D6E4FF,#9DBBFF)',ready:true},
  {id:'flags',name:'رحلة حول العالم',emoji:'🌍',age:'10-14',skill:'الجغرافيا والأعلام',price:3,color:'linear-gradient(135deg,#CDEBFF,#86CCFF)',ready:true},
  {id:'logic',name:'ألغاز المنطق',emoji:'🧩',img:'img/puzzle.png',age:'10-14',skill:'التفكير المنطقي',price:3,color:'linear-gradient(135deg,#EADCFF,#C6A8FF)',ready:true},
- {id:'science',name:'مختبر العلوم',emoji:'🔬',img:'img/magnifier.png',age:'all',skill:'العلوم والطبيعة',price:3,color:'linear-gradient(135deg,#D3F7F2,#8EE6DA)',ready:true},
  {id:'xo',name:'إكس أو مع نبيه',emoji:'❌',age:'all',skill:'التخطيط والتفكير',price:3,color:'linear-gradient(135deg,#FFE0EE,#FFB3D1)',ready:true},
  {id:'puzzle',name:'رتّب الصورة',emoji:'🖼️',age:'all',skill:'التركيز والملاحظة',price:3,color:'linear-gradient(135deg,#FFF1C2,#FFD36B)',ready:true},
  {id:'capitals',name:'عواصم العالم',emoji:'🏙️',age:'all',skill:'الجغرافيا والعواصم',price:3,color:'linear-gradient(135deg,#D7ECFF,#9FD0FF)',ready:true},
  {id:'islamic',name:'معلومات إسلامية',emoji:'🕌',age:'all',skill:'الثقافة الإسلامية',price:3,color:'linear-gradient(135deg,#D6F5E1,#8FE3AE)',ready:true},
- {id:'simon',name:'تذكّر الألوان',emoji:'🎵',age:'all',skill:'الذاكرة والانتباه',price:3,color:'linear-gradient(135deg,#FFE0D1,#FFB38F)',ready:true},
  {id:'spelling',name:'تهجئة الكلمات',emoji:'✍️',age:'6-9',skill:'الإملاء والقراءة',price:3,color:'linear-gradient(135deg,#FFF1C2,#FFE08A)',ready:true},
  {id:'clock',name:'قراءة الساعة',emoji:'⏰',age:'all',skill:'الوقت والساعة',price:3,color:'linear-gradient(135deg,#D6E4FF,#A9C4FF)',ready:true},
- {id:'count',name:'العدّ الممتع',emoji:'🍎',age:'6-9',skill:'العدّ والأرقام',price:3,color:'linear-gradient(135deg,#FFE0E0,#FFB3B3)',ready:true,isNew:true},
- {id:'shapes',name:'عالم الأشكال',emoji:'🔷',age:'6-9',skill:'الأشكال الهندسية',price:3,color:'linear-gradient(135deg,#D7ECFF,#A9D4FF)',ready:true,isNew:true},
- {id:'order',name:'ترتيب الأعداد',emoji:'🔢',age:'all',skill:'مقارنة الأعداد',price:3,color:'linear-gradient(135deg,#E9DCFF,#CDB5FF)',ready:true,isNew:true},
- {id:'opposites',name:'الأضداد',emoji:'↔️',age:'all',skill:'المفردات واللغة',price:3,color:'linear-gradient(135deg,#FFF1C2,#FFDC7A)',ready:true,isNew:true},
- {id:'truefalse',name:'صح أم خطأ؟',emoji:'⚡',age:'10-14',skill:'سرعة البديهة',price:3,color:'linear-gradient(135deg,#D6F5E1,#9BE8B9)',ready:true,isNew:true},
  {id:'coinrun',name:'عدّاء الكنوز',emoji:'🪙',age:'all',skill:'سرعة البديهة والتركيز',box:true,cost:80,desc:'🏃 اركض 60 ثانية واجمع العملات والجواهر!',color:'linear-gradient(135deg,#FFE9A8,#FFB347)',ready:true,isNew:true},
  {id:'riddles',name:'ألغاز وأحاجي',emoji:'🧩',age:'all',skill:'التفكير والذكاء',box:true,cost:80,desc:'⚔️ معركة الوحوش: كل لغز تحلّه ضربة سحرية!',color:'linear-gradient(135deg,#FFE0B5,#FFB86B)',ready:true,isNew:true},
  {id:'emojiq',name:'ألغاز الإيموجي',emoji:'😎',age:'all',skill:'الملاحظة والربط',box:true,cost:80,desc:'🎈 فرقع بالون الإجابة قبل أن يطير!',color:'linear-gradient(135deg,#FFF3B0,#FFD84D)',ready:true,isNew:true},
@@ -2734,7 +2727,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-56';
+const APP_VERSION='2026.11.19-57';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
