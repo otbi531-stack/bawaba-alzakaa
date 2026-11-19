@@ -314,6 +314,13 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .vsrow.on{border-color:var(--pri);background:#EAF2FF}.vsrow small{display:block;color:var(--muted);font-size:12px}.vsrow .grow{flex:1}
 .vsrow .play{width:32px;height:32px;border-radius:50%;background:var(--pri);color:#fff;display:grid;place-items:center;font-size:13px}
 .hq{font-size:11px;background:#FFF2C2;color:#8a6200;border-radius:8px;padding:1px 6px}
+.boxhead{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#3B1E6E,#7A3FE0);color:#fff;border-radius:22px;padding:14px 16px;margin-bottom:12px}
+.boxhead h3{margin:0;font-size:20px}.boxhead .meta{color:#E9DEFF}.chest{font-size:46px;animation:chest 2.4s ease-in-out infinite}@keyframes chest{50%{transform:rotate(-8deg) scale(1.08)}}
+.boxgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.boxcard{position:relative;border-radius:20px;padding:14px 10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;box-shadow:0 4px 0 rgba(0,0,0,.08)}
+.boxcard:not(.open) .bemo{filter:grayscale(.2)}.boxcard .bemo{font-size:44px}.boxcard b{font-size:16px}.boxcard small{font-size:12px;color:#4b4b5c;min-height:30px}
+.boxcard .cbtn{width:100%;margin-top:4px}.boxcard .cbtn span{font-weight:500;font-size:11px}
+.bnew{position:absolute;top:8px;left:8px;background:var(--coral);color:#fff;font-size:11px;border-radius:8px;padding:2px 7px}
 .toast{position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -353,9 +360,10 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
   <section id="daily" style="padding-bottom:0"><div class="daily" id="dailyBox"></div></section>
 
   <section id="games">
-    <div class="viewtg" id="viewtg"><button data-view="map" class="on">🗺️ الخريطة</button><button data-view="list">📋 كل الألعاب</button><button data-view="friends">👫 أصدقائي</button></div>
+    <div class="viewtg" id="viewtg"><button data-view="map" class="on">🗺️ الخريطة</button><button data-view="list">📋 كل الألعاب</button><button data-view="box">🎁 الصندوق</button><button data-view="friends">👫 أصدقائي</button></div>
     <div id="mapView"></div>
     <div id="friendsView" style="display:none"></div>
+    <div id="boxView" style="display:none"></div>
     <div class="sec-head" id="listHead">
       <div><h2>🎮 كل الألعاب</h2><p>ألعاب جديدة تُضاف باستمرار</p></div>
       <div class="tabs" id="tabs">
@@ -587,6 +595,10 @@ const GAMES=[
  {id:'order',name:'ترتيب الأعداد',emoji:'🔢',age:'all',skill:'مقارنة الأعداد',price:3,color:'linear-gradient(135deg,#E9DCFF,#CDB5FF)',ready:true,isNew:true},
  {id:'opposites',name:'الأضداد',emoji:'↔️',age:'all',skill:'المفردات واللغة',price:3,color:'linear-gradient(135deg,#FFF1C2,#FFDC7A)',ready:true,isNew:true},
  {id:'truefalse',name:'صح أم خطأ؟',emoji:'⚡',age:'10-14',skill:'سرعة البديهة',price:3,color:'linear-gradient(135deg,#D6F5E1,#9BE8B9)',ready:true,isNew:true},
+ {id:'riddles',name:'ألغاز وأحاجي',emoji:'🧩',age:'all',skill:'التفكير والذكاء',box:true,cost:50,desc:'ألغاز عربية ممتعة: من يحلّها أولًا؟',color:'linear-gradient(135deg,#FFE0B5,#FFB86B)',ready:true,isNew:true},
+ {id:'emojiq',name:'ألغاز الإيموجي',emoji:'😎',age:'all',skill:'الملاحظة والربط',box:true,cost:50,desc:'خمّن الكلمة من الرموز التعبيرية',color:'linear-gradient(135deg,#FFF3B0,#FFD84D)',ready:true,isNew:true},
+ {id:'whoami',name:'من أنا؟',emoji:'🕵️',age:'all',skill:'المعلومات العامة',box:true,cost:50,desc:'اقرأ الأدلة واكتشف من أنا',color:'linear-gradient(135deg,#DCD3FF,#B7A6FF)',ready:true,isNew:true},
+ {id:'mathriddles',name:'ألغاز الحساب',emoji:'🧮',age:'all',skill:'الحساب الذهني',box:true,cost:50,desc:'مسائل قصيرة تحتاج تفكيرًا ذكيًا',color:'linear-gradient(135deg,#C9F2E6,#7EDDC2)',ready:true,isNew:true},
  {id:'code',name:'روبوت المتاهة',emoji:'🤖',img:'img/robot.png',age:'10-14',skill:'مبادئ البرمجة',price:3,color:'linear-gradient(135deg,#FFE0D1,#FFB38F)',ready:true},
 ];
 const NEED={letters:0,memory:0,xo:0,islamic:0,count:0,shapes:5,order:20,opposites:35,truefalse:45,simon:10,puzzle:15,math:25,spelling:30,flags:40,capitals:50,logic:60,clock:70,science:85,code:100};
@@ -731,7 +743,7 @@ const AV=k=>KID(KIDS[k]?k:'b1');
 
 const AVATARS=['b1','b2','b3','b4','b5','g1','g2','g3','g4','g5'];
 function activeKid(){return profile&&profile.kids.find(k=>k.id===kidId)||null}
-function sync(){owned=new Set(profile?profile.owned||[]:LS.get('bw_guest_owned',[]));const k=activeKid();stars=k?k.stars:guestStars;earned=k?(k.earned??k.stars):LS.get('bw_guest_earned',guestStars);renderHeader();render();renderDaily();if(typeof renderMap==='function')renderMap();if(typeof publishPlayer==='function')publishPlayer()}
+function sync(){owned=new Set(profile?profile.owned||[]:LS.get('bw_guest_owned',[]));const k=activeKid();stars=k?k.stars:guestStars;earned=k?(k.earned??k.stars):LS.get('bw_guest_earned',guestStars);renderHeader();render();renderDaily();if(typeof renderMap==='function')renderMap();if(typeof renderBox==='function')renderBox();if(typeof publishPlayer==='function')publishPlayer()}
 async function persist(){if(user&&profile){try{await B.save(user.uid,profile)}catch(e){console.warn(e);toast('⚠️ تعذر الحفظ، تحقق من الاتصال')}}}
 let lastLoss=0;
 function recordPlay(gid,s){
@@ -809,22 +821,22 @@ function renderDaily(){
 // ---- Unlock by stars, or buy for 3 SAR
 let lastUnlocked=[];
 function openLock(id){
-  const g=GAMES.find(x=>x.id===id),left=Math.max(0,COST-stars),pct=Math.min(100,Math.round(stars/COST*100)),buyN=Math.ceil(left/10)*10;
+  const g=GAMES.find(x=>x.id===id),C=costOf(g),left=Math.max(0,C-stars),pct=Math.min(100,Math.round(stars/C*100)),buyN=Math.ceil(left/10)*10;
   $('#lkBody').innerHTML=`<div style="width:90px;margin:0 auto">${OWL()}</div><h3>${g.emoji} ${g.name}</h3>
-   <div class="meta" style="font-size:15px;margin:6px 0 10px">افتح هذه اللعبة بـ <b>${COST} ⭐</b> من نجومك</div>
+   <div class="meta" style="font-size:15px;margin:6px 0 10px">افتح هذه اللعبة بـ <b>${C} ⭐</b> من نجومك</div>
    <div class="dprog" style="margin:0"><i style="width:${pct}%"></i></div>
    <div class="meta" style="margin:8px 0 4px">معك <b>${stars} ⭐</b>${left?` · ينقصك <b>${left} ⭐</b>`:' · تكفي لفتحها! ✨'}</div>
    ${left?`<div class="meta">💡 العب الألعاب المفتوحة وأنجز مهمة اليوم لتجمع النجوم، أو اشترِ نجومًا (10 ⭐ بريال)</div>`:''}`;
   const go=$('#lkGo'),sb=$('#lkStars');
-  if(!left){go.textContent=`🔓 افتحها الآن بـ ${COST} ⭐`;go.dataset.unlock=id}else{go.textContent=owned.size?'🎯 العب لتجمع النجوم':'🎯 إلى مهمة اليوم';delete go.dataset.unlock}
+  if(!left){go.textContent=`🔓 افتحها الآن بـ ${C} ⭐`;go.dataset.unlock=id}else{go.textContent=owned.size?'🎯 العب لتجمع النجوم':'🎯 إلى مهمة اليوم';delete go.dataset.unlock}
   if(left){sb.style.display='block';sb.dataset.id=id;sb.dataset.n=buyN;sb.textContent=`⭐ اشترِ ${buyN} نجمة بـ ${buyN/10} ${buyN/10===1?'ريال':buyN/10===2?'ريالين':'ريالات'}`}else sb.style.display='none';
   $('#lkBuy').style.display='none';
   show('lockOv');
 }
 function unlockWithStars(id){
-  const g=GAMES.find(x=>x.id===id),k=activeKid();if(stars<COST||owned.has(id))return false;
-  if(k){k.stars-=COST;profile.owned=[...new Set([...(profile.owned||[]),id])];persist()}
-  else{guestStars-=COST;LS.set('bw_guest',guestStars);LS.set('bw_guest_owned',[...new Set([...LS.get('bw_guest_owned',[]),id])])}
+  const g=GAMES.find(x=>x.id===id),k=activeKid(),C=costOf(g);if(!g||stars<C||owned.has(id))return false;
+  if(k){k.stars-=C;profile.owned=[...new Set([...(profile.owned||[]),id])];persist()}
+  else{guestStars-=C;LS.set('bw_guest',guestStars);LS.set('bw_guest_owned',[...new Set([...LS.get('bw_guest_owned',[]),id])])}
   sync();SFX.fanfare();confetti();toast(`🎉 فتحت «${g.name}»!`);SFX.sayP('unlock');setTimeout(()=>openGame(id),700);return true;
 }
 
@@ -931,7 +943,7 @@ $('#lkGo').onclick=()=>{hide('lockOv');const u=$('#lkGo').dataset.unlock;if(u)re
 $('#lkBuy').onclick=()=>{hide('lockOv');openBuy($('#lkBuy').dataset.id)};
 $('#lkStars').onclick=()=>{hide('lockOv');openBuy($('#lkStars').dataset.id,+$('#lkStars').dataset.n)};
 $('#dBack').onclick=()=>{delArm=null;hide('dash')};
-const COST=30;
+const COST=30;const costOf=g=>(g&&g.cost)||COST;
 const isOpen=g=>owned.has(g.id);
 
 // ---- Sounds & encouragement (generated in the browser, no files)
@@ -1009,7 +1021,7 @@ function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show')
 function confetti(){const e=['⭐','🎉','✨','🎈','💛'];for(let i=0;i<24;i++){const c=document.createElement('div');c.className='confetti';c.textContent=e[i%e.length];c.style.left=Math.random()*100+'vw';c.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),2300)}}
 
 function render(){
-  const list=GAMES.filter(g=>ageFilter==='all'||g.age===ageFilter||g.age==='all');
+  const list=GAMES.filter(g=>!g.box&&(ageFilter==='all'||g.age===ageFilter||g.age==='all'));
   $('#grid').innerHTML=list.map(g=>{
     const open=isOpen(g);
     const need=COST;const tagR=open?'<span class="tag r free">مفتوحة</span>':'';
@@ -1074,7 +1086,7 @@ function openGame(id){
   const g=GAMES.find(x=>x.id===id);if(!isOpen(g))return openLock(id);
   if(stars<=0){$('#game').classList.remove('show');clearAll();toast('⭐ نفدت نجومك! اشترِ نجومًا لتكمل اللعب');return openBuy(null,50)}
   $('#owlPop').classList.remove('show','talking');clearAll();curId=id;$('#gTitle').textContent=g.emoji+' '+g.name;$('#game').classList.add('show');
-  ({animals,letters,memory,math,flags,logic,science,code,capitals,puzzle,xo,clock,spelling,simon,islamic,count,shapes,order,opposites,truefalse})[id]();
+  ({animals,letters,memory,math,flags,logic,science,code,capitals,puzzle,xo,clock,spelling,simon,islamic,count,shapes,order,opposites,truefalse,riddles,emojiq,whoami,mathriddles})[id]();
 }
 $('#gBack').onclick=()=>{clearAll();$('#game').classList.remove('show')};
 function result(score,total,msg){
@@ -1502,11 +1514,46 @@ const ZONES=[
  {min:70,max:1e9,name:'🚀 مدينة الفضاء',sub:'آخر محطة للأبطال!',bg:'linear-gradient(180deg,#E4DBFF,#F2EDFF)',path:'#8B5CF6',deco:['🪐','⭐','🛸','🌙']}];
 let view=LS.get('bw_view','map');
 function setView(v){view=v;LS.set('bw_view',v);document.querySelectorAll('#viewtg button').forEach(b=>b.classList.toggle('on',b.dataset.view===v));
-  $('#mapView').style.display=v==='map'?'block':'none';$('#friendsView').style.display=v==='friends'?'block':'none';$('#listHead').style.display=$('#grid').style.display=v==='list'?'':'none';if(v==='map')renderMap();if(v==='friends'){renderFriends();if(user)loadFriends()}updFrBadge()}
+  $('#mapView').style.display=v==='map'?'block':'none';$('#friendsView').style.display=v==='friends'?'block':'none';$('#boxView').style.display=v==='box'?'block':'none';if(v==='box')renderBox();$('#listHead').style.display=$('#grid').style.display=v==='list'?'':'none';if(v==='map')renderMap();if(v==='friends'){renderFriends();if(user)loadFriends()}updFrBadge()}
 document.querySelectorAll('#viewtg button').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+
+// ---- Treasure box games (not on the map)
+const RIDDLES=[['ما الشيء الذي كلما أخذتَ منه كَبُر؟','الحفرة'],['له أسنان ولا يَعَضّ، فما هو؟','المشط'],['يمشي بلا أرجل ويبكي بلا عيون، فما هو؟','السحاب'],
+ ['بيتٌ ليس له أبواب ولا نوافذ، فما هو؟','البيضة'],['له عين واحدة ولا يرى، فما هو؟','الإبرة'],['يكتب ولا يقرأ، فما هو؟','القلم'],['شيء كلما زاد نقص، فما هو؟','العمر'],
+ ['شيء تراه في «الليل» ثلاث مرات وفي «النهار» مرة واحدة؟','حرف اللام'],['له رقبة وليس له رأس، فما هو؟','الزجاجة'],['يجري ولا يمشي، وله فم ولا يتكلم؟','النهر'],
+ ['ابن الماء، إذا وضعته في الماء مات؟','الثلج'],['ما الشيء الذي كلما غسلته صَغُر؟','الصابون'],['له أوراق وليس شجرة، وله جلد وليس حيوانًا؟','الكتاب'],
+ ['ما الشيء الذي ينكسر إذا نطقتَ باسمه؟','الصمت'],['يسمع بلا أذن ويتكلم بلا لسان؟','الهاتف'],['ما الشيء الذي يقرصك ولا تراه؟','الجوع']];
+const EMOJIQ=[['🏫📚✏️','المدرسة'],['🎂🎈🎁','عيد الميلاد'],['🌧️☂️⛈️','المطر'],['❄️⛄🧣','الشتاء'],['☀️🏖️🍉','الصيف'],['✈️🧳🌍','السفر'],['🏥👨‍⚕️💉','المستشفى'],
+ ['⚽🥅👟','كرة القدم'],['🐄🐑🐓🌾','المزرعة'],['🍳🥐☕','الفطور'],['🌴🐪🏜️','الصحراء'],['🌊🐠🐙','البحر'],['🎨🖌️🖼️','الرسم'],['🚀🌕👨‍🚀','الفضاء'],['🔥🚒🧯','الحريق'],['🌙⭐😴','النوم']];
+const WHOAMI=[['أعيش في الصحراء، وأخزّن الدهن في سنامي، وأصبر على العطش.','الجمل'],['أنا ملك الغابة، ولي لِبْدة كبيرة.','الأسد'],['أصنع العسل وأعيش في خلية.','النحلة'],
+ ['أعالج المرضى في المستشفى.','الطبيب'],['أطفئ الحرائق وأنقذ الناس.','رجل الإطفاء'],['أعلّم الطلاب في المدرسة.','المعلم'],['أضيء السماء ليلًا، وأتغيّر من هلال إلى بدر.','القمر'],
+ ['أنا أكبر كوكب في المجموعة الشمسية.','المشتري'],['أنا أطول حيوان في العالم.','الزرافة'],['أنا أكبر حيوان في العالم، وأعيش في البحر.','الحوت الأزرق'],
+ ['لي عقارب ولا ألدغ، وأخبرك بالوقت.','الساعة'],['أنا المدينة التي فيها الكعبة المشرّفة.','مكة المكرمة'],['أنا عاصمة المملكة العربية السعودية.','الرياض'],
+ ['أنا طائر أقلّد كلام الإنسان.','الببغاء'],['أنا أسرع حيوان على اليابسة.','الفهد'],['أنا أكبر محيط في العالم.','المحيط الهادئ']];
+const MATHR=[['معك 3 تفاحات، وأخذت 2 أُخريين. كم تفاحة معك؟',5],['في الأسبوع 7 أيام، فكم يومًا في أسبوعين؟',14],['عند سارة 10 حلويات، أعطت صديقتها نصفها. كم بقي معها؟',5],
+ ['كم رِجلًا لثلاث قطط؟',12],['عمر أبي 40 سنة، وعمري ربع عمره. كم عمري؟',10],['قطار فيه 5 عربات، في كل عربة 6 ركاب. كم راكبًا في القطار؟',30],
+ ['ما العدد الذي إذا ضربته في نفسه صار 49؟',7],['كم دقيقة في ساعة ونصف؟',90],['اشتريت 3 أقلام، سعر القلم ريالان. كم ريالًا دفعت؟',6],['معي 20 ريالًا، صرفت منها 7. كم بقي معي؟',13],
+ ['ما العدد الذي إذا أضفت إليه 5 صار 12؟',7],['كم ضلعًا لمثلثين معًا؟',6],['ما نصف العدد 18؟',9],['في المزرعة 4 دجاجات وخروفان. كم رِجلًا في المزرعة؟',16],
+ ['الساعة الآن 3، كم ستكون بعد 5 ساعات؟',8],['عندي 4 علب، في كل علبة 5 أقلام. كم قلمًا عندي؟',20]];
+function boxQuiz(list,mk){const ans=list.map(x=>x[1]);quiz2(shuffle(list).slice(0,8).map(([q,a])=>mk(q,a,shuffle(ans.filter(x=>x!==a)).slice(0,3))))}
+function riddles(){boxQuiz(RIDDLES,(q,a,o)=>({show:'🧩',prompt:q,ans:a,opts:[a,...o],txt:true,reveal:`الجواب: ${a}`}))}
+function emojiq(){boxQuiz(EMOJIQ,(q,a,o)=>({show:q,prompt:'ماذا تعني هذه الرموز؟',ans:a,opts:[a,...o],txt:true,reveal:`${q} = ${a}`}))}
+function whoami(){boxQuiz(WHOAMI,(q,a,o)=>({show:'🕵️',prompt:q+'<br><b>من أنا؟</b>',ans:a,opts:[a,...o],txt:true,reveal:`أنا ${a}`}))}
+function mathriddles(){quiz2(shuffle(MATHR).slice(0,8).map(([q,a])=>{const s=new Set([a]);while(s.size<4){const d=a+rnd(-4,4);if(d>=0)s.add(d)}
+  return {show:'🧮',prompt:q,ans:a,opts:[...s],reveal:`الجواب: ${a}`}}))}
+function renderBox(){
+  const box=$('#boxView');if(!box||view!=='box')return;const list=GAMES.filter(g=>g.box&&g.ready),own=list.filter(isOpen).length;
+  box.innerHTML=`<div class="boxhead"><div class="chest">🎁</div><div><h3>صندوق الكنوز</h3><div class="meta">ألعاب مميزة غير موجودة في الخريطة · معك <b>${stars} ⭐</b> · فتحت ${own} من ${list.length}</div></div></div>
+   <div class="boxgrid">${list.map(g=>{const op=isOpen(g),c=costOf(g),best=((activeKid()||{}).stats||{})[g.id];return `<div class="boxcard ${op?'open':''}" style="background:${g.color}">
+     ${g.isNew&&!op?'<span class="bnew">جديد</span>':''}<div class="bemo">${g.emoji}</div><b>${g.name}</b><small>${g.desc||g.skill}</small>
+     ${op?`<button class="cbtn play" data-bplay="${g.id}">▶ العب${best&&best.best?' '+'⭐'.repeat(best.best):''}</button>`:`<button class="cbtn buy" data-block="${g.id}">🔒 ${c} ⭐ <span>(${c/10} ${c/10===1?'ريال':c/10===2?'ريالان':'ريالات'})</span></button>`}</div>`}).join('')}</div>
+   <div class="note" style="margin-top:12px">💡 كل 10 ⭐ بريال. اجمع النجوم بالفوز أو اشترِها من 👤 ملفي.</div>`;
+  box.querySelectorAll('[data-bplay]').forEach(b=>b.onclick=()=>openGame(b.dataset.bplay));
+  box.querySelectorAll('[data-block]').forEach(b=>b.onclick=()=>openLock(b.dataset.block));
+}
 function renderMap(){
   const box=$('#mapView');if(!box||view!=='map')return;
-  const k=activeKid(),order=GAMES.filter(g=>g.ready).map((g,i)=>({g,i,n:NEED[g.id]||0})).sort((a,b)=>a.n-b.n||a.i-b.i);
+  const k=activeKid(),order=GAMES.filter(g=>g.ready&&!g.box).map((g,i)=>({g,i,n:NEED[g.id]||0})).sort((a,b)=>a.n-b.n||a.i-b.i);
   const openList=order.filter(o=>isOpen(o.g)),here=openList.length?openList[openList.length-1].g.id:null,nextLock=order.find(o=>!isOpen(o.g));
   const X=[50,80,50,20];const me=k?AV(k.avatar):'<span style="font-size:22px">🧒</span>';
   box.innerHTML=`<div class="mapinfo"><b>⭐ ${stars}</b> نجمة · فتحت <b>${openList.length}</b> من ${order.length} محطة${nextLock?` · كل لعبة تُفتح بـ ${COST} ⭐`:' · فتحت كل المحطات 🏆'}</div>`+
@@ -1548,7 +1595,7 @@ async function applyApproved(reqs){if(applying||!profile)return;applying=true;
     await persist();sync();confetti();SFX.fanfare();
     toast(r.kind==='game'?'🎉 تم تأكيد الدفع وفُتحت لعبتك!':`🎉 تم تأكيد التحويل! وصلت نجومك: +${r.stars} ⭐`);
     SFX.say(r.kind==='game'?'مَبْروك! فُتِحَتْ لُعْبَتُك':'مَبْروك! وَصَلَتْ نُجومُك');
-    if(r.game&&r.kind!=='game'&&!owned.has(r.game)&&stars>=COST)setTimeout(()=>unlockWithStars(r.game),1500);
+    if(r.game&&r.kind!=='game'&&!owned.has(r.game)&&stars>=costOf(GAMES.find(x=>x.id===r.game)))setTimeout(()=>unlockWithStars(r.game),1500);
   }}finally{applying=false}}
 function reqLine(r){const g=r.game?GAMES.find(x=>x.id===r.game):null,st=r.status==='pending'?'⏳ بانتظار التأكيد':r.status==='approved'?'✅ تمت الموافقة':'❌ مرفوض';
   return `<div class="rqm"><span>${r.kind==='game'?'🎮 '+(g?g.name:''):`⭐ ${r.stars} نجمة`} · ${r.price} ريال</span><span class="rref2" dir="ltr">${esc(r.ref||'')}</span><b class="rst ${r.status}">${st}</b></div>`}
@@ -1582,7 +1629,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-30';
+const APP_VERSION='2026.11.19-31';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
