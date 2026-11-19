@@ -386,6 +386,13 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 #area .stars{animation:starsIn .8s cubic-bezier(.3,1.6,.5,1) both}@keyframes starsIn{from{transform:scale(0) rotate(-30deg)}}
 .mnode.open .mcirc{animation:nbob 3s ease-in-out infinite}.mnode.open:nth-child(odd) .mcirc{animation-delay:1.5s}@keyframes nbob{50%{transform:translateY(-5px)}}
 @media (prefers-reduced-motion:reduce){.buddy,.gfloat span,#area *{animation:none!important}}
+.rq{background:#1F2A55;color:#fff;border-radius:16px;padding:8px 16px;font-size:26px;font-weight:800;margin-bottom:8px;font-family:'Baloo Bhaijaan 2',Tajawal,sans-serif;min-width:200px;box-shadow:0 4px 0 #111a3a}
+.rq small{font-size:13px;opacity:.7;font-family:Tajawal,sans-serif;margin-inline-end:6px}.rq b{color:#FFC72C}
+.rwrap{position:relative;border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.2);touch-action:none;user-select:none}
+.rhud{position:absolute;top:8px;right:8px;left:8px;display:flex;justify-content:space-between;pointer-events:none}.rhud span{background:rgba(0,0,0,.5);color:#fff;border-radius:10px;padding:3px 9px;font-weight:800;font-size:13px}
+.rmsg{position:absolute;top:38%;left:0;right:0;text-align:center;font-size:34px;font-weight:900;text-shadow:0 3px 0 rgba(0,0,0,.4);opacity:0;pointer-events:none}
+.rmsg.show{animation:rmsg 1s ease}@keyframes rmsg{0%{opacity:0;transform:scale(.4)}20%{opacity:1;transform:scale(1.15)}70%{opacity:1;transform:scale(1)}100%{opacity:0;transform:translateY(-30px)}}
+.rctl{display:flex;gap:10px;margin-top:10px;width:100%;max-width:430px}.rctl .btn{flex:1;font-size:18px;padding:14px}
 .toast{position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -653,6 +660,7 @@ function A(k){
 
 
 const GAMES=[
+ {id:'race',name:'سباق العباقرة',emoji:'🏎️',age:'all',skill:'الحساب السريع',desc:'ادخل البوابة الصحيحة واحصل على نيترو!',color:'linear-gradient(135deg,#FFD1D1,#FF7A7A)',ready:true,isNew:true},
  {id:'letters',name:'مغامرة الحروف',emoji:'🔤',age:'6-9',skill:'القراءة والحروف',price:0,color:'linear-gradient(135deg,#C9F2D6,#8FE3AE)',ready:true},
  {id:'memory',name:'ذاكرة الحيوانات',emoji:'🐼',svg:'panda',age:'6-9',skill:'التركيز والذاكرة',price:0,color:'linear-gradient(135deg,#FFD6E8,#FFA8CB)',ready:true},
  {id:'math',name:'تحدي الرياضيات',emoji:'🚀',img:'img/abacus.png',age:'all',skill:'الحساب الذهني',price:3,color:'linear-gradient(135deg,#D6E4FF,#9DBBFF)',ready:true},
@@ -680,7 +688,7 @@ const GAMES=[
  {id:'fillblank',name:'أكمل الفراغ',emoji:'✍️',age:'all',skill:'اللغة والفهم',box:true,cost:50,desc:'اختر الكلمة التي تكمل الجملة',color:'linear-gradient(135deg,#E2F7C8,#B4E57F)',ready:true,isNew:true},
  {id:'code',name:'روبوت المتاهة',emoji:'🤖',img:'img/robot.png',age:'10-14',skill:'مبادئ البرمجة',price:3,color:'linear-gradient(135deg,#FFE0D1,#FFB38F)',ready:true},
 ];
-const NEED={letters:0,memory:0,xo:0,islamic:0,count:0,shapes:5,order:20,opposites:35,truefalse:45,simon:10,puzzle:15,math:25,spelling:30,flags:40,capitals:50,logic:60,clock:70,science:85,code:100};
+const NEED={race:0,letters:0,memory:0,xo:0,islamic:0,count:0,shapes:5,order:20,opposites:35,truefalse:45,simon:10,puzzle:15,math:25,spelling:30,flags:40,capitals:50,logic:60,clock:70,science:85,code:100};
 const TROPHIES=[{n:5,i:'🥉',t:'نجم صاعد'},{n:15,i:'🥈',t:'بطل واعد'},{n:30,i:'🥇',t:'عبقري'},{n:60,i:'👑',t:'ملك الذكاء'}];
 
 // =====================================================================
@@ -1171,8 +1179,8 @@ function openGame(id){
   const g=GAMES.find(x=>x.id===id);if(!isOpen(g))return openLock(id);
   if(stars<=0){$('#game').classList.remove('show');clearAll();toast('⭐ نفدت نجومك! اشترِ نجومًا لتكمل اللعب');return openBuy(null,50)}
   $('#owlPop').classList.remove('show','talking');clearAll();curId=id;$('#gTitle').textContent=g.emoji+' '+g.name;$('#game').classList.add('show');
-  gameT0=Date.now();$('#buddy').className='buddy';
-  ({animals,letters,memory,math,flags,logic,science,code,capitals,puzzle,xo,clock,spelling,simon,islamic,count,shapes,order,opposites,truefalse,riddles,emojiq,whoami,mathriddles,matchpairs,arrange,fillblank})[id]();
+  gameT0=Date.now();$('#buddy').className='buddy';$('#buddy').style.display='';
+  ({animals,letters,memory,math,flags,logic,science,code,capitals,puzzle,xo,clock,spelling,simon,islamic,count,shapes,order,opposites,truefalse,riddles,emojiq,whoami,mathriddles,matchpairs,arrange,fillblank,race})[id]();
   renderVs();
 }
 $('#gBack').onclick=()=>{clearAll();vsStop();const vb=$('#vsBar');if(vb)vb.remove();$('#game').classList.remove('show')};
@@ -1679,6 +1687,92 @@ const BLANK=[['يسبح السمك في ___','الماء',['الشجرة','ال�
  ['نسمع بـ ___','الأذنين',['العينين','الأنف','اليدين'],'👂'],['أبرد فصول السنة هو ___','الشتاء',['الصيف','الربيع','الخريف'],'❄️'],['نركب ___ لنطير إلى مدينة بعيدة','الطائرة',['الدراجة','القارب','الحصان'],'✈️'],
  ['الطبيب يعمل في ___','المستشفى',['المخبز','المزرعة','المصنع'],'🩺']];
 function fillblank(){quiz2(shuffle(BLANK).slice(0,8).map(([q,a,o,e])=>({show:e,prompt:q.replace('___','<mark>____</mark>'),ans:a,opts:[a,...o],txt:true,reveal:q.replace('___',a)})),{hearts:3})}
+
+// ---- Racing game: steer into the gate with the right answer to get nitro
+function race(){
+  $('#buddy').style.display='none';
+  const W=Math.min(area.clientWidth-8,430),H=Math.min(Math.max(420,innerHeight-230),620),DPR=Math.min(2,devicePixelRatio||1);
+  area.innerHTML=`<div class="rq" id="rq">استعد...</div><div class="rwrap"><canvas id="rc" style="width:${W}px;height:${H}px"></canvas><div class="rhud"><span id="rpos">🏁 1/4</span><span id="rspd">0 كم/س</span></div><div class="rmsg" id="rmsg"></div></div>
+   <div class="rctl"><button class="btn" id="rL">◀ يسار</button><button class="btn" id="rR">يمين ▶</button></div>`;
+  const cv=$('#rc'),ctx=cv.getContext('2d');cv.width=W*DPR;cv.height=H*DPR;ctx.scale(DPR,DPR);
+  const LANES=3,RW=W*.74,RX=(W-RW)/2,LW=RW/LANES,laneX=l=>RX+LW*(l+.5),PX=4.2,PY=H-110,LEN=1300;
+  const kid=activeKid(),myCol=['#3D7BFF','#FF4D6D','#22C55E','#F59E0B','#A855F7'][(kid&&kid.avatar||'b1').charCodeAt(1)%5];
+  const me={lane:1,x:laneX(1),d:0,v:0,boost:0,slow:0,spin:0,name:kid?String(kid.name).split(' ')[0]:'أنت',col:myCol,me:true,fin:0};
+  const bots=[['🦊 ثعلوب','#FF8A3D',34.5,0],['🐢 سلحوف','#2FB8A6',32,2],['🐰 أرنوب','#F06AA0',37,0]].map(([n,c,v,l],i)=>({name:n,col:c,base:v,v:0,d:-12-i*10,lane:l,x:laneX(l),fin:0}));
+  const all=[me,...bots];let gate=null,qn=0,right=0,t0=0,last=0,state='count',cnt=3,shake=0,parts=[],scroll=0,deco=[],finished=[];
+  for(let i=0;i<14;i++)deco.push({y:Math.random()*H,side:i%2,e:['🌴','🌵','🌳','🪨','🌼'][i%5],o:Math.random()*(RX-26)});
+  const mkQ=()=>{const t=rnd(0,2);let a,b,q,ans;
+    if(t===0){a=rnd(2,15);b=rnd(1,12);q=`${a} + ${b}`;ans=a+b}else if(t===1){a=rnd(8,20);b=rnd(1,a-1);q=`${a} − ${b}`;ans=a-b}else{a=rnd(2,9);b=rnd(2,9);q=`${a} × ${b}`;ans=a*b}
+    const s=new Set([ans]);while(s.size<3){const d=ans+[-1,1,-2,2,-10,10,-3,3][rnd(0,7)];if(d>=0)s.add(d)}return {q,ans,opts:shuffle([...s])}};
+  const newGate=()=>{const Q=mkQ();gate={...Q,d:me.d+150,hit:false};qn++;$('#rq').innerHTML=`<small>سؤال ${qn}</small> <span dir="ltr">${Q.q} = <b>?</b></span>`};
+  const move=dir=>{if(state!=='race'||me.spin>0)return;me.lane=Math.max(0,Math.min(LANES-1,me.lane+dir));SFX.note(420+me.lane*80)};
+  $('#rL').onclick=()=>move(-1);$('#rR').onclick=()=>move(1);
+  window._race={get gate(){return gate},me};
+  let sx=null;cv.addEventListener('pointerdown',e=>{sx=e.clientX});cv.addEventListener('pointerup',e=>{const r=cv.getBoundingClientRect(),dx=e.clientX-(sx??e.clientX);sx=null;
+    if(Math.abs(dx)>25)return move(dx>0?1:-1);move(e.clientX-r.left<W/2?-1:1)});
+  const key=e=>{if(!document.body.contains(cv))return removeEventListener('keydown',key);if(e.key==='ArrowLeft')move(-1);if(e.key==='ArrowRight')move(1)};addEventListener('keydown',key);
+  const msg=(t,c)=>{const m=$('#rmsg');if(!m)return;m.textContent=t;m.style.color=c;m.classList.remove('show');void m.offsetWidth;m.classList.add('show')};
+  const car=(x,y,col,o={})=>{ctx.save();ctx.translate(x,y);if(o.rot)ctx.rotate(o.rot);
+    ctx.fillStyle='rgba(0,0,0,.25)';rr(-17,-28,38,62,10);ctx.fill();
+    if(o.boost){const fl=10+Math.random()*14;const g=ctx.createLinearGradient(0,30,0,30+fl+16);g.addColorStop(0,'#FFF3A0');g.addColorStop(.5,'#FF9A1F');g.addColorStop(1,'rgba(255,60,0,0)');ctx.fillStyle=g;
+      ctx.beginPath();ctx.moveTo(-11,30);ctx.lineTo(-6,30+fl+12);ctx.lineTo(-1,30);ctx.moveTo(1,30);ctx.lineTo(6,30+fl+16);ctx.lineTo(11,30);ctx.fill()}
+    ctx.fillStyle='#1E1E28';[[-19,-20],[13,-20],[-19,12],[13,12]].forEach(([a,b])=>{rr(a,b,6,14,3);ctx.fill()});
+    ctx.fillStyle=col;rr(-15,-30,30,62,12);ctx.fill();
+    const gl=ctx.createLinearGradient(-15,0,15,0);gl.addColorStop(0,'rgba(255,255,255,.35)');gl.addColorStop(.5,'rgba(255,255,255,0)');gl.addColorStop(1,'rgba(0,0,0,.18)');ctx.fillStyle=gl;rr(-15,-30,30,62,12);ctx.fill();
+    ctx.fillStyle='#BFE3FF';rr(-11,-16,22,13,4);ctx.fill();ctx.fillStyle='rgba(0,0,0,.25)';rr(-10,8,20,10,3);ctx.fill();
+    ctx.fillStyle='#fff';rr(-3,-30,6,62,2);ctx.globalAlpha=.55;ctx.fill();ctx.globalAlpha=1;
+    ctx.fillStyle='#FFE680';ctx.fillRect(-12,-31,6,3);ctx.fillRect(6,-31,6,3);
+    if(o.label){ctx.font='bold 12px Tajawal,sans-serif';ctx.textAlign='center';const w=ctx.measureText(o.label).width+12;ctx.fillStyle=o.me?'#1F5BD6':'rgba(0,0,0,.55)';rr(-w/2,-50,w,17,8);ctx.fill();ctx.fillStyle='#fff';ctx.fillText(o.label,0,-37)}
+    ctx.restore()};
+  function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+  const rank=()=>[...all].sort((a,b)=>(a.fin&&b.fin)?a.fin-b.fin:a.fin?-1:b.fin?1:b.d-a.d).indexOf(me)+1;
+  function draw(){
+    const sh=shake>0?(Math.random()-.5)*shake:0;ctx.save();ctx.translate(sh,0);
+    ctx.fillStyle='#7BCB5A';ctx.fillRect(0,0,W,H);ctx.fillStyle='#6AB84C';for(let y=(scroll*1.0)%40-40;y<H;y+=40){ctx.fillRect(0,y,RX,20);ctx.fillRect(RX+RW,y+20,RX,20)}
+    ctx.font='24px serif';ctx.textAlign='center';deco.forEach(d=>{const x=d.side?RX+RW+10+d.o:10+d.o;ctx.fillText(d.e,x+12,d.y)});
+    ctx.fillStyle='#4A4F5C';ctx.fillRect(RX,0,RW,H);
+    ctx.fillStyle='#E53935';for(let y=scroll%30-30;y<H;y+=30){ctx.fillRect(RX-8,y,8,15);ctx.fillRect(RX+RW,y,8,15)}ctx.fillStyle='#fff';for(let y=scroll%30-15;y<H;y+=30){ctx.fillRect(RX-8,y,8,15);ctx.fillRect(RX+RW,y,8,15)}
+    ctx.fillStyle='rgba(255,255,255,.7)';for(let l=1;l<LANES;l++)for(let y=scroll%46-46;y<H;y+=46)ctx.fillRect(RX+LW*l-2,y,4,24);
+    // finish line
+    const fy=PY-(LEN-me.d)*PX;if(fy>-40&&fy<H){for(let i=0;i<12;i++)for(let j=0;j<2;j++){ctx.fillStyle=(i+j)%2?'#111':'#fff';ctx.fillRect(RX+i*RW/12,fy+j*10,RW/12,10)}}
+    // speed lines
+    if(me.boost>0){ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=2;for(let i=0;i<8;i++){const x=RX+Math.random()*RW,y=Math.random()*H;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y+40+Math.random()*40);ctx.stroke()}}
+    // gate
+    if(gate&&!gate.hit){const gy=PY-(gate.d-me.d)*PX;if(gy>-70){ctx.fillStyle='rgba(255,255,255,.18)';ctx.fillRect(RX,gy-4,RW,8);
+      gate.opts.forEach((o,l)=>{const x=laneX(l),w=LW-14;ctx.fillStyle='#1F2A55';rr(x-w/2,gy-34,w,40,12);ctx.fill();ctx.strokeStyle='#FFC72C';ctx.lineWidth=3;rr(x-w/2,gy-34,w,40,12);ctx.stroke();
+        ctx.fillStyle='#FFC72C';ctx.fillRect(x-w/2-3,gy-34,5,44);ctx.fillRect(x+w/2-2,gy-34,5,44);ctx.fillStyle='#fff';ctx.font='bold 22px "Baloo Bhaijaan 2",Tajawal,sans-serif';ctx.textAlign='center';ctx.fillText(o,x,gy-6)})}}
+    // cars
+    bots.forEach(b=>{const y=PY-(b.d-me.d)*PX;if(y>-60&&y<H+60)car(b.x,y,b.col,{label:b.name})});
+    car(me.x,PY,me.col,{boost:me.boost>0,rot:me.spin>0?me.spin*12:0,label:me.name,me:true});
+    parts.forEach(p=>{ctx.globalAlpha=Math.max(0,p.l);ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fill()});ctx.globalAlpha=1;
+    // mini progress
+    const mx=W-14;ctx.fillStyle='rgba(0,0,0,.25)';rr(mx-4,40,8,H-120,4);ctx.fill();all.forEach(c=>{const y=40+(H-120)*(1-Math.min(1,Math.max(0,c.d)/LEN));ctx.fillStyle=c.col;ctx.beginPath();ctx.arc(mx,y,c.me?7:5,0,7);ctx.fill();if(c.me){ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke()}});
+    if(state==='count'){ctx.fillStyle='rgba(0,0,0,.35)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#fff';ctx.font='bold 90px "Baloo Bhaijaan 2",sans-serif';ctx.textAlign='center';ctx.fillText(cnt>0?cnt:'انطلق!',W/2,H/2)}
+    ctx.restore()}
+  function step(ts){
+    if(!document.body.contains(cv)||curId!=='race'||!$('#game').classList.contains('show'))return removeEventListener('keydown',key);
+    const dt=Math.min(.05,(ts-(last||ts))/1000);last=ts;
+    if(state==='count'){if(!t0)t0=ts;const c=3-Math.floor((ts-t0)/800);if(c!==cnt){cnt=c;if(c>0)SFX.note(500);else SFX.note(900)}if((ts-t0)>3200){state='race';newGate()}}
+    if(state==='race'||state==='end'){
+      me.boost=Math.max(0,me.boost-dt);me.slow=Math.max(0,me.slow-dt);me.spin=Math.max(0,me.spin-dt);shake=Math.max(0,shake-dt*30);
+      const target=me.fin?18:30+(me.boost>0?28:0)-(me.slow>0?16:0);me.v+=(target-me.v)*Math.min(1,dt*3);me.d+=me.v*dt;me.x+=(laneX(me.lane)-me.x)*Math.min(1,dt*12);
+      bots.forEach((b,i)=>{const t=b.fin?16:b.base+Math.sin(ts/900+i*2)*3;b.v+=(t-b.v)*Math.min(1,dt*2);b.d+=b.v*dt;if(Math.random()<dt*.25)b.lane=Math.max(0,Math.min(2,b.lane+(Math.random()<.5?-1:1)));b.x+=(laneX(b.lane)-b.x)*Math.min(1,dt*3);
+        if(!b.fin&&b.d>=LEN){finished.push(b);b.fin=finished.length}});
+      scroll+=me.v*dt*PX;deco.forEach(d=>{d.y+=me.v*dt*PX;if(d.y>H+30){d.y=-30;d.o=Math.random()*(RX-26)}});
+      if(gate&&!gate.hit&&me.d>=gate.d){gate.hit=true;const ok=gate.opts[me.lane]===gate.ans;
+        if(ok){right++;me.boost=2.2;SFX.ok();msg('🔥 نيترو!','#FFC72C');for(let i=0;i<14;i++)parts.push({x:me.x,y:PY+30,vx:(Math.random()-.5)*120,vy:60+Math.random()*80,r:3+Math.random()*4,l:1,c:['#FFC72C','#FF7A1F','#fff'][i%3]})}
+        else{me.slow=1.6;me.spin=.5;shake=10;SFX.no();msg(`✖ الجواب ${gate.ans}`,'#FF5A5A');for(let i=0;i<10;i++)parts.push({x:me.x,y:PY,vx:(Math.random()-.5)*80,vy:(Math.random()-.5)*80,r:5+Math.random()*6,l:1,c:'#8a8f9c'})}
+        if(state==='race'&&me.d<LEN-160)later(newGate,500);else $('#rq').innerHTML='🏁 إلى خط النهاية!'}
+      parts.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.l-=dt*1.4});parts=parts.filter(p=>p.l>0);
+      if(!me.fin&&me.d>=LEN){finished.push(me);me.fin=finished.length;state='end';const place=me.fin,s=Math.max(0,4-place);
+        $('#rq').innerHTML=place===1?'🏆 المركز الأول!':`🏁 المركز ${['','الأول','الثاني','الثالث','الرابع'][place]}`;if(place===1){confetti();SFX.fanfare()}
+        later(()=>{$('#buddy').style.display='';result(s,3,`وصلت في المركز ${['','الأول 🥇','الثاني 🥈','الثالث 🥉','الرابع'][place]} · أجبت صحيحًا على ${right} من ${qn}`)},1800)}
+      const rp=$('#rpos'),rs=$('#rspd');if(rp)rp.textContent=`🏁 المركز ${me.fin||rank()}/4`;if(rs)rs.textContent=`${Math.round(me.v*4)} كم/س${me.boost>0?' 🔥':''}`;
+      stat(`${Math.min(100,Math.round(me.d/LEN*100))}%`,right);
+    }
+    draw();requestAnimationFrame(step)}
+  requestAnimationFrame(step);
+}
 function renderBox(){
   const box=$('#boxView');if(!box||view!=='box')return;const list=GAMES.filter(g=>g.box&&g.ready),own=list.filter(isOpen).length;
   box.innerHTML=`<div class="boxhead"><div class="chest">🎁</div><div><h3>صندوق الكنوز</h3><div class="meta">ألعاب مميزة غير موجودة في الخريطة · معك <b>${stars} ⭐</b> · فتحت ${own} من ${list.length}</div></div></div>
@@ -1767,7 +1861,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-35';
+const APP_VERSION='2026.11.19-37';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
