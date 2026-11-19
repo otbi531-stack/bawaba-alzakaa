@@ -456,7 +456,7 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
       </div>
       <div class="badges">
         <span class="chip">🚫 بلا إعلانات</span><span class="chip">🔁 بلا اشتراك</span>
-        <span class="chip">🎁 هدية 100 ⭐</span><span class="chip">🛡️ آمن 100%</span>
+        <span class="chip">🎁 هدية 50 ⭐</span><span class="chip">🛡️ آمن 100%</span>
       </div>
     </div>
     <div class="hero-wrap"><div class="hero-img"><img src="hero.jpg" alt="لاعبان يتعلمان ويلعبان"></div><img class="deco d1" src="img/rocket.png" alt=""><img class="deco d2" src="img/palette.png" alt=""><img class="deco d3" src="img/train.png" alt=""></div>
@@ -497,7 +497,7 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
   <section id="how">
     <div class="sec-head"><h2>كيف يعمل؟</h2></div>
     <div class="steps">
-      <div class="step"><div class="n" style="background:#DDF7E6">🎁</div><h3>هدية 100 ⭐</h3><p>تبدأ بهدية 100 نجمة، وكل محطات الخريطة مفتوحة لك مجانًا، والبومة نبيه ترشدك.</p></div>
+      <div class="step"><div class="n" style="background:#DDF7E6">🎁</div><h3>هدية 50 ⭐</h3><p>تبدأ بهدية 50 نجمة، وكل محطات الخريطة مفتوحة لك مجانًا، والبومة نبيه ترشدك.</p></div>
       <div class="step"><div class="n" style="background:#FFF3C4">🔓</div><h3>العب مجانًا واجمع النجوم</h3><p>كل ألعاب الخريطة مجانية. الفوز يعطيك من 1 إلى 3 نجوم، والخسارة تخصم 5 نجوم ⚠️. اجمع النجوم لتفتح ألعاب الصندوق المميزة، وتشتري من المتجر، وتفقس الوحوش. 10 ⭐ بريال.</p></div>
       <div class="step"><div class="n" style="background:#FFE1EE">🆕</div><h3>ألعاب جديدة باستمرار</h3><p>نضيف ألعابًا بين الحين والآخر، وتظهر عليها شارة «جديد».</p></div>
     </div>
@@ -1635,12 +1635,12 @@ function truefalse(){
   show();
 }
 
-const WELCOME=100,OLD_WELCOME=30,LOSS=5;
+const WELCOME=50,OLD_WELCOME=30,LOSS=5;
 function giveWelcome(){
   const k=activeKid();
-  if(k){if(!k.welcome){k.earned=k.earned??k.stars;k.stars+=WELCOME;k.welcome=true;k.welcome2=true;persist();sync();toast('🎁 هدية من نبيه: 100 ⭐ لتبدأ اللعب!')}
+  if(k){if(!k.welcome){k.earned=k.earned??k.stars;k.stars+=WELCOME;k.welcome=true;k.welcome2=true;persist();sync();toast('🎁 هدية من نبيه: 50 ⭐ لتبدأ اللعب!')}
     else if(!k.welcome2){k.stars+=WELCOME-OLD_WELCOME;k.welcome2=true;persist();sync();toast(`🎁 هدية إضافية من نبيه: ${WELCOME-OLD_WELCOME} ⭐!`)}}
-  else if(!LS.get('bw_welcome',false)){LS.set('bw_welcome',true);LS.set('bw_welcome2',true);guestStars+=WELCOME;LS.set('bw_guest',guestStars);sync();toast('🎁 هدية من نبيه: 100 ⭐ لتبدأ اللعب!')}
+  else if(!LS.get('bw_welcome',false)){LS.set('bw_welcome',true);LS.set('bw_welcome2',true);guestStars+=WELCOME;LS.set('bw_guest',guestStars);sync();toast('🎁 هدية من نبيه: 50 ⭐ لتبدأ اللعب!')}
   else if(!LS.get('bw_welcome2',false)){LS.set('bw_welcome2',true);guestStars+=WELCOME-OLD_WELCOME;LS.set('bw_guest',guestStars);sync();toast(`🎁 هدية إضافية من نبيه: ${WELCOME-OLD_WELCOME} ⭐!`)}
 }
 // ---- Adventure map
@@ -2353,7 +2353,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-47';
+const APP_VERSION='2026.11.19-48';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
@@ -2585,7 +2585,7 @@ function claimGift(){if(giftDay()===today())return;const n=GIFTS[rnd(0,GIFTS.len
   if(k){k.giftDay=today();k.stars+=n;k.earned=(k.earned??k.stars)+n;addWeekXp(n);persist()}else{LS.set('bw_gift_day',today());guestStars+=n;LS.set('bw_guest',guestStars);LS.set('bw_guest_earned',LS.get('bw_guest_earned',0)+n)}
   sync();confetti();SFX.fanfare();popEmoji('🎁',true);toast(`🎁 هدية اليوم: +${n} ⭐`);SFX.say(`هَدِيَّةُ اليَوْم: ${n===1?'نَجْمَةٌ واحِدَة':n===2?'نَجْمَتان':n+' نُجوم'}!`)}
 // ---- Share & install
-function shareSite(){const url=inviteLink(),t='🦉 جرّب «بوابة الذكاء»: ألعاب تعليمية عربية ممتعة، وابدأ بهدية 100 ⭐';
+function shareSite(){const url=inviteLink(),t='🦉 جرّب «بوابة الذكاء»: ألعاب تعليمية عربية ممتعة، وابدأ بهدية 50 ⭐';
   if(navigator.share)navigator.share({title:'بوابة الذكاء',text:t,url}).catch(()=>{});else window.open('https://wa.me/?text='+encodeURIComponent(t+'\n'+url),'_blank')}
 let installEvt=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;const b=$('#instBtn');if(b)b.style.display=''});
 const standalone=()=>window.matchMedia&&matchMedia('(display-mode: standalone)').matches||navigator.standalone;
