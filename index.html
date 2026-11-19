@@ -735,9 +735,9 @@ const GAMES=[
  {id:'coinrun',name:'عدّاء الكنوز',emoji:'🪙',age:'all',skill:'التاريخ والجغرافيا',box:true,cost:80,desc:'🏃 اركض واجمع العملات واقفز فوق الصناديق!',color:'linear-gradient(135deg,#FFE9A8,#FFB347)',ready:true,isNew:true},
  {id:'riddles',name:'ألغاز وأحاجي',emoji:'🧩',age:'all',skill:'التفكير والذكاء',box:true,cost:80,desc:'⚔️ معركة الوحوش: كل لغز تحلّه ضربة سحرية!',color:'linear-gradient(135deg,#FFE0B5,#FFB86B)',ready:true,isNew:true},
  {id:'emojiq',name:'ألغاز الإيموجي',emoji:'😎',age:'all',skill:'الملاحظة والربط',box:true,cost:80,desc:'🎈 فرقع بالون الإجابة قبل أن يطير!',color:'linear-gradient(135deg,#FFF3B0,#FFD84D)',ready:true,isNew:true},
- {id:'whoami',name:'من أنا؟',emoji:'🕵️',age:'all',skill:'المعلومات العامة',box:true,cost:80,desc:'⚔️ اهزم الوحوش بمعرفة من أنا!',color:'linear-gradient(135deg,#DCD3FF,#B7A6FF)',ready:true,isNew:true},
- {id:'mathriddles',name:'ألغاز الحساب',emoji:'🧮',age:'all',skill:'الحساب الذهني',box:true,cost:80,desc:'🚀 دمّر النيزك الذي يحمل الجواب!',color:'linear-gradient(135deg,#C9F2E6,#7EDDC2)',ready:true,isNew:true},
- {id:'matchpairs',name:'طابق الكلمات',emoji:'🔗',age:'all',skill:'الإنجليزية والذاكرة',box:true,cost:80,desc:'🚀 أطلق الليزر على الكلمة الإنجليزية الصحيحة!',color:'linear-gradient(135deg,#D3ECFF,#8EC9FF)',ready:true,isNew:true},
+ {id:'whoami',name:'من أنا؟',emoji:'🕵️',age:'all',skill:'المعلومات العامة',box:true,cost:80,desc:'🎣 اصطد السمكة التي تحمل الجواب!',color:'linear-gradient(135deg,#DCD3FF,#B7A6FF)',ready:true,isNew:true},
+ {id:'mathriddles',name:'ألغاز الحساب',emoji:'🧮',age:'all',skill:'الحساب الذهني',box:true,cost:80,desc:'🏀 ارمِ الكرة في سلة الجواب الصحيح!',color:'linear-gradient(135deg,#C9F2E6,#7EDDC2)',ready:true,isNew:true},
+ {id:'matchpairs',name:'طابق الكلمات',emoji:'🔗',age:'all',skill:'الإنجليزية والذاكرة',box:true,cost:80,desc:'🍉 قطّع الفاكهة التي عليها الكلمة الصحيحة!',color:'linear-gradient(135deg,#D3ECFF,#8EC9FF)',ready:true,isNew:true},
  {id:'arrange',name:'رتّب الجملة',emoji:'🧱',age:'all',skill:'القراءة وبناء الجمل',box:true,cost:80,desc:'🚂 حمّل القطار بالكلمات بالترتيب!',color:'linear-gradient(135deg,#FFDCE8,#FF9EC0)',ready:true,isNew:true},
  {id:'fillblank',name:'أكمل الفراغ',emoji:'✍️',age:'all',skill:'اللغة والفهم',box:true,cost:80,desc:'🎈 فرقع البالون الذي يكمل الجملة!',color:'linear-gradient(135deg,#E2F7C8,#B4E57F)',ready:true,isNew:true},
  {id:'code',name:'روبوت المتاهة',emoji:'🤖',img:'img/robot.png',age:'10-14',skill:'مبادئ البرمجة',price:3,color:'linear-gradient(135deg,#FFE0D1,#FFB38F)',ready:true},
@@ -1841,6 +1841,104 @@ function trainGame(){
     if(state==='load'){c.fillStyle='rgba(31,42,68,.75)';A.rr(W/2-90,18,180,26,13);c.fill();c.fillStyle='#fff';c.font='bold 13px Tajawal,sans-serif';c.textAlign='center';c.fillText(`الكلمة ${loaded.length+1} من ${words.length}`,W/2,36)}
     A.stepParts(dt);A.hud(hp,3,`🚂 ${Math.min(i+1,list.length)}/${list.length} · ✔ ${right}`);stat(`${Math.min(i+1,list.length)}/${list.length}`,right);requestAnimationFrame(frame)}
   setup();requestAnimationFrame(frame)}
+// ---------- F) Fishing (who am I)
+function fishingGame(items){
+  const A=arena(460),{W,H,c}=A;let i=0,right=0,hp=3,fish=[],last=0,state='go',hook=null,qT=0,bubbles=[],caught=null;const WL=H*.22,QT=14;
+  const COLS=[['#FF8A3D','#FFC93C'],['#3DA5FF','#9BD6FF'],['#F06AA0','#FFC1DA'],['#22C55E','#A7F3D0'],['#A855F7','#E9D5FF']];
+  const next=()=>{if(i>=items.length||hp<=0)return finish();const it=items[i];$('#aq').innerHTML=`<span class="aqe">${it.show}</span><span>${it.q}</span>`;
+    fish=it.opts.map((o,k)=>{const dir=k%2?-1:1;return {t:o,ok:o===it.ans,x:Math.random()*W,y:WL+60+k*((H-WL-110)/Math.max(1,it.opts.length-1)),dir,v:(28+Math.random()*22+i*3)*dir,ph:Math.random()*7,col:COLS[(k+i)%COLS.length],gone:0}});qT=QT;state='go';hook=null;caught=null};
+  const finish=()=>{state='end';A.msg(hp>0?'🎣 صيد رائع!':'💔 انتهت القلوب','#FFC72C');later(()=>A.end(right,items.length,`اصطدت ${right} سمكات صحيحة من ${items.length}`),1300)};
+  const cast=f=>{if(state!=='go'||!f||f.gone)return;state='cast';hook={x:W/2+20,y:WL-10,tx:f.x,ty:f.y,t:0,f};SFX.note(500)};
+  A.cv.addEventListener('pointerdown',e=>{const r=A.cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let b=null,bd=1e9;fish.forEach(f=>{const d=Math.hypot(f.x-x,f.y-y);if(!f.gone&&d<70&&d<bd){bd=d;b=f}});cast(b)});
+  window._arc={get fish(){return fish},cast};
+  function drawFish(f,ts){const sw=Math.sin(ts/200+f.ph)*.18;c.save();c.translate(f.x,f.y);c.scale(f.dir>0?1:-1,1);c.rotate(sw*.3);
+    c.fillStyle=f.col[0];c.beginPath();c.moveTo(-38,0);c.lineTo(-60,-18+sw*20);c.lineTo(-60,18+sw*20);c.closePath();c.fill();
+    const g=c.createLinearGradient(0,-24,0,24);g.addColorStop(0,f.col[1]);g.addColorStop(1,f.col[0]);c.fillStyle=g;c.beginPath();c.ellipse(0,0,44,26,0,0,7);c.fill();
+    c.fillStyle='rgba(255,255,255,.35)';c.beginPath();c.ellipse(-6,-10,22,6,0,0,7);c.fill();c.fillStyle='#fff';c.beginPath();c.arc(26,-6,7,0,7);c.fill();c.fillStyle='#1d1d26';c.beginPath();c.arc(28,-6,3.5,0,7);c.fill();
+    c.restore();const lines=A.wrap(f.t,90,'bold 13px Tajawal,sans-serif');const bw=Math.max(...lines.map(l=>c.measureText(l).width))+12;c.fillStyle='rgba(10,30,60,.78)';A.rr(f.x-bw/2,f.y-10*lines.length,bw,20*lines.length,9);c.fill();
+    c.fillStyle='#fff';c.textAlign='center';lines.forEach((l,j)=>c.fillText(l,f.x,f.y+5-10*(lines.length-1)+j*20))}
+  function frame(ts){if(!A.alive())return;const dt=Math.min(.05,(ts-(last||ts))/1000);last=ts;
+    const sky=c.createLinearGradient(0,0,0,WL);sky.addColorStop(0,'#7FD1FF');sky.addColorStop(1,'#D8F2FF');c.fillStyle=sky;c.fillRect(0,0,W,WL);
+    const sea=c.createLinearGradient(0,WL,0,H);sea.addColorStop(0,'#2BB3E6');sea.addColorStop(1,'#0B3E78');c.fillStyle=sea;c.fillRect(0,WL,W,H-WL);
+    c.fillStyle='rgba(255,255,255,.35)';c.beginPath();c.moveTo(0,WL);for(let x=0;x<=W;x+=10)c.lineTo(x,WL+Math.sin(x/25+ts/400)*4);c.lineTo(W,WL+10);c.lineTo(0,WL+10);c.fill();
+    for(let k=0;k<6;k++){const x=(k*83)%W;c.strokeStyle='#1E8C4E';c.lineWidth=6;c.beginPath();c.moveTo(x,H);for(let y=H;y>H-70-k%3*20;y-=8)c.lineTo(x+Math.sin(y/14+ts/600+k)*8,y);c.stroke()}
+    c.fillStyle='rgba(255,255,255,.15)';for(let k=0;k<5;k++){c.beginPath();c.moveTo(W*(k/5)+Math.sin(ts/3000+k)*30,WL);c.lineTo(W*(k/5)+60,H);c.lineTo(W*(k/5)+30,H);c.fill()}
+    if(Math.random()<dt*3)bubbles.push({x:Math.random()*W,y:H,r:2+Math.random()*4});bubbles.forEach(b=>{b.y-=40*dt;b.x+=Math.sin(b.y/20)*.3;c.strokeStyle='rgba(255,255,255,.6)';c.lineWidth=1.5;c.beginPath();c.arc(b.x,b.y,b.r,0,7);c.stroke()});bubbles=bubbles.filter(b=>b.y>WL);
+    // boat + fisher
+    const bx=W/2,by=WL+Math.sin(ts/500)*3;c.fillStyle='#8A5A2B';c.beginPath();c.moveTo(bx-60,by-14);c.lineTo(bx+60,by-14);c.lineTo(bx+44,by+8);c.lineTo(bx-44,by+8);c.fill();c.fillStyle='#C98A4B';c.fillRect(bx-60,by-18,120,6);
+    c.fillStyle='#F4C9A0';c.beginPath();c.arc(bx-8,by-42,11,0,7);c.fill();c.fillStyle='#E8233C';A.rr(bx-20,by-32,24,20,6);c.fill();c.fillStyle='#FFC72C';c.beginPath();c.ellipse(bx-8,by-52,16,5,0,0,7);c.fill();c.fillRect(bx-16,by-62,16,10);
+    c.strokeStyle='#5B3A1E';c.lineWidth=3;c.beginPath();c.moveTo(bx,by-26);c.lineTo(bx+26,by-64);c.stroke();
+    // fish
+    fish.forEach(f=>{if(f.gone)return;if(!(caught&&caught===f)&&!(hook&&hook.f===f&&hook.t>.5)){f.x+=f.v*dt;if(f.x>W+70){f.x=-70}if(f.x<-70){f.x=W+70}}drawFish(f,ts)});
+    // line + hook
+    if(hook){hook.t+=dt*2;const p=Math.min(1,hook.t),f=hook.f,ox=bx+26,oy=by-64;let hx=ox+(f.x-ox)*Math.min(1,p*1.2),hy=oy+(f.y-oy)*Math.min(1,p*1.2);
+      if(hook.t>1&&!hook.done){hook.done=1;if(f.ok){right++;caught=f;SFX.ok();A.burst(f.x,f.y,24,['#fff','#9BD6FF'],160,4);A.msg('🎣 صيد صحيح!','#FFC72C')}else{hp--;SFX.no();f.v*=3;A.msg('🐟 هربت! خطأ','#FF6B6B');A.burst(f.x,f.y,14,['#fff'],120,3)}}
+      if(hook.t>1){const q=Math.min(1,hook.t-1);if(caught){caught.x=f.x+(ox-f.x)*q*.1;caught.y=f.y+(oy+20-f.y)*q;hx=caught.x;hy=caught.y}else{hx=hx+(ox-hx)*q;hy=hy+(oy-hy)*q}
+        if(hook.t>2){if(caught){caught.gone=1;A.burst(ox,WL,30,['#fff','#2BB3E6','#FFC72C'],200,5);i++;hook=null;state='wait';later(next,500)}else{hook=null;state=hp<=0?'wait':'go';if(hp<=0)later(finish,400)}}}
+      c.strokeStyle='rgba(255,255,255,.85)';c.lineWidth=1.5;c.beginPath();c.moveTo(ox,oy);c.lineTo(hx,hy);c.stroke();c.strokeStyle='#ccc';c.lineWidth=2.5;c.beginPath();c.arc(hx,hy+6,6,0,Math.PI);c.stroke()}
+    if(state==='go'){qT-=dt;if(qT<=0){hp--;SFX.no();A.msg('⏱ انتهى الوقت!','#FF6B6B');i++;state='wait';later(hp>0?next:finish,700)}}
+    c.fillStyle='rgba(0,0,0,.3)';A.rr(W*.2,H-14,W*.6,6,3);c.fill();c.fillStyle=qT<4?'#EF4444':'#FFC72C';A.rr(W*.2,H-14,W*.6*Math.max(0,qT/QT),6,3);c.fill();
+    A.stepParts(dt,80);A.hud(hp,3,`🎣 ${Math.min(i+1,items.length)}/${items.length} · ✔ ${right}`);stat(`${Math.min(i+1,items.length)}/${items.length}`,right);requestAnimationFrame(frame)}
+  next();requestAnimationFrame(frame)}
+// ---------- G) Fruit slicer (English words)
+function sliceGame(items){
+  const A=arena(460),{W,H,c}=A;let i=0,right=0,hp=3,fr=[],halves=[],trail=[],last=0,state='go',combo=0;const FR=[['#E53935','#FFCDD2','🍉'],['#FB8C00','#FFE0B2','🍊'],['#43A047','#C8E6C9','🍈'],['#8E24AA','#E1BEE7','🍇'],['#FDD835','#FFF9C4','🍋']];
+  const next=()=>{if(i>=items.length||hp<=0)return finish();const it=items[i];$('#aq').innerHTML=`<span class="aqe">${it.show}</span><span>${it.q}</span>`;
+    fr=it.opts.map((o,k)=>({t:o,ok:o===it.ans,x:W*(k+.5)/it.opts.length+(Math.random()-.5)*30,y:H+40+k*25,vx:(Math.random()-.5)*50,vy:-(H*1.05+Math.random()*60),r:42,rot:0,vr:(Math.random()-.5)*3,f:FR[(k+i)%FR.length],cut:0}));state='go'};
+  const finish=()=>{state='end';A.msg(hp>0?'🍉 تقطيع بطولي!':'💔 انتهت القلوب','#FFC72C');later(()=>A.end(right,items.length,`قطّعت ${right} فواكه صحيحة من ${items.length}`),1300)};
+  const cut=(f,ang)=>{if(state!=='go'||f.cut)return;f.cut=1;halves.push({...f,side:-1,ang,vx:f.vx-60,vy:f.vy*.3},{...f,side:1,ang,vx:f.vx+60,vy:f.vy*.3});
+    if(f.ok){right++;combo++;SFX.ok();A.burst(f.x,f.y,30,[f.f[0],f.f[1],'#fff'],240,5);A.msg(combo>=3?`🔥 سلسلة ×${combo}!`:'🔪 صحيح!','#FFC72C');state='wait';i++;later(next,900)}
+    else{hp--;combo=0;SFX.no();A.burst(f.x,f.y,20,['#555','#888'],160,6);A.msg('✖ فاكهة خاطئة!','#FF6B6B');if(hp<=0){state='wait';later(finish,600)}}};
+  let down=false,lp=null;const pt=e=>{const r=A.cv.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top}};
+  const test=(a,b)=>fr.forEach(f=>{if(f.cut)return;const dx=b.x-a.x,dy=b.y-a.y,l2=dx*dx+dy*dy||1,t=Math.max(0,Math.min(1,((f.x-a.x)*dx+(f.y-a.y)*dy)/l2)),d=Math.hypot(a.x+dx*t-f.x,a.y+dy*t-f.y);if(d<f.r)cut(f,Math.atan2(dy,dx))});
+  A.cv.addEventListener('pointerdown',e=>{down=true;lp=pt(e);trail=[{...lp,l:1}];test(lp,{x:lp.x+1,y:lp.y+1})});
+  A.cv.addEventListener('pointermove',e=>{if(!down)return;const p=pt(e);test(lp,p);trail.push({...p,l:1});lp=p});addEventListener('pointerup',()=>{down=false});
+  window._arc={get fruits(){return fr},cut:f=>cut(f,0)};
+  function fruit(f,ts,half){c.save();c.translate(f.x,f.y);c.rotate(f.rot);if(half){c.rotate(f.ang);c.beginPath();c.rect(-60,half<0?-60:0,120,60);c.clip()}
+    const g=c.createRadialGradient(-f.r*.3,-f.r*.3,4,0,0,f.r);g.addColorStop(0,f.f[1]);g.addColorStop(1,f.f[0]);c.fillStyle=g;c.beginPath();c.arc(0,0,f.r,0,7);c.fill();
+    if(half){c.fillStyle=f.f[1];c.beginPath();c.ellipse(0,0,f.r*.9,f.r*.15,0,0,7);c.fill()}c.fillStyle='rgba(255,255,255,.45)';c.beginPath();c.ellipse(-f.r*.35,-f.r*.4,f.r*.18,f.r*.1,-.6,0,7);c.fill();c.fillStyle='#2E7D32';c.beginPath();c.ellipse(4,-f.r-2,9,4,.5,0,7);c.fill();c.restore();
+    if(!half){const lines=A.wrap(f.t,f.r*1.8,'bold 16px "Baloo Bhaijaan 2",Tajawal,sans-serif');c.fillStyle='#fff';c.strokeStyle='rgba(0,0,0,.45)';c.lineWidth=3.5;c.textAlign='center';lines.forEach((l,j)=>{const y=f.y+6+(j-(lines.length-1)/2)*18;c.strokeText(l,f.x,y);c.fillText(l,f.x,y)})}}
+  function frame(ts){if(!A.alive())return;const dt=Math.min(.05,(ts-(last||ts))/1000);last=ts;
+    const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#5D3A1A');g.addColorStop(1,'#2E1C0C');c.fillStyle=g;c.fillRect(0,0,W,H);c.strokeStyle='rgba(0,0,0,.25)';c.lineWidth=2;for(let y=30;y<H;y+=46){c.beginPath();c.moveTo(0,y);c.lineTo(W,y+Math.sin(y)*6);c.stroke()}
+    c.fillStyle='rgba(255,255,255,.04)';for(let x=0;x<W;x+=90)c.fillRect(x,0,3,H);
+    const G=H*.9;fr.forEach(f=>{if(f.cut)return;f.vy+=G*dt;f.x+=f.vx*dt;f.y+=f.vy*dt;f.rot+=f.vr*dt;if(f.x<f.r)f.vx=Math.abs(f.vx);if(f.x>W-f.r)f.vx=-Math.abs(f.vx);fruit(f,ts)});
+    halves.forEach(h=>{h.vy+=G*dt;h.x+=h.vx*dt;h.y+=h.vy*dt;h.rot+=h.side*3*dt;fruit(h,ts,h.side)});halves=halves.filter(h=>h.y<H+80);
+    if(state==='go'){const miss=fr.find(f=>f.ok&&!f.cut&&f.vy>0&&f.y>H+50);if(miss){miss.cut=1;hp--;combo=0;SFX.no();A.msg(`🍉 سقطت! الجواب ${miss.t}`,'#FF6B6B');state='wait';i++;later(hp>0?next:finish,800)}
+      else if(fr.every(f=>f.cut||(f.vy>0&&f.y>H+50))){state='wait';later(()=>{fr.forEach(f=>{if(!f.cut){f.y=H+40;f.vy=-(H*1.05);f.vx=(Math.random()-.5)*50}});state='go'},300)}}
+    trail.forEach(p=>p.l-=dt*4);trail=trail.filter(p=>p.l>0);if(trail.length>1){c.strokeStyle='rgba(255,255,255,.9)';c.lineCap='round';for(let k=1;k<trail.length;k++){c.lineWidth=8*trail[k].l;c.beginPath();c.moveTo(trail[k-1].x,trail[k-1].y);c.lineTo(trail[k].x,trail[k].y);c.stroke()}}
+    A.stepParts(dt,500);A.hud(hp,3,`🍉 ${Math.min(i+1,items.length)}/${items.length} · ✔ ${right}`);stat(`${Math.min(i+1,items.length)}/${items.length}`,right);requestAnimationFrame(frame)}
+  next();requestAnimationFrame(frame)}
+// ---------- H) Basketball shots (math riddles)
+function hoopsGame(items){
+  const A=arena(460),{W,H,c}=A;let i=0,right=0,hp=3,hoops=[],ball=null,last=0,state='go',qT=0,score=0;const QT=12,HY=H*.3;
+  const next=()=>{if(i>=items.length||hp<=0)return finish();const it=items[i];$('#aq').innerHTML=`<span class="aqe">${it.show}</span><span>${it.q}</span>`;
+    hoops=it.opts.map((o,k)=>({t:o,ok:o===it.ans,bx:W*(k+.5)/it.opts.length,x:W*(k+.5)/it.opts.length,ph:Math.random()*7,amp:i>=3?W*.06:0,swish:0,shake:0}));qT=QT;ball=null;state='go'};
+  const finish=()=>{state='end';A.msg(hp>0?'🏀 مباراة رائعة!':'💔 انتهت القلوب','#FFC72C');later(()=>A.end(right,items.length,`سجّلت ${right} رميات صحيحة من ${items.length} · ${score} نقطة`),1300)};
+  const shoot=h=>{if(state!=='go'||!h)return;state='fly';ball={x:W/2,y:H-60,sx:W/2,sy:H-60,h,t:0};SFX.note(400)};
+  A.cv.addEventListener('pointerdown',e=>{const r=A.cv.getBoundingClientRect(),x=e.clientX-r.left;let b=null,bd=1e9;hoops.forEach(h=>{const d=Math.abs(h.x-x);if(d<bd){bd=d;b=h}});shoot(b)});
+  window._arc={get hoops(){return hoops},shoot};
+  function hoop(h,ts){const x=h.x,bw=Math.min(96,W*.27),y=HY;c.fillStyle='#fff';A.rr(x-bw/2,y-78,bw,62,6);c.fill();c.strokeStyle='#E53935';c.lineWidth=3;A.rr(x-bw/2,y-78,bw,62,6);c.stroke();c.strokeRect(x-bw*.22,y-46,bw*.44,28);
+    const lines=A.wrap(h.t,bw-10,'bold 17px "Baloo Bhaijaan 2",Tajawal,sans-serif');c.fillStyle='#1F2A44';c.textAlign='center';lines.forEach((l,j)=>c.fillText(l,x,y-56+j*16));
+    c.fillStyle='#777';c.fillRect(x-3,y-16,6,10);const sh=h.shake>0?Math.sin(ts/15)*3:0;c.strokeStyle='#FF6D00';c.lineWidth=4;c.beginPath();c.ellipse(x+sh,y,bw*.3,6,0,0,7);c.stroke();
+    c.strokeStyle='rgba(255,255,255,.85)';c.lineWidth=1.3;const sw=h.swish>0?Math.sin(h.swish*20)*4:0;for(let k=-3;k<=3;k++){c.beginPath();c.moveTo(x+k*bw*.09,y+2);c.lineTo(x+k*bw*.05+sw,y+32+(h.swish>0?6:0));c.stroke()}c.beginPath();c.moveTo(x-bw*.25,y+14);c.lineTo(x+bw*.25,y+14);c.moveTo(x-bw*.18,y+26);c.lineTo(x+bw*.18,y+26);c.stroke()}
+  function bball(x,y,r,rot){c.save();c.translate(x,y);c.rotate(rot);const g=c.createRadialGradient(-r*.3,-r*.3,2,0,0,r);g.addColorStop(0,'#FFB36B');g.addColorStop(1,'#D9530F');c.fillStyle=g;c.beginPath();c.arc(0,0,r,0,7);c.fill();c.strokeStyle='#5a2207';c.lineWidth=r*.09;c.beginPath();c.moveTo(-r,0);c.lineTo(r,0);c.moveTo(0,-r);c.lineTo(0,r);c.stroke();c.beginPath();c.arc(-r*1.1,0,r*.8,-.9,.9);c.stroke();c.beginPath();c.arc(r*1.1,0,r*.8,Math.PI-.9,Math.PI+.9);c.stroke();c.restore()}
+  function frame(ts){if(!A.alive())return;const dt=Math.min(.05,(ts-(last||ts))/1000);last=ts;
+    const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#141B3A');g.addColorStop(.55,'#2A3570');g.addColorStop(.56,'#C68B4E');g.addColorStop(1,'#9E6A36');c.fillStyle=g;c.fillRect(0,0,W,H);
+    for(let k=0;k<60;k++){const x=(k*37)%W,y=H*.05+((k*53)%Math.floor(H*.14));c.fillStyle=['#E53935','#FDD835','#3DA5FF','#fff'][k%4];c.globalAlpha=.5;c.beginPath();c.arc(x,y+Math.sin(ts/200+k)*2,4,0,7);c.fill()}c.globalAlpha=1;
+    [[W*.15,0],[W*.85,0]].forEach(([x])=>{const lg=c.createRadialGradient(x,0,2,x,0,W*.5);lg.addColorStop(0,'rgba(255,255,220,.4)');lg.addColorStop(1,'rgba(255,255,220,0)');c.fillStyle=lg;c.fillRect(0,0,W,H*.6)});
+    c.strokeStyle='rgba(255,255,255,.35)';c.lineWidth=2;c.beginPath();c.ellipse(W/2,H*.98,W*.36,H*.16,0,Math.PI,0);c.stroke();for(let x=0;x<W;x+=40){c.strokeStyle='rgba(0,0,0,.08)';c.beginPath();c.moveTo(x,H*.56);c.lineTo(x-20,H);c.stroke()}
+    hoops.forEach(h=>{h.x=h.bx+Math.sin(ts/900+h.ph)*h.amp;h.swish=Math.max(0,h.swish-dt);h.shake=Math.max(0,h.shake-dt);hoop(h,ts)});
+    if(ball){ball.t+=dt*1.5;const p=Math.min(1,ball.t),h=ball.h,tx=h.x,ty=HY-14;
+      if(h.ok||p<.82){ball.x=ball.sx+(tx-ball.sx)*p;ball.y=ball.sy+(ty-ball.sy)*p-Math.sin(p*Math.PI)*H*.28;if(h.ok&&p>=1)ball.y=ty+(ball.t-1)*160}
+      else{if(!ball.bounce){ball.bounce=1;h.shake=.4;ball.vx=(Math.random()<.5?-1:1)*140;ball.vy=-120;SFX.no();hp--;A.msg(`✖ ارتطمت بالحلقة! الجواب ${items[i].ans}`,'#FF6B6B')}ball.vy+=600*dt;ball.x+=ball.vx*dt;ball.y+=ball.vy*dt}
+      bball(ball.x,ball.y,18*(1-p*.35),ball.t*10);
+      if(h.ok&&p>=1&&!ball.scored){ball.scored=1;h.swish=.6;right++;score+=2;SFX.ok();A.burst(tx,ty+20,26,['#FFC72C','#fff','#FF6D00'],200,4);A.msg('🏀 سلّة! +2','#FFC72C')}
+      if(ball.t>1.6){ball=null;i++;state='wait';later(hp>0?next:finish,400)}}
+    else if(state==='go')bball(W/2,H-60+Math.abs(Math.sin(ts/250))*-14,18,ts/400);
+    if(state==='go'){qT-=dt;if(qT<=0){hp--;SFX.no();A.msg('⏱ انتهى الوقت!','#FF6B6B');i++;state='wait';later(hp>0?next:finish,700)}}
+    c.fillStyle='rgba(0,0,0,.3)';A.rr(W*.2,H-14,W*.6,6,3);c.fill();c.fillStyle=qT<4?'#EF4444':'#FFC72C';A.rr(W*.2,H-14,W*.6*Math.max(0,qT/QT),6,3);c.fill();
+    A.stepParts(dt,300);A.hud(hp,3,`🏀 ${Math.min(i+1,items.length)}/${items.length} · ${score} نقطة`);stat(`${Math.min(i+1,items.length)}/${items.length}`,right);requestAnimationFrame(frame)}
+  next();requestAnimationFrame(frame)}
 // ---------- E) Treasure runner: run the jungle path, collect coins, jump crates, pass the right answer gate
 function coinrun(){
   const A=arena(470),{W,H,c}=A,kid=activeKid(),eq=myEq(),kit=KITS[eq.kit]||KITS.k_basic,boots=BOOTS[eq.boots]||BOOTS.b_black,nm=kid?String(kid.name).split(' ')[0]:'بطل';
@@ -1911,14 +2009,14 @@ function coinrun(){
 function boxQuiz(list,mk){const ans=list.map(x=>x[1]);quiz2(shuffle(list).slice(0,8).map(([q,a])=>mk(q,a,shuffle(ans.filter(x=>x!==a)).slice(0,3))),{hearts:3})}
 function riddles(){battleGame(boxItems('riddles'))}
 function emojiq(){balloonGame(boxItems('emojiq'))}
-function whoami(){battleGame(boxItems('whoami'))}
-function mathriddles(){shooterGame(boxItems('mathriddles'))}
+function whoami(){fishingGame(boxItems('whoami'))}
+function mathriddles(){hoopsGame(boxItems('mathriddles'))}
 
 // ---- Lesson-style box games (match pairs, build the sentence, fill the blank)
 const EN=[['cat','قطة'],['dog','كلب'],['apple','تفاحة'],['sun','شمس'],['moon','قمر'],['book','كتاب'],['water','ماء'],['house','بيت'],['car','سيارة'],['tree','شجرة'],
  ['fish','سمكة'],['bird','طائر'],['milk','حليب'],['door','باب'],['school','مدرسة'],['red','أحمر'],['blue','أزرق'],['one','واحد'],['two','اثنان'],['three','ثلاثة'],
  ['mother','أم'],['father','أب'],['pen','قلم'],['ball','كرة'],['chair','كرسي'],['star','نجمة'],['bread','خبز'],['egg','بيضة'],['hand','يد'],['eye','عين']];
-function matchpairs(){shooterGame(boxItems('matchpairs'))}
+function matchpairs(){sliceGame(boxItems('matchpairs'))}
 function matchpairsOld(){
   const pool=shuffle(EN);let round=0,miss=0,done=0,pick=null,t0=Date.now();const R=3,N=5;
   const play=()=>{
@@ -2594,7 +2692,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-53';
+const APP_VERSION='2026.11.19-54';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
