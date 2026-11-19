@@ -729,6 +729,7 @@ const GAMES=[
  {id:'order',name:'ترتيب الأعداد',emoji:'🔢',age:'all',skill:'مقارنة الأعداد',price:3,color:'linear-gradient(135deg,#E9DCFF,#CDB5FF)',ready:true,isNew:true},
  {id:'opposites',name:'الأضداد',emoji:'↔️',age:'all',skill:'المفردات واللغة',price:3,color:'linear-gradient(135deg,#FFF1C2,#FFDC7A)',ready:true,isNew:true},
  {id:'truefalse',name:'صح أم خطأ؟',emoji:'⚡',age:'10-14',skill:'سرعة البديهة',price:3,color:'linear-gradient(135deg,#D6F5E1,#9BE8B9)',ready:true,isNew:true},
+ {id:'coinrun',name:'عدّاء الكنوز',emoji:'🪙',age:'all',skill:'التاريخ والجغرافيا',box:true,cost:80,desc:'🏃 اركض واجمع العملات واقفز فوق الصناديق!',color:'linear-gradient(135deg,#FFE9A8,#FFB347)',ready:true,isNew:true},
  {id:'riddles',name:'ألغاز وأحاجي',emoji:'🧩',age:'all',skill:'التفكير والذكاء',box:true,cost:80,desc:'⚔️ معركة الوحوش: كل لغز تحلّه ضربة سحرية!',color:'linear-gradient(135deg,#FFE0B5,#FFB86B)',ready:true,isNew:true},
  {id:'emojiq',name:'ألغاز الإيموجي',emoji:'😎',age:'all',skill:'الملاحظة والربط',box:true,cost:80,desc:'🎈 فرقع بالون الإجابة قبل أن يطير!',color:'linear-gradient(135deg,#FFF3B0,#FFD84D)',ready:true,isNew:true},
  {id:'whoami',name:'من أنا؟',emoji:'🕵️',age:'all',skill:'المعلومات العامة',box:true,cost:80,desc:'⚔️ اهزم الوحوش بمعرفة من أنا!',color:'linear-gradient(135deg,#DCD3FF,#B7A6FF)',ready:true,isNew:true},
@@ -1229,7 +1230,7 @@ function openGame(id){
   const g=GAMES.find(x=>x.id===id);if(!isOpen(g))return openLock(id);
   $('#owlPop').classList.remove('show','talking');clearAll();curId=id;$('#gTitle').textContent=g.emoji+' '+g.name;$('#game').classList.add('show');
   gameT0=Date.now();$('#buddy').className='buddy';$('#buddy').style.display='';$('#buddy').innerHTML=companionSVG();
-  ({animals,letters,memory,math,flags,logic,science,code,capitals,puzzle,xo,clock,spelling,simon,islamic,count,shapes,order,opposites,truefalse,riddles,emojiq,whoami,mathriddles,matchpairs,arrange,fillblank,race,penalty})[id]();
+  ({animals,letters,memory,math,flags,logic,science,code,capitals,puzzle,xo,clock,spelling,simon,islamic,count,shapes,order,opposites,truefalse,riddles,emojiq,whoami,mathriddles,matchpairs,arrange,fillblank,race,penalty,coinrun})[id]();
   renderVs();
 }
 $('#gBack').onclick=()=>{clearAll();vsStop();const vb=$('#vsBar');if(vb)vb.remove();$('#game').classList.remove('show')};
@@ -1836,6 +1837,72 @@ function trainGame(){
     if(state==='load'){c.fillStyle='rgba(31,42,68,.75)';A.rr(W/2-90,18,180,26,13);c.fill();c.fillStyle='#fff';c.font='bold 13px Tajawal,sans-serif';c.textAlign='center';c.fillText(`الكلمة ${loaded.length+1} من ${words.length}`,W/2,36)}
     A.stepParts(dt);A.hud(hp,3,`🚂 ${Math.min(i+1,list.length)}/${list.length} · ✔ ${right}`);stat(`${Math.min(i+1,list.length)}/${list.length}`,right);requestAnimationFrame(frame)}
   setup();requestAnimationFrame(frame)}
+// ---------- E) Treasure runner: run the jungle path, collect coins, jump crates, pass the right answer gate
+function coinrun(){
+  const A=arena(470),{W,H,c}=A,kid=activeKid(),eq=myEq(),kit=KITS[eq.kit]||KITS.k_basic,boots=BOOTS[eq.boots]||BOOTS.b_black,nm=kid?String(kid.name).split(' ')[0]:'بطل';
+  const HZ=H*.34,K=H-HZ,LX=[-.62,0,.62],ZMAX=26,qs=shuffle(PKQ.slice()).slice(0,6);
+  let lane=1,px=0,jump=0,jv=0,v=7,dist=0,coins=0,hp=3,right=0,qi=0,objs=[],last=0,state='count',t0=0,spawnC=0,spawnX=0,gateDue=4,hurt=0,parts=[],pop=[],qShown=false,cur=null,flash=0;
+  $('#aq').innerHTML='<span class="aqe">🏃</span><span>اجمع العملات 🪙 واقفز فوق الصناديق، وادخل بوابة الجواب الصحيح!</span>';
+  $('#aopts').innerHTML='<div class="rctl" style="margin:0;max-width:none;direction:ltr"><button class="btn" id="rnL">◀</button><button class="btn" id="rnJ">⤒ اقفز</button><button class="btn" id="rnR">▶</button></div>';
+  const mv=d=>{if(state!=='run')return;lane=Math.max(0,Math.min(2,lane+d));SFX.note(420+lane*60)},jp=()=>{if(state!=='run'||jump>0)return;jv=9.5;jump=.001;SFX.note(700)};
+  $('#rnL').onclick=()=>mv(-1);$('#rnR').onclick=()=>mv(1);$('#rnJ').onclick=jp;
+  let sx=null,sy=null;A.cv.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY});A.cv.addEventListener('pointerup',e=>{if(sx===null)return;const dx=e.clientX-sx,dy=e.clientY-sy;sx=null;
+    if(Math.abs(dy)>30&&dy<0&&Math.abs(dy)>Math.abs(dx))return jp();if(Math.abs(dx)>25)return mv(dx>0?1:-1);const r=A.cv.getBoundingClientRect(),x=e.clientX-r.left;x<W/3?mv(-1):x>W*2/3?mv(1):jp()});
+  const key=e=>{if(!A.alive())return removeEventListener('keydown',key);if(e.key==='ArrowLeft')mv(-1);if(e.key==='ArrowRight')mv(1);if(e.key==='ArrowUp'||e.key===' ')jp()};addEventListener('keydown',key);
+  window._arc={get objs(){return objs},get lane(){return lane},get cur(){return cur},mv,jp};
+  const yAt=z=>HZ+K/z,sAt=z=>1/z,xAt=(l,z)=>W/2+l*W*.46/z;
+  const spawn=dt=>{spawnC-=dt*v;if(spawnC<=0){spawnC=2.2+Math.random()*1.6;const l=rnd(0,2);
+      if(Math.random()<.32&&gateDue>1.5)objs.push({k:'crate',l,z:ZMAX});else for(let n=0;n<5;n++)objs.push({k:'coin',l,z:ZMAX+n*.9,a:Math.random()*7})}
+    gateDue-=dt;if(gateDue<=0&&!cur&&qi<qs.length){const [q,ans,d1,d2]=qs[qi];cur={q,ans,opts:shuffle([ans,d1,d2])};$('#aq').innerHTML=`<span class="aqe">❓</span><span>${q}</span>`;objs=objs.filter(o=>o.z<ZMAX-6);
+      objs.push({k:'gate',z:ZMAX+8,opts:cur.opts,ans});gateDue=99}};
+  function tree(x,y,s){c.fillStyle='#6B4423';c.fillRect(x-s*.06,y-s*.7,s*.12,s*.7);c.fillStyle='#1E7A35';c.beginPath();c.arc(x,y-s*.8,s*.38,0,7);c.arc(x-s*.3,y-s*.62,s*.28,0,7);c.arc(x+s*.3,y-s*.62,s*.28,0,7);c.fill();c.fillStyle='rgba(255,255,255,.12)';c.beginPath();c.arc(x-s*.1,y-s*.92,s*.14,0,7);c.fill()}
+  function coin(x,y,s,a){const w=Math.abs(Math.cos(a))*s*.5+s*.08;const g=c.createLinearGradient(x-w,0,x+w,0);g.addColorStop(0,'#B8860B');g.addColorStop(.5,'#FFE27A');g.addColorStop(1,'#C9961A');c.fillStyle=g;c.beginPath();c.ellipse(x,y-s*.6,w,s*.5,0,0,7);c.fill();c.strokeStyle='#8A6410';c.lineWidth=Math.max(1,s*.06);c.stroke();
+    if(w>s*.25){c.fillStyle='#B8860B';c.font=`bold ${s*.5}px sans-serif`;c.textAlign='center';c.fillText('★',x,y-s*.42)}}
+  function crate(x,y,s){c.fillStyle='rgba(0,0,0,.25)';c.beginPath();c.ellipse(x,y,s*.55,s*.12,0,0,7);c.fill();const w=s*.9;c.fillStyle='#C98A4B';c.fillRect(x-w/2,y-w,w,w);c.strokeStyle='#7A4E22';c.lineWidth=Math.max(1,s*.07);c.strokeRect(x-w/2,y-w,w,w);
+    c.beginPath();c.moveTo(x-w/2,y-w);c.lineTo(x+w/2,y);c.moveTo(x+w/2,y-w);c.lineTo(x-w/2,y);c.stroke();if(s>30){c.fillStyle='#FFE27A';c.font=`bold ${s*.35}px sans-serif`;c.textAlign='center';c.fillText('!',x,y-w*.35)}}
+  function gate(o,z){const y=yAt(z),s=sAt(z)*W*.3;o.opts.forEach((t,l)=>{const x=xAt(LX[l],z),w=s*.92,h=s*.36;c.fillStyle='#6B4423';c.fillRect(x-w/2,y-s*1.25,w*.08,s*1.25);c.fillRect(x+w/2-w*.08,y-s*1.25,w*.08,s*1.25);
+    c.fillStyle='#14224f';A.rr(x-w/2,y-s*1.3,w,h,h*.3);c.fill();c.strokeStyle='#FFC72C';c.lineWidth=Math.max(1,s*.04);A.rr(x-w/2,y-s*1.3,w,h,h*.3);c.stroke();
+    if(s>22){const lines=A.wrap(t,w*.9,`bold ${Math.max(9,s*.13)}px Tajawal,sans-serif`);c.fillStyle='#fff';c.textAlign='center';lines.slice(0,2).forEach((ln,j)=>c.fillText(ln,x,y-s*1.3+h*.42+j*s*.14-(lines.length>1?s*.06:0)))}})}
+  function frame(ts){if(!A.alive()){removeEventListener('keydown',key);return}const dt=Math.min(.05,(ts-(last||ts))/1000);last=ts;
+    if(state==='count'){if(!t0)t0=ts;if(ts-t0>2400){state='run'}}
+    if(state==='run'){v=Math.min(13,v+dt*.12);dist+=v*dt;spawn(dt);objs.forEach(o=>{o.pz=o.z;o.z-=v*dt*.9});
+      if(jump>0){jump+=jv*dt;jv-=24*dt;if(jump<=0){jump=0;jv=0}}
+      objs.forEach(o=>{if(o.done||!(o.pz>=1&&o.z<1))return;
+        if(o.k==='coin'&&o.l===lane&&jump<1.2){o.done=1;coins++;SFX.note(1100+Math.random()*200);pop.push({x:xAt(LX[o.l],1),y:H-120,t:1,v:'+1'})}
+        if(o.k==='crate'&&o.l===lane&&jump<.6){o.done=1;hp--;hurt=.6;SFX.no();A.burst(W/2,H-90,20,['#C98A4B','#7A4E22'],200,5);A.msg('📦 اصطدمت!','#FF6B6B');if(hp<=0)over()}
+        if(o.k==='gate'){o.done=1;const ok=o.opts[lane]===o.ans;
+          if(ok){right++;coins+=10;flash=.5;SFX.ok();A.msg('✔ صحيح! +10 🪙','#FFC72C');A.burst(W/2,H-140,40,['#FFE27A','#FFC72C','#fff'],260,5)}
+          else{hp--;hurt=.6;SFX.no();A.msg(`✖ الجواب: ${o.ans}`,'#FF6B6B');if(hp<=0)over()}
+          cur=null;qi++;gateDue=3.5;$('#aq').innerHTML=qi>=qs.length?'<span class="aqe">🏁</span><span>آخر مسافة! اجمع ما تبقى من العملات</span>':'<span class="aqe">🏃</span><span>استعد للسؤال التالي...</span>';if(qi>=qs.length&&hp>0)later(()=>{if(state==='run')over(true)},4500)}});
+      objs=objs.filter(o=>o.z>.6&&!(o.done&&o.k!=='gate'));}
+    px+=(LX[lane]-px)*Math.min(1,dt*12);hurt=Math.max(0,hurt-dt);flash=Math.max(0,flash-dt);
+    // sky + mountains
+    const g=c.createLinearGradient(0,0,0,HZ);g.addColorStop(0,'#4FB3FF');g.addColorStop(1,'#CDEBFF');c.fillStyle=g;c.fillRect(0,0,W,HZ+2);
+    c.fillStyle='#5FA36B';c.beginPath();c.moveTo(0,HZ);for(let x=0;x<=W;x+=12)c.lineTo(x,HZ-30-Math.sin(x/60+dist*.01)*14-Math.sin(x/23)*6);c.lineTo(W,HZ);c.fill();
+    c.fillStyle='#2F7D3B';c.fillRect(0,HZ,W,H-HZ);
+    // path with bands
+    for(let z=ZMAX;z>.7;z-=.5){const z2=z-.5,y1=yAt(z),y2=yAt(Math.max(.7,z2)),w1=W*.5/z,w2=W*.5/Math.max(.7,z2),band=Math.floor(z+dist*.9)%2;
+      c.fillStyle=band?'#D9A35B':'#CC9450';c.beginPath();c.moveTo(W/2-w1,y1);c.lineTo(W/2+w1,y1);c.lineTo(W/2+w2,y2);c.lineTo(W/2-w2,y2);c.fill();
+      c.fillStyle=band?'#3C8C45':'#348040';c.fillRect(0,y1,W/2-w1+1,y2-y1+1);c.fillRect(W/2+w1-1,y1,W,y2-y1+1);
+      c.fillStyle=band?'#8A5A2B':'#6B4423';const fw1=w1*.06,fw2=w2*.06;[[-1],[1]].forEach(([sd])=>{c.beginPath();c.moveTo(W/2+sd*w1,y1);c.lineTo(W/2+sd*(w1+fw1),y1);c.lineTo(W/2+sd*(w2+fw2),y2);c.lineTo(W/2+sd*w2,y2);c.fill()})}
+    // side trees (parallax by distance)
+    for(let n=0;n<14;n++){const z=ZMAX-((n*1.9+dist*.9)%ZMAX);if(z<.8)continue;const s=sAt(z)*W*.55;tree(W/2-W*.62/z-s*.2,yAt(z),s);tree(W/2+W*.62/z+s*.2,yAt(z),s)}
+    // objects back-to-front
+    [...objs].sort((a,b)=>b.z-a.z).forEach(o=>{if(o.z>ZMAX+9||o.done&&o.k!=='gate')return;const y=yAt(o.z),s=sAt(o.z)*W*.18;
+      if(o.k==='coin'){o.a+=dt*5;coin(xAt(LX[o.l],o.z),y,s,o.a)}else if(o.k==='crate')crate(xAt(LX[o.l],o.z),y,s*1.4);else if(o.k==='gate'&&!o.done)gate(o,o.z)});
+    // runner
+    const run=(ts/1000*v*.22)%1,bob=Math.abs(Math.sin(run*Math.PI*2))*4,ry=H-14-jump*26-bob;c.globalAlpha=hurt>0&&Math.floor(ts/80)%2?0.4:1;
+    c.fillStyle='rgba(0,0,0,.25)';c.beginPath();c.ellipse(W/2+px*W*.46,H-12,34-jump*2,8,0,0,7);c.fill();
+    drawPlayer(c,W/2+px*W*.46,ry,H*.24,kit,{view:'back',num:'10',name:nm,run:jump>0?0:run,boots,air:true,arms:jump>0?.6:0});c.globalAlpha=1;
+    if(flash>0){c.fillStyle=`rgba(255,226,122,${flash*.5})`;c.fillRect(0,0,W,H)}
+    pop.forEach(p=>{p.t-=dt;p.y-=60*dt;c.globalAlpha=Math.max(0,p.t);c.fillStyle='#FFE27A';c.font='bold 20px Tajawal,sans-serif';c.textAlign='center';c.fillText(p.v,p.x,p.y);c.globalAlpha=1});pop=pop.filter(p=>p.t>0);
+    // coin counter
+    c.fillStyle='rgba(0,0,0,.45)';A.rr(W/2-58,40,116,30,15);c.fill();c.fillStyle='#FFE27A';c.font='bold 18px "Baloo Bhaijaan 2",Tajawal,sans-serif';c.textAlign='center';c.fillText(`🪙 ${coins}`,W/2,62);
+    if(state==='count'){c.fillStyle='rgba(0,0,0,.35)';c.fillRect(0,0,W,H);c.fillStyle='#fff';c.font='bold 80px "Baloo Bhaijaan 2",sans-serif';c.textAlign='center';const k=3-Math.floor((ts-t0)/800);c.fillText(k>0?k:'انطلق!',W/2,H*.45)}
+    A.stepParts(dt);A.hud(hp,3,`🏃 ${Math.round(dist*10)} م · ✔ ${right}/${qs.length}`);stat(`${Math.min(qi+1,qs.length)}/${qs.length}`,right);requestAnimationFrame(frame)}
+  function over(win){if(state==='end')return;state='end';removeEventListener('keydown',key);A.msg(win?'🏁 وصلت!':'💔 انتهت القلوب','#FFC72C');
+    later(()=>A.end(right,qs.length,`جمعت 🪙 ${coins} عملة وركضت ${Math.round(dist*10)} مترًا · أجبت صحيحًا على ${right} من ${qs.length}`),1500)}
+  requestAnimationFrame(frame)}
 
 function boxQuiz(list,mk){const ans=list.map(x=>x[1]);quiz2(shuffle(list).slice(0,8).map(([q,a])=>mk(q,a,shuffle(ans.filter(x=>x!==a)).slice(0,3))),{hearts:3})}
 function riddles(){battleGame(boxItems('riddles'))}
@@ -2518,7 +2585,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-50';
+const APP_VERSION='2026.11.19-51';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
