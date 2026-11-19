@@ -449,7 +449,7 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
   <div class="hero">
     <div>
       <h1>العب، تعلّم،<br><span>واجمع</span> <em>النجوم!</em> ⭐</h1>
-      <p>ألعاب تعليمية عربية ممتعة من 6 إلى 14 سنة. ابدأ بهدية 100 ⭐، اربح النجوم بالفوز، وافتح بها الألعاب 🔓 كل لعبة بـ 30 ⭐ (10 ⭐ بريال)</p>
+      <p>ألعاب تعليمية عربية ممتعة من 6 إلى 14 سنة. كل ألعاب الخريطة مجانية 🎉 اربح النجوم بالفوز، وافتح بها كنوز الصندوق المميزة 🎁 (10 ⭐ بريال)</p>
       <div class="cta">
         <button class="btn pri" data-scroll="games">🎮 العب مجانًا الآن</button>
         <button class="btn ghost" data-scroll="how">كيف يعمل؟</button>
@@ -469,12 +469,11 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
   <section id="daily" style="padding-bottom:0"><div class="daily" id="dailyBox"></div></section>
 
   <section id="games">
-    <div class="viewtg" id="viewtg"><button data-view="map" class="on">🗺️ الخريطة</button><button data-view="list">📋 الكل</button><button data-view="box">🎁 الصندوق</button><button data-view="shop">🛍️ المتجر</button><button data-view="mons">🐲 وحوشي</button><button data-view="friends">👫 أصدقائي</button></div>
+    <div class="viewtg" id="viewtg"><button data-view="map" class="on">🗺️ الخريطة</button><button data-view="list">📋 الكل</button><button data-view="box">🎁 الصندوق</button><button data-view="shop">🛍️ المتجر</button><button data-view="friends">👫 أصدقائي</button></div>
     <div id="mapView"></div>
     <div id="friendsView" style="display:none"></div>
     <div id="boxView" style="display:none"></div>
     <div id="shopView" style="display:none"></div>
-    <div id="monsView" style="display:none"></div>
     <div class="sec-head" id="listHead">
       <div><h2>🎮 كل الألعاب</h2><p>ألعاب جديدة تُضاف باستمرار</p></div>
       <div class="tabs" id="tabs">
@@ -498,8 +497,8 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
   <section id="how">
     <div class="sec-head"><h2>كيف يعمل؟</h2></div>
     <div class="steps">
-      <div class="step"><div class="n" style="background:#DDF7E6">🎁</div><h3>هدية 100 ⭐</h3><p>تبدأ بهدية 100 نجمة تفتح بها ألعابك من الخريطة، والبومة نبيه ترشدك.</p></div>
-      <div class="step"><div class="n" style="background:#FFF3C4">🔓</div><h3>اجمع النجوم وافتح</h3><p>الفوز يعطيك من 1 إلى 3 نجوم، والخسارة تخصم 5 نجوم ⚠️، ومهمة اليوم تعطيك 5 نجوم إضافية. كل 30 ⭐ تفتح لعبة جديدة، وإذا نفدت نجومك اشترِ المزيد: 10 ⭐ بريال.</p></div>
+      <div class="step"><div class="n" style="background:#DDF7E6">🎁</div><h3>هدية 100 ⭐</h3><p>تبدأ بهدية 100 نجمة، وكل محطات الخريطة مفتوحة لك مجانًا، والبومة نبيه ترشدك.</p></div>
+      <div class="step"><div class="n" style="background:#FFF3C4">🔓</div><h3>العب مجانًا واجمع النجوم</h3><p>كل ألعاب الخريطة مجانية. الفوز يعطيك من 1 إلى 3 نجوم، والخسارة تخصم 5 نجوم ⚠️. اجمع النجوم لتفتح ألعاب الصندوق المميزة، وتشتري من المتجر، وتفقس الوحوش. 10 ⭐ بريال.</p></div>
       <div class="step"><div class="n" style="background:#FFE1EE">🆕</div><h3>ألعاب جديدة باستمرار</h3><p>نضيف ألعابًا بين الحين والآخر، وتظهر عليها شارة «جديد».</p></div>
     </div>
   </section>
@@ -722,13 +721,13 @@ const GAMES=[
  {id:'order',name:'ترتيب الأعداد',emoji:'🔢',age:'all',skill:'مقارنة الأعداد',price:3,color:'linear-gradient(135deg,#E9DCFF,#CDB5FF)',ready:true,isNew:true},
  {id:'opposites',name:'الأضداد',emoji:'↔️',age:'all',skill:'المفردات واللغة',price:3,color:'linear-gradient(135deg,#FFF1C2,#FFDC7A)',ready:true,isNew:true},
  {id:'truefalse',name:'صح أم خطأ؟',emoji:'⚡',age:'10-14',skill:'سرعة البديهة',price:3,color:'linear-gradient(135deg,#D6F5E1,#9BE8B9)',ready:true,isNew:true},
- {id:'riddles',name:'ألغاز وأحاجي',emoji:'🧩',age:'all',skill:'التفكير والذكاء',box:true,cost:50,desc:'ألغاز عربية ممتعة: من يحلّها أولًا؟',color:'linear-gradient(135deg,#FFE0B5,#FFB86B)',ready:true,isNew:true},
- {id:'emojiq',name:'ألغاز الإيموجي',emoji:'😎',age:'all',skill:'الملاحظة والربط',box:true,cost:50,desc:'خمّن الكلمة من الرموز التعبيرية',color:'linear-gradient(135deg,#FFF3B0,#FFD84D)',ready:true,isNew:true},
- {id:'whoami',name:'من أنا؟',emoji:'🕵️',age:'all',skill:'المعلومات العامة',box:true,cost:50,desc:'اقرأ الأدلة واكتشف من أنا',color:'linear-gradient(135deg,#DCD3FF,#B7A6FF)',ready:true,isNew:true},
- {id:'mathriddles',name:'ألغاز الحساب',emoji:'🧮',age:'all',skill:'الحساب الذهني',box:true,cost:50,desc:'مسائل قصيرة تحتاج تفكيرًا ذكيًا',color:'linear-gradient(135deg,#C9F2E6,#7EDDC2)',ready:true,isNew:true},
- {id:'matchpairs',name:'طابق الكلمات',emoji:'🔗',age:'all',skill:'الإنجليزية والذاكرة',box:true,cost:50,desc:'صِل الكلمة الإنجليزية بمعناها بأسرع وقت',color:'linear-gradient(135deg,#D3ECFF,#8EC9FF)',ready:true,isNew:true},
- {id:'arrange',name:'رتّب الجملة',emoji:'🧱',age:'all',skill:'القراءة وبناء الجمل',box:true,cost:50,desc:'اضغط الكلمات بالترتيب الصحيح',color:'linear-gradient(135deg,#FFDCE8,#FF9EC0)',ready:true,isNew:true},
- {id:'fillblank',name:'أكمل الفراغ',emoji:'✍️',age:'all',skill:'اللغة والفهم',box:true,cost:50,desc:'اختر الكلمة التي تكمل الجملة',color:'linear-gradient(135deg,#E2F7C8,#B4E57F)',ready:true,isNew:true},
+ {id:'riddles',name:'ألغاز وأحاجي',emoji:'🧩',age:'all',skill:'التفكير والذكاء',box:true,cost:200,desc:'ألغاز عربية ممتعة: من يحلّها أولًا؟',color:'linear-gradient(135deg,#FFE0B5,#FFB86B)',ready:true,isNew:true},
+ {id:'emojiq',name:'ألغاز الإيموجي',emoji:'😎',age:'all',skill:'الملاحظة والربط',box:true,cost:200,desc:'خمّن الكلمة من الرموز التعبيرية',color:'linear-gradient(135deg,#FFF3B0,#FFD84D)',ready:true,isNew:true},
+ {id:'whoami',name:'من أنا؟',emoji:'🕵️',age:'all',skill:'المعلومات العامة',box:true,cost:200,desc:'اقرأ الأدلة واكتشف من أنا',color:'linear-gradient(135deg,#DCD3FF,#B7A6FF)',ready:true,isNew:true},
+ {id:'mathriddles',name:'ألغاز الحساب',emoji:'🧮',age:'all',skill:'الحساب الذهني',box:true,cost:200,desc:'مسائل قصيرة تحتاج تفكيرًا ذكيًا',color:'linear-gradient(135deg,#C9F2E6,#7EDDC2)',ready:true,isNew:true},
+ {id:'matchpairs',name:'طابق الكلمات',emoji:'🔗',age:'all',skill:'الإنجليزية والذاكرة',box:true,cost:200,desc:'صِل الكلمة الإنجليزية بمعناها بأسرع وقت',color:'linear-gradient(135deg,#D3ECFF,#8EC9FF)',ready:true,isNew:true},
+ {id:'arrange',name:'رتّب الجملة',emoji:'🧱',age:'all',skill:'القراءة وبناء الجمل',box:true,cost:200,desc:'اضغط الكلمات بالترتيب الصحيح',color:'linear-gradient(135deg,#FFDCE8,#FF9EC0)',ready:true,isNew:true},
+ {id:'fillblank',name:'أكمل الفراغ',emoji:'✍️',age:'all',skill:'اللغة والفهم',box:true,cost:200,desc:'اختر الكلمة التي تكمل الجملة',color:'linear-gradient(135deg,#E2F7C8,#B4E57F)',ready:true,isNew:true},
  {id:'code',name:'روبوت المتاهة',emoji:'🤖',img:'img/robot.png',age:'10-14',skill:'مبادئ البرمجة',price:3,color:'linear-gradient(135deg,#FFE0D1,#FFB38F)',ready:true},
 ];
 const NEED={penalty:0,race:0,letters:0,memory:0,xo:0,islamic:0,count:0,shapes:5,order:20,opposites:35,truefalse:45,simon:10,puzzle:15,math:25,spelling:30,flags:40,capitals:50,logic:60,clock:70,science:85,code:100};
@@ -877,7 +876,7 @@ const AV=k=>KID(KIDS[k]?k:'b1');
 
 const AVATARS=['b1','b2','b3','b4','b5','g1','g2','g3','g4','g5'];
 function activeKid(){return profile&&profile.kids.find(k=>k.id===kidId)||null}
-function sync(){owned=new Set(profile?profile.owned||[]:LS.get('bw_guest_owned',[]));const k=activeKid();stars=k?k.stars:guestStars;earned=k?(k.earned??k.stars):LS.get('bw_guest_earned',guestStars);renderHeader();render();renderDaily();if(typeof renderMap==='function')renderMap();if(typeof renderBox==='function')renderBox();if(typeof renderShop==='function'&&view==='shop')renderShop();if(typeof renderMons==='function'&&view==='mons')renderMons();if(typeof updMonBadge==='function')updMonBadge();if(typeof publishPlayer==='function')publishPlayer()}
+function sync(){owned=new Set(profile?profile.owned||[]:LS.get('bw_guest_owned',[]));const k=activeKid();stars=k?k.stars:guestStars;earned=k?(k.earned??k.stars):LS.get('bw_guest_earned',guestStars);renderHeader();render();renderDaily();if(typeof renderMap==='function')renderMap();if(typeof renderBox==='function')renderBox();if(typeof renderShop==='function'&&view==='shop')renderShop();if(typeof updMonBadge==='function')updMonBadge();if(typeof publishPlayer==='function')publishPlayer()}
 async function persist(){if(user&&profile){try{await B.save(user.uid,profile)}catch(e){console.warn(e);toast('⚠️ تعذر الحفظ، تحقق من الاتصال')}}}
 let lastLoss=0;
 function recordPlay(gid,s,secs){
@@ -1053,7 +1052,7 @@ function openDash(){
    <div class="dcard"><h3>${esc(user.name||'حسابي')}</h3><div class="meta" dir="ltr" style="text-align:right">${esc(user.email)}</div>
      <div style="margin-top:8px"><span class="mode ${B.mode==='firebase'?'live':''}">${B.mode==='firebase'?'☁️ متصل بالسحابة':'🧪 وضع تجريبي (هذا المتصفح فقط)'}</span></div></div>
    <div class="dcard"><h3>🎮 ألعابي (${GAMES.filter(isOpen).length}/${GAMES.length})</h3><div class="ownl">${GAMES.filter(isOpen).map(g=>`<span>${g.emoji} ${g.name}</span>`).join('')}</div></div>
-   <div class="dcard"><h3>⭐ متجر النجوم</h3><div class="meta" style="margin-bottom:10px">معك ${stars} ⭐ · كل لعبة تُفتح بـ ${COST} ⭐</div><div class="kact">${[10,30,60].map(n=>`<button class="sbtn pri" data-shop="${n}">${n} ⭐ = ${n/10} ${n===10?"ريال":n===20?"ريالين":"ريالات"}</button>`).join("")}</div></div>
+   <div class="dcard"><h3>⭐ متجر النجوم</h3><div class="meta" style="margin-bottom:10px">معك ${stars} ⭐ · كنوز الصندوق والمتجر تُفتح بالنجوم</div><div class="kact">${[10,30,60].map(n=>`<button class="sbtn pri" data-shop="${n}">${n} ⭐ = ${n/10} ${n===10?"ريال":n===20?"ريالين":"ريالات"}</button>`).join("")}</div></div>
    
    ${profile.kids.map(k=>{const rows=GAMES.filter(g=>k.stats&&k.stats[g.id]).map(g=>{const st=k.stats[g.id];return `<tr><td>${g.emoji} ${g.name}</td><td>${st.plays}</td><td>${'⭐'.repeat(st.best)}${'☆'.repeat(3-st.best)}</td></tr>`}).join('');
      const tr=[...TROPHIES].reverse().find(t=>(k.earned??k.stars)>=t.n);
@@ -1080,7 +1079,7 @@ $('#lkBuy').onclick=()=>{hide('lockOv');openBuy($('#lkBuy').dataset.id)};
 $('#lkStars').onclick=()=>{hide('lockOv');openBuy($('#lkStars').dataset.id,+$('#lkStars').dataset.n)};
 $('#dBack').onclick=()=>{delArm=null;hide('dash')};
 const COST=30;const costOf=g=>(g&&g.cost)||COST;
-const isOpen=g=>owned.has(g.id);
+const isOpen=g=>!!g&&(!g.box||owned.has(g.id));
 
 // ---- Sounds & encouragement (generated in the browser, no files)
 const SFX=(()=>{
@@ -1220,7 +1219,6 @@ function clearAll(){timers.forEach(t=>{clearTimeout(t);clearInterval(t)});timers
 function stat(prog,score){$('#gProg').textContent=prog;$('#gScore').textContent='⭐ '+score}
 function openGame(id){
   const g=GAMES.find(x=>x.id===id);if(!isOpen(g))return openLock(id);
-  if(stars<=0){$('#game').classList.remove('show');clearAll();toast('⭐ نفدت نجومك! اشترِ نجومًا لتكمل اللعب');return openBuy(null,50)}
   $('#owlPop').classList.remove('show','talking');clearAll();curId=id;$('#gTitle').textContent=g.emoji+' '+g.name;$('#game').classList.add('show');
   gameT0=Date.now();$('#buddy').className='buddy';$('#buddy').style.display='';$('#buddy').innerHTML=companionSVG();
   ({animals,letters,memory,math,flags,logic,science,code,capitals,puzzle,xo,clock,spelling,simon,islamic,count,shapes,order,opposites,truefalse,riddles,emojiq,whoami,mathriddles,matchpairs,arrange,fillblank,race,penalty})[id]();
@@ -1236,7 +1234,7 @@ function result(score,total,msg){
    <div class="levels"><button class="btn pri" id="again">🔁 العب مرة أخرى</button><button class="btn ghost" id="home">🏠 كل الألعاب</button></div>`;
   if(lastMission&&lastMission.finished)setTimeout(()=>{confetti();SFX.fanfare();SFX.sayP('daily')},2600);
   if(lastUnlocked.length)setTimeout(()=>{confetti();SFX.fanfare();SFX.sayP('unlock')},lastMission&&lastMission.finished?5400:2600);
-  if(stars<=0){$('#again').textContent='⭐ اشترِ نجومًا';$('#again').onclick=()=>{$('#gBack').click();openBuy(null,50)}}else $('#again').onclick=()=>openGame(curId);$('#home').onclick=()=>$('#gBack').click();
+  $('#again').onclick=()=>openGame(curId);$('#home').onclick=()=>$('#gBack').click();
 }
 function quiz(items,{prompt,show,answer,pool,txt,reveal}){
   let i=0,score=0;
@@ -1652,9 +1650,9 @@ const ZONES=[
  {min:30,max:49,name:'🏔️ جبل الكلمات',sub:'اصعد وتعلّم كلمات جديدة',bg:'linear-gradient(180deg,#E6EEFF,#F4F7FF)',path:'#3D8BFF',deco:['⛰️','❄️','🦅','☁️']},
  {min:50,max:69,name:'🏜️ واحة المعرفة',sub:'اكتشف العالم وحلّ الألغاز',bg:'linear-gradient(180deg,#FFF0CC,#FFF8E6)',path:'#FFA62B',deco:['🌵','🐪','🌴','☀️']},
  {min:70,max:1e9,name:'🚀 مدينة الفضاء',sub:'آخر محطة للأبطال!',bg:'linear-gradient(180deg,#E4DBFF,#F2EDFF)',path:'#8B5CF6',deco:['🪐','⭐','🛸','🌙']}];
-let view=LS.get('bw_view','map');
+let view=LS.get('bw_view','map');if(view==='mons')view='box';if(!['map','list','box','shop','friends'].includes(view))view='map';
 function setView(v){view=v;LS.set('bw_view',v);document.querySelectorAll('#viewtg button').forEach(b=>b.classList.toggle('on',b.dataset.view===v));
-  $('#mapView').style.display=v==='map'?'block':'none';$('#friendsView').style.display=v==='friends'?'block':'none';$('#boxView').style.display=v==='box'?'block':'none';if(v==='box')renderBox();$('#shopView').style.display=v==='shop'?'block':'none';$('#monsView').style.display=v==='mons'?'block':'none';if(v==='mons'){shopPend=null;renderMons()}if(v==='shop'){shopPend=null;renderShop()}$('#listHead').style.display=$('#grid').style.display=v==='list'?'':'none';if(v==='map')renderMap();if(v==='friends'){renderFriends();if(user){loadFriends();loadLeague()}}updFrBadge()}
+  $('#mapView').style.display=v==='map'?'block':'none';$('#friendsView').style.display=v==='friends'?'block':'none';$('#boxView').style.display=v==='box'?'block':'none';if(v==='box')renderBox();$('#shopView').style.display=v==='shop'?'block':'none';if(v==='shop'){shopPend=null;renderShop()}$('#listHead').style.display=$('#grid').style.display=v==='list'?'':'none';if(v==='map')renderMap();if(v==='friends'){renderFriends();if(user){loadFriends();loadLeague()}}updFrBadge()}
 document.querySelectorAll('#viewtg button').forEach(b=>b.onclick=()=>setView(b.dataset.view));
 
 // ---- Treasure box games (not on the map)
@@ -1982,9 +1980,9 @@ function eggSVG(t,cr=0){const [a,b]=EGGS[t].col;return `<svg viewBox="0 0 120 15
   <path d="M60 8 C95 8 106 70 106 92 C106 122 86 140 60 140 C34 140 14 122 14 92 C14 70 25 8 60 8Z" fill="url(#vol77)"/>${cr?`<path d="M22 78 l14 -10 10 12 12 -14 12 12 12 -12 10 10 12 -8" stroke="#3a2b10" stroke-width="3.5" fill="none" stroke-linejoin="round"/>`:''}</svg>`}
 function rollMon(t){const w=EGGS[t].w,r=Math.random()*100,rar=r<w[0]?1:r<w[0]+w[1]?2:3,list=MONS.filter(m=>m.r===rar);return list[rnd(0,list.length-1)]}
 function eggEnergy(s){if(s<=0)return '';const d=monData(),before=d.e;d.e+=s;let line=`🥚 طاقة البيضة +${s} (${Math.min(d.e,EGG_NEED)}/${EGG_NEED})`;
-  if(d.e>=EGG_NEED){d.e-=EGG_NEED;d.eggs.push('egg');line='🥚✨ بيضتك جاهزة للفقس! افتح «وحوشي»';setTimeout(()=>toast('🥚 لديك بيضة جاهزة للفقس!'),1200)}monSave(d);updMonBadge();
+  if(d.e>=EGG_NEED){d.e-=EGG_NEED;d.eggs.push('egg');line='🥚✨ بيضتك جاهزة للفقس! افتح الصندوق ← وحوشي';setTimeout(()=>toast('🥚 لديك بيضة جاهزة للفقس!'),1200)}monSave(d);updMonBadge();
   return `<br><b style="color:#B07A00">${line}</b>`}
-function updMonBadge(){const n=monData().eggs.length,b=document.querySelector('#viewtg [data-view=mons]');if(b)b.innerHTML=`🐲 وحوشي${n?` <span class="nbadge">${n}</span>`:''}`}
+function updMonBadge(){const n=monData().eggs.length,b=document.querySelector('#viewtg [data-view=box]');if(b)b.innerHTML=`🎁 الصندوق${n?` <span class="nbadge">${n}🥚</span>`:''}`;const t=document.querySelector('[data-bt=mons]');if(t)t.innerHTML=`🐲 وحوشي${n?` <span class="nbadge">${n}</span>`:''}`}
 // season
 const seasonId=()=>{const d=new Date(Date.now()+3*36e5);return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')};
 const MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
@@ -1997,7 +1995,7 @@ function claimTier(i){const d=season(),[need,type,val]=TIERS[i];if(d.s.xp<need||
   if(type==='item'){const inv=[...myInv()],eq={...myEq()};if(!inv.includes(val))inv.push(val);eq[SHOP_ITEM[val].slot]=val;saveShop(inv,eq);toast(`🎁 جائزة حصرية: ${SHOP_ITEM[val].n}!`)}
   monSave(d);confetti();SFX.fanfare();sync();renderMons()}
 function tierIcon(t,v){return t==='stars'?`⭐<b>${v}</b>`:t==='egg'?`<span class="tegg">${eggSVG(v)}</span>`:SHOP_ITEM[v].slot==='kit'?`<span class="sw kitsw" style="background:${kitCss(KITS[SHOP_ITEM[v].v])};width:28px;height:28px"></span>`:`<span class="sw" style="background:${SHOP_ITEM[v].v};width:28px;height:18px"></span>`}
-function renderMons(){const box=$('#monsView');if(!box||view!=='mons')return;const d=season(),own=Object.keys(d.c),k=activeKid();
+function renderMons(){const box=$('#monsView');if(!box||view!=='box'||boxTab!=='mons')return;const d=season(),own=Object.keys(d.c),k=activeKid();
   const dleft=(()=>{const n=new Date(Date.now()+3*36e5),e=Date.UTC(n.getUTCFullYear(),n.getUTCMonth()+1,1);return Math.max(1,Math.ceil((e-n.getTime())/864e5))})();
   const mi=+d.s.id.split('-')[1]-1,nextT=TIERS.findIndex(t=>d.s.xp<t[0]),pct=nextT<0?100:Math.min(100,d.s.xp/TIERS[TIERS.length-1][0]*100);
   box.innerHTML=`<div class="seasonhd"><div><small>🌟 الموسم الحالي</small><h3>موسم ${MONTHS[mi]}</h3><div class="meta">ينتهي بعد ${dleft} ${dleft<=2?'يوم':'أيام'} · نقاط الموسم <b>${d.s.xp}</b></div></div><div class="sbig">🏆</div></div>
@@ -2097,7 +2095,7 @@ function renderShop(){
       const g=c.createLinearGradient(0,0,0,150);g.addColorStop(0,'#2a3350');g.addColorStop(1,'#0f1428');c.fillStyle=g;c.fillRect(0,0,280,150);c.fillStyle='#3a4160';c.fillRect(0,118,280,32);
       const boost=((ts-t0)/1000)%3>2;drawCarRear(c,140,132+Math.sin(ts/90)*.8,150,L.col,{gold:L.gold,stripes:L.stripes,neon:L.neon,flame:L.flame,boost,spoiler:true,plate:k?String(k.name).slice(0,6):'بطل'});shopRaf=requestAnimationFrame(loop)};shopRaf=requestAnimationFrame(loop)}
 }
-function shopClick(id){const it=SHOP_ITEM[id];if(!it)return;const inv=[...myInv()],eq={...myEq()},owned=(it.p===0&&!it.excl)||inv.includes(id);if(it.excl&&!owned){toast('🌟 هذه جائزة حصرية من «وحوشي» ← جوائز الموسم');return}
+function shopClick(id){const it=SHOP_ITEM[id];if(!it)return;const inv=[...myInv()],eq={...myEq()},owned=(it.p===0&&!it.excl)||inv.includes(id);if(it.excl&&!owned){toast('🌟 جائزة حصرية: الصندوق ← وحوشي ← جوائز الموسم');return}
   if(owned){if(eq[it.slot]===id&&it.slot!=='paint')delete eq[it.slot];else eq[it.slot]=id;saveShop(inv,eq);shopPend=null;SFX.ok();sync();return renderShop()}
   if(shopPend!==id){shopPend=id;SFX.note(600);return renderShop()}
   shopPend=null;if(stars<it.p){toast(`تحتاج ${it.p-stars} ⭐ إضافية`);return openBuy(null,Math.ceil((it.p-stars)/10)*10)}
@@ -2263,22 +2261,26 @@ function penalty(){
     render(ts);requestAnimationFrame(step)}
   requestAnimationFrame(step);
 }
+let boxTab='games';
 function renderBox(){
   const box=$('#boxView');if(!box||view!=='box')return;const list=GAMES.filter(g=>g.box&&g.ready),own=list.filter(isOpen).length;
-  box.innerHTML=`<div class="boxhead"><div class="chest">🎁</div><div><h3>صندوق الكنوز</h3><div class="meta">ألعاب مميزة غير موجودة في الخريطة · معك <b>${stars} ⭐</b> · فتحت ${own} من ${list.length}</div></div></div>
+  const tabs=`<div class="shoptabs boxtabs"><button class="${boxTab==='games'?'on':''}" data-bt="games">🎮 ألعاب مميزة</button><button class="${boxTab==='mons'?'on':''}" data-bt="mons">🐲 وحوشي</button></div>`;
+  if(boxTab==='mons'){box.innerHTML=tabs+'<div id="monsView"></div>';box.querySelectorAll('[data-bt]').forEach(b=>b.onclick=()=>{boxTab=b.dataset.bt;shopPend=null;renderBox()});renderMons();return}
+  box.innerHTML=tabs+`<div class="boxhead"><div class="chest">🎁</div><div><h3>صندوق الكنوز</h3><div class="meta">ألعاب مميزة حصرية · معك <b>${stars} ⭐</b> · فتحت ${own} من ${list.length}</div></div></div>
    <div class="boxgrid">${list.map(g=>{const op=isOpen(g),c=costOf(g),best=((activeKid()||{}).stats||{})[g.id];return `<div class="boxcard ${op?'open':''}" style="background:${g.color}">
      ${g.isNew&&!op?'<span class="bnew">جديد</span>':''}<div class="bemo">${g.emoji}</div><b>${g.name}</b><small>${g.desc||g.skill}</small>
-     ${op?`<button class="cbtn play" data-bplay="${g.id}">▶ العب${best&&best.best?' '+'⭐'.repeat(best.best):''}</button>`:`<button class="cbtn buy" data-block="${g.id}">🔒 ${c} ⭐ <span>(${c/10} ${c/10===1?'ريال':c/10===2?'ريالان':'ريالات'})</span></button>`}</div>`}).join('')}</div>
+     ${op?`<button class="cbtn play" data-bplay="${g.id}">▶ العب${best&&best.best?' '+'⭐'.repeat(best.best):''}</button>`:`<button class="cbtn buy" data-block="${g.id}">🔒 ${c} ⭐ <span>(${c/10} ${c/10===1?'ريال':c/10===2?'ريالان':c/10<=10?'ريالات':'ريالًا'})</span></button>`}</div>`}).join('')}</div>
    <div class="note" style="margin-top:12px">💡 كل 10 ⭐ بريال. اجمع النجوم بالفوز أو اشترِها من 👤 ملفي.</div>`;
   box.querySelectorAll('[data-bplay]').forEach(b=>b.onclick=()=>openGame(b.dataset.bplay));
   box.querySelectorAll('[data-block]').forEach(b=>b.onclick=()=>openLock(b.dataset.block));
+  box.querySelectorAll('[data-bt]').forEach(b=>b.onclick=()=>{boxTab=b.dataset.bt;shopPend=null;renderBox()});updMonBadge();
 }
 function renderMap(){
   const box=$('#mapView');if(!box||view!=='map')return;
   const k=activeKid(),order=GAMES.filter(g=>g.ready&&!g.box).map((g,i)=>({g,i,n:NEED[g.id]||0})).sort((a,b)=>a.n-b.n||a.i-b.i);
   const openList=order.filter(o=>isOpen(o.g)),here=openList.length?openList[openList.length-1].g.id:null,nextLock=order.find(o=>!isOpen(o.g));
   const X=[50,80,50,20];const me=k?AV(k.avatar):'<span style="font-size:22px">🧒</span>';
-  box.innerHTML=`<div class="mapinfo"><b>⭐ ${stars}</b> نجمة · فتحت <b>${openList.length}</b> من ${order.length} محطة${nextLock?` · كل لعبة تُفتح بـ ${COST} ⭐`:' · فتحت كل المحطات 🏆'}</div>`+
+  box.innerHTML=`<div class="mapinfo"><b>⭐ ${stars}</b> نجمة · فتحت <b>${openList.length}</b> من ${order.length} محطة${' · كل المحطات مجانية 🎉'}</div>`+
   ZONES.map((z,zi)=>{
     const items=order.filter(o=>o.n>=z.min&&o.n<=z.max);if(!items.length)return '';
     const top=96,gap=124,H=top+items.length*gap;
@@ -2351,7 +2353,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-45';
+const APP_VERSION='2026.11.19-46';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
