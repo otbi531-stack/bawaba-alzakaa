@@ -438,6 +438,9 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .abtn:nth-child(2){animation-delay:.07s}.abtn:nth-child(3){animation-delay:.14s}.abtn:active{transform:translateY(3px);box-shadow:0 1px 0 #24124a}
 .crates{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.crate{border:0;border-radius:12px;padding:10px 12px;font-size:17px;font-weight:800;background:#C98A4B;color:#fff;box-shadow:0 4px 0 #8A5A2B;animation:popIn .35s both}
 .crate.used{visibility:hidden}.crate.bad{background:#E53935;animation:shk .35s}
+.admg{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}.admg .ae{font-size:26px}.admg small{display:block;color:var(--muted);font-size:12px}.admg .grow{flex:1;min-width:0}
+.admsec{font-weight:800;margin:12px 0 2px;color:var(--pri)}
+.adminchip{margin-top:6px;display:inline-block;background:#FFC72C;color:#3B1E6E;border-radius:10px;padding:3px 10px;font-weight:800;font-size:12px}
 .toast{position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -1088,7 +1091,8 @@ $('#lkBuy').onclick=()=>{hide('lockOv');openBuy($('#lkBuy').dataset.id)};
 $('#lkStars').onclick=()=>{hide('lockOv');openBuy($('#lkStars').dataset.id,+$('#lkStars').dataset.n)};
 $('#dBack').onclick=()=>{delArm=null;hide('dash')};
 const COST=30;const costOf=g=>(g&&g.cost)||COST;
-const isOpen=g=>!!g&&(!g.box||owned.has(g.id));
+const adminOn=()=>{try{return isAdmin()}catch(e){return false}};
+const isOpen=g=>!!g&&(!g.box||owned.has(g.id)||adminOn());
 
 // ---- Sounds & encouragement (generated in the browser, no files)
 const SFX=(()=>{
@@ -2498,7 +2502,7 @@ function renderBox(){
   const box=$('#boxView');if(!box||view!=='box')return;const list=GAMES.filter(g=>g.box&&g.ready),own=list.filter(isOpen).length;
   const tabs=`<div class="shoptabs boxtabs"><button class="${boxTab==='games'?'on':''}" data-bt="games">🎮 ألعاب مميزة</button><button class="${boxTab==='mons'?'on':''}" data-bt="mons">🐲 وحوشي</button></div>`;
   if(boxTab==='mons'){box.innerHTML=tabs+'<div id="monsView"></div>';box.querySelectorAll('[data-bt]').forEach(b=>b.onclick=()=>{boxTab=b.dataset.bt;shopPend=null;renderBox()});renderMons();return}
-  box.innerHTML=tabs+`<div class="boxhead"><div class="chest">🎁</div><div><h3>صندوق الكنوز</h3><div class="meta">ألعاب مميزة حصرية · معك <b>${stars} ⭐</b> · فتحت ${own} من ${list.length}</div></div></div>
+  box.innerHTML=tabs+`<div class="boxhead"><div class="chest">🎁</div><div><h3>صندوق الكنوز</h3><div class="meta">ألعاب مميزة حصرية · معك <b>${stars} ⭐</b> · فتحت ${own} من ${list.length}</div>${adminOn()?'<div class="adminchip">👑 وضع الإدارة: كل الألعاب مفتوحة للمراجعة</div>':''}</div></div>
    <div class="boxgrid">${list.map(g=>{const op=isOpen(g),c=costOf(g),best=((activeKid()||{}).stats||{})[g.id];return `<div class="boxcard ${op?'open':''}" style="background:${g.color}">
      ${g.isNew&&!op?'<span class="bnew">جديد</span>':''}<div class="bemo">${g.emoji}</div><b>${g.name}</b><small>${g.desc||g.skill}</small>
      ${op?`<button class="cbtn play" data-bplay="${g.id}">▶ العب${best&&best.best?' '+'⭐'.repeat(best.best):''}</button>`:`<button class="cbtn buy" data-block="${g.id}">🔒 ${c} ⭐ <span>(${c/10} ${c/10===1?'ريال':c/10===2?'ريالان':c/10<=10?'ريالات':'ريالًا'})</span></button>`}</div>`}).join('')}</div>
@@ -2557,13 +2561,18 @@ function reqLine(r){const g=r.game?GAMES.find(x=>x.id===r.game):null,st=r.status
   return `<div class="rqm"><span>${r.kind==='game'?'🎮 '+(g?g.name:''):`⭐ ${r.stars} نجمة`} · ${r.price} ريال</span><span class="rref2" dir="ltr">${esc(r.ref||'')}</span><b class="rst ${r.status}">${st}</b></div>`}
 function myReqsCard(){if(!myReqs.length)return '';const list=[...myReqs].sort((a,b)=>tsOf(b)-tsOf(a)).slice(0,6);
   return `<div class="dcard"><h3>🧾 طلباتي</h3>${list.map(reqLine).join('')}<div class="meta" style="margin-top:6px">تُضاف النجوم تلقائيًا بعد التأكد من وصول التحويل.</div></div>`}
+function adminGamesHtml(){const notes=LS.get('bw_admin_notes',{}),row=g=>`<div class="admg"><span class="ae">${g.emoji}</span><div class="grow"><b>${g.name}</b><small>${g.box?'🎁 الصندوق':'🗺️ الخريطة'}${notes[g.id]?' · 📝 '+esc(notes[g.id]).slice(0,40):''}</small></div><button class="sbtn pri" data-agp="${g.id}">▶ جرّب</button><button class="sbtn" data-agn="${g.id}">📝</button></div>`,
+  list=GAMES.filter(g=>g.ready);return `<div class="dcard"><h3>🎮 معاينة الألعاب (${list.length})</h3><div class="meta" style="margin-bottom:8px">كل الألعاب مفتوحة لك للمراجعة بدون نجوم. اكتب ملاحظاتك على أي لعبة بزر 📝 لتتذكر ما يحتاج تعديلًا.</div>
+   <div class="admsec">🗺️ ألعاب الخريطة</div>${list.filter(g=>!g.box).map(row).join('')}<div class="admsec">🎁 ألعاب الصندوق</div>${list.filter(g=>g.box).map(row).join('')}</div>`}
+function bindAdminGames(body){body.querySelectorAll('[data-agp]').forEach(b=>b.onclick=()=>{hide('adm');openGame(b.dataset.agp);toast('👑 وضع المراجعة: للعودة للوحة اضغط ⚙️ في ملفك')});
+  body.querySelectorAll('[data-agn]').forEach(b=>b.onclick=()=>{const n=LS.get('bw_admin_notes',{}),g=GAMES.find(x=>x.id===b.dataset.agn),v=prompt(`ملاحظاتك على «${g.name}»:`,n[g.id]||'');if(v===null)return;if(v.trim())n[g.id]=v.trim();else delete n[g.id];LS.set('bw_admin_notes',n);openAdmin()})}
 async function openAdmin(){
   if(!isAdmin())return toast('هذه الصفحة للإدارة فقط');
   hide('dash');show('adm');const body=$('#admBody');
   if(!B.isVerified()){body.innerHTML=`<div class="dcard" style="text-align:center"><h3>🔐 أكّد بريدك أولًا</h3><div class="meta" style="margin:8px 0 14px">لحماية لوحة الإدارة يجب تأكيد البريد <b dir="ltr">${esc(user.email)}</b>. سنرسل لك رابطًا، اضغطه ثم ارجع هنا.</div>
     <button class="btn blue full" id="admSend">📧 أرسل رابط التأكيد</button><button class="btn ghost full" style="margin-top:10px" id="admChk">✔ أكّدت بريدي، حدّث</button></div>`;
     $('#admSend').onclick=async()=>{try{await B.sendVerify();toast('📧 أرسلنا الرابط إلى بريدك')}catch(e){toast(errMsg(e))}};
-    $('#admChk').onclick=async()=>{try{if(await B.refreshUser())openAdmin();else toast('لم يتم التأكيد بعد')}catch(e){toast(errMsg(e))}};return}
+    $('#admChk').onclick=async()=>{try{if(await B.refreshUser())openAdmin();else toast('لم يتم التأكيد بعد')}catch(e){toast(errMsg(e))}};body.insertAdjacentHTML('beforeend',adminGamesHtml());bindAdminGames(body);return}
   body.innerHTML='<div class="meta" style="text-align:center;padding:30px">⏳ جارٍ تحميل الطلبات...</div>';
   let data;try{data=await B.listRequests()}catch(e){console.warn(e);body.innerHTML=`<div class="dcard"><h3>⚠️ تعذّر تحميل الطلبات</h3><div class="meta">تأكد من نشر قواعد Firestore الجديدة، ثم حدّث الصفحة.</div></div>`;return}
   data.done.filter(r=>r.status==='rejected').forEach(r=>B.removeRequest(r.id).catch(()=>{}));
@@ -2578,14 +2587,14 @@ async function openAdmin(){
   body.innerHTML=`<div class="dcard"><h3>📊 ملخص</h3><div class="meta">طلبات معلّقة: <b>${pend.length}</b> · المبالغ الموافق عليها (آخر ${done.length} طلب): <b>${sum} ريال</b></div>
      <div class="meta" style="margin-top:6px">قارن <b>الرمز المرجعي</b> بملاحظة التحويل في تطبيق STC Bank قبل الموافقة.</div></div>
     <h3 style="margin:16px 4px 8px">⏳ بانتظار التأكيد (${pend.length})</h3>${pend.length?pend.map(card).join(''):'<div class="meta" style="padding:0 6px">لا توجد طلبات معلّقة 👍</div>'}
-    <h3 style="margin:18px 4px 8px">🗂️ آخر الطلبات الموافق عليها</h3>${done.slice(0,20).map(card).join('')||'<div class="meta" style="padding:0 6px">لا يوجد بعد</div>'}`;
+    <h3 style="margin:18px 4px 8px">🗂️ آخر الطلبات الموافق عليها</h3>${done.slice(0,20).map(card).join('')||'<div class="meta" style="padding:0 6px">لا يوجد بعد</div>'}`+'<div style="height:14px"></div>'+adminGamesHtml();bindAdminGames(body);
   body.querySelectorAll('[data-ok],[data-no]').forEach(b=>b.onclick=async()=>{const id=b.dataset.ok||b.dataset.no,st=b.dataset.ok?'approved':'rejected';
     b.disabled=true;try{if(st==='approved')await B.decide(id,st);else await B.removeRequest(id);toast(st==='approved'?'✅ تمت الموافقة، ستصل النجوم للاعب':'🗑️ تم رفض الطلب وحذفه');openAdmin()}catch(e){console.warn(e);toast('⚠️ تعذّر الحفظ');b.disabled=false}});
 }
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-51';
+const APP_VERSION='2026.11.19-53';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
