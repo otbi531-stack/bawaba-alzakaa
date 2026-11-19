@@ -321,6 +321,16 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .boxcard:not(.open) .bemo{filter:grayscale(.2)}.boxcard .bemo{font-size:44px}.boxcard b{font-size:16px}.boxcard small{font-size:12px;color:#4b4b5c;min-height:30px}
 .boxcard .cbtn{width:100%;margin-top:4px}.boxcard .cbtn span{font-weight:500;font-size:11px}
 .bnew{position:absolute;top:8px;left:8px;background:var(--coral);color:#fff;font-size:11px;border-radius:8px;padding:2px 7px}
+.mpair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.mcol{display:flex;flex-direction:column;gap:8px}
+.mbtn{border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 6px;font-size:18px;font-weight:800;color:var(--ink);box-shadow:0 4px 0 var(--line);transition:.15s}
+.mbtn.en{font-family:'Baloo Bhaijaan 2',sans-serif}.mbtn.sel{border-color:var(--pri);background:#EAF2FF}.mbtn.ok{border-color:#3CCB6E;background:#E3F9EA;color:#1f8a47;opacity:.6;box-shadow:none}
+.mbtn.no{border-color:var(--coral);background:#FFE6E1;animation:shake .35s}@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.sline{min-height:58px;border-bottom:3px dashed var(--line);display:flex;flex-wrap:wrap;gap:6px;padding:8px 0;margin:10px 0;align-items:center;justify-content:center}
+.sline small{color:var(--muted)}.sline.ok{border-color:#3CCB6E}.sline.no{border-color:var(--coral)}
+.sbank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chip{border:2px solid var(--line);background:#fff;border-radius:12px;padding:9px 13px;font-size:18px;font-weight:800;color:var(--ink);box-shadow:0 3px 0 var(--line)}
+.chip.on{background:#EAF2FF;border-color:var(--pri)}.chip.used{visibility:hidden}
+#sChk:disabled{opacity:.5}
 .toast{position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -599,6 +609,9 @@ const GAMES=[
  {id:'emojiq',name:'ألغاز الإيموجي',emoji:'😎',age:'all',skill:'الملاحظة والربط',box:true,cost:50,desc:'خمّن الكلمة من الرموز التعبيرية',color:'linear-gradient(135deg,#FFF3B0,#FFD84D)',ready:true,isNew:true},
  {id:'whoami',name:'من أنا؟',emoji:'🕵️',age:'all',skill:'المعلومات العامة',box:true,cost:50,desc:'اقرأ الأدلة واكتشف من أنا',color:'linear-gradient(135deg,#DCD3FF,#B7A6FF)',ready:true,isNew:true},
  {id:'mathriddles',name:'ألغاز الحساب',emoji:'🧮',age:'all',skill:'الحساب الذهني',box:true,cost:50,desc:'مسائل قصيرة تحتاج تفكيرًا ذكيًا',color:'linear-gradient(135deg,#C9F2E6,#7EDDC2)',ready:true,isNew:true},
+ {id:'matchpairs',name:'طابق الكلمات',emoji:'🔗',age:'all',skill:'الإنجليزية والذاكرة',box:true,cost:50,desc:'صِل الكلمة الإنجليزية بمعناها بأسرع وقت',color:'linear-gradient(135deg,#D3ECFF,#8EC9FF)',ready:true,isNew:true},
+ {id:'arrange',name:'رتّب الجملة',emoji:'🧱',age:'all',skill:'القراءة وبناء الجمل',box:true,cost:50,desc:'اضغط الكلمات بالترتيب الصحيح',color:'linear-gradient(135deg,#FFDCE8,#FF9EC0)',ready:true,isNew:true},
+ {id:'fillblank',name:'أكمل الفراغ',emoji:'✍️',age:'all',skill:'اللغة والفهم',box:true,cost:50,desc:'اختر الكلمة التي تكمل الجملة',color:'linear-gradient(135deg,#E2F7C8,#B4E57F)',ready:true,isNew:true},
  {id:'code',name:'روبوت المتاهة',emoji:'🤖',img:'img/robot.png',age:'10-14',skill:'مبادئ البرمجة',price:3,color:'linear-gradient(135deg,#FFE0D1,#FFB38F)',ready:true},
 ];
 const NEED={letters:0,memory:0,xo:0,islamic:0,count:0,shapes:5,order:20,opposites:35,truefalse:45,simon:10,puzzle:15,math:25,spelling:30,flags:40,capitals:50,logic:60,clock:70,science:85,code:100};
@@ -1086,7 +1099,7 @@ function openGame(id){
   const g=GAMES.find(x=>x.id===id);if(!isOpen(g))return openLock(id);
   if(stars<=0){$('#game').classList.remove('show');clearAll();toast('⭐ نفدت نجومك! اشترِ نجومًا لتكمل اللعب');return openBuy(null,50)}
   $('#owlPop').classList.remove('show','talking');clearAll();curId=id;$('#gTitle').textContent=g.emoji+' '+g.name;$('#game').classList.add('show');
-  ({animals,letters,memory,math,flags,logic,science,code,capitals,puzzle,xo,clock,spelling,simon,islamic,count,shapes,order,opposites,truefalse,riddles,emojiq,whoami,mathriddles})[id]();
+  ({animals,letters,memory,math,flags,logic,science,code,capitals,puzzle,xo,clock,spelling,simon,islamic,count,shapes,order,opposites,truefalse,riddles,emojiq,whoami,mathriddles,matchpairs,arrange,fillblank})[id]();
 }
 $('#gBack').onclick=()=>{clearAll();$('#game').classList.remove('show')};
 function result(score,total,msg){
@@ -1541,6 +1554,55 @@ function emojiq(){boxQuiz(EMOJIQ,(q,a,o)=>({show:q,prompt:'ماذا تعني ه�
 function whoami(){boxQuiz(WHOAMI,(q,a,o)=>({show:'🕵️',prompt:q+'<br><b>من أنا؟</b>',ans:a,opts:[a,...o],txt:true,reveal:`أنا ${a}`}))}
 function mathriddles(){quiz2(shuffle(MATHR).slice(0,8).map(([q,a])=>{const s=new Set([a]);while(s.size<4){const d=a+rnd(-4,4);if(d>=0)s.add(d)}
   return {show:'🧮',prompt:q,ans:a,opts:[...s],reveal:`الجواب: ${a}`}}))}
+
+// ---- Lesson-style box games (match pairs, build the sentence, fill the blank)
+const EN=[['cat','قطة'],['dog','كلب'],['apple','تفاحة'],['sun','شمس'],['moon','قمر'],['book','كتاب'],['water','ماء'],['house','بيت'],['car','سيارة'],['tree','شجرة'],
+ ['fish','سمكة'],['bird','طائر'],['milk','حليب'],['door','باب'],['school','مدرسة'],['red','أحمر'],['blue','أزرق'],['one','واحد'],['two','اثنان'],['three','ثلاثة'],
+ ['mother','أم'],['father','أب'],['pen','قلم'],['ball','كرة'],['chair','كرسي'],['star','نجمة'],['bread','خبز'],['egg','بيضة'],['hand','يد'],['eye','عين']];
+function matchpairs(){
+  const pool=shuffle(EN);let round=0,miss=0,done=0,pick=null,t0=Date.now();const R=3,N=5;
+  const play=()=>{
+    if(round>=R){const sec=Math.round((Date.now()-t0)/1000);return result(Math.max(0,R*N-miss),R*N,`طابقت ${R*N} كلمة في ${sec} ثانية، مع ${miss} ${miss===1?'خطأ':'أخطاء'}`)}
+    const set=pool.slice(round*N,round*N+N),L=shuffle(set),Rr=shuffle(set);done=0;pick=null;stat(`${round+1}/${R}`,R*N-miss);
+    area.innerHTML=`<div class="q">صِل كل كلمة بمعناها 🔗</div><div class="mpair"><div class="mcol" dir="ltr">${L.map(p=>`<button class="mbtn en" data-k="${p[0]}">${p[0]}</button>`).join('')}</div>
+      <div class="mcol">${Rr.map(p=>`<button class="mbtn" data-k="${p[0]}">${p[1]}</button>`).join('')}</div></div><div class="reveal" id="rv"></div>`;
+    area.querySelectorAll('.mbtn').forEach(b=>b.onclick=()=>{
+      if(b.classList.contains('ok'))return;
+      if(!pick||pick.classList.contains('en')===b.classList.contains('en')){if(pick)pick.classList.remove('sel');pick=b;b.classList.add('sel');return}
+      const a=pick;pick=null;a.classList.remove('sel');
+      if(a.dataset.k===b.dataset.k){a.classList.add('ok');b.classList.add('ok');SFX.ok();done++;if(done>=N){popEmoji(HAPPY[rnd(0,HAPPY.length-1)]);round++;later(play,700)}}
+      else{miss++;SFX.no();[a,b].forEach(x=>{x.classList.add('no');setTimeout(()=>x.classList.remove('no'),450)});stat(`${round+1}/${R}`,Math.max(0,R*N-miss))}
+    });
+  };play();
+}
+const SENT=[['أغسل يدي قبل الأكل','🧼'],['الشمس تشرق في الصباح','🌅'],['أشرب الماء عندما أعطش','💧'],['أحب أن أقرأ القصص كل يوم','📚'],['ذهبت مع أبي إلى السوق','🛒'],
+ ['القطة تشرب الحليب','🐱'],['النظافة من الإيمان','✨'],['من جدّ وجد ومن زرع حصد','🌱'],['أساعد أمي في البيت','🏠'],['العقل السليم في الجسم السليم','💪'],
+ ['الرياض عاصمة المملكة العربية السعودية','🇸🇦'],['نلعب الكرة في الحديقة','⚽']];
+function arrange(){
+  const list=shuffle(SENT).slice(0,6);let i=0,score=0;
+  const next=()=>{
+    if(i>=list.length)return result(score,list.length,`رتّبت ${score} من ${list.length} جمل صحيحة`);
+    const [s,e]=list[i],words=s.split(' ');let chips=shuffle(words.map((w,k)=>({w,k})));
+    if(chips.every((c,k)=>c.k===k))chips=chips.reverse();let built=[];stat(`${i+1}/${list.length}`,score);
+    const draw=()=>{area.innerHTML=`<div class="big">${e}</div><div class="q">رتّب الكلمات لتكوّن جملة صحيحة</div>
+      <div class="sline">${built.map((c,k)=>`<button class="chip on" data-b="${k}">${c.w}</button>`).join('')||'<small>اضغط الكلمات بالترتيب</small>'}</div>
+      <div class="sbank">${chips.map((c,k)=>`<button class="chip ${built.includes(c)?'used':''}" data-c="${k}">${c.w}</button>`).join('')}</div>
+      <button class="btn blue" id="sChk" ${built.length===words.length?'':'disabled'} style="width:100%;margin-top:12px">✔ تحقّق</button><div class="reveal" id="rv"></div>`;
+      area.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{const c=chips[+b.dataset.c];if(busy||built.includes(c))return;built.push(c);SFX.note(500+built.length*60);draw()});
+      area.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{if(busy)return;built.splice(+b.dataset.b,1);draw()});
+      $('#sChk').onclick=()=>{if(busy)return;busy=true;const ok=built.map(c=>c.w).join(' ')===s;
+        if(ok){score++;SFX.ok(true);popEmoji(HAPPY[rnd(0,HAPPY.length-1)]);$('.sline').classList.add('ok')}else{SFX.no();popEmoji('😢');$('.sline').classList.add('no')}
+        $('#rv').textContent=ok?'✔ أحسنت!':`الجملة الصحيحة: ${s}`;later(()=>{busy=false;i++;next()},ok?1200:2200)}};
+    draw();
+  };next();
+}
+const BLANK=[['يسبح السمك في ___','الماء',['الشجرة','السماء','الرمل'],'🐟'],['نكتب الدرس بـ ___','القلم',['الملعقة','الحذاء','الوسادة'],'📝'],['نرى بـ ___','العينين',['الأذنين','القدمين','اليدين'],'👀'],
+ ['تشرق الشمس من ___','الشرق',['الغرب','الشمال','الجنوب'],'🌅'],['نصلّي في ___','المسجد',['المطبخ','الملعب','السوق'],'🕌'],['عدد أيام الأسبوع ___ أيام','سبعة',['خمسة','ستة','عشرة'],'📅'],
+ ['البقرة تعطينا ___','الحليب',['العسل','البيض','الحرير'],'🐄'],['نحفظ الطعام باردًا في ___','الثلاجة',['الفرن','الخزانة','الحقيبة'],'🧊'],['عكس كلمة «سريع» هو ___','بطيء',['طويل','قوي','جميل'],'🐢'],
+ ['جمع كلمة «كتاب» هو ___','كتب',['كتابان','مكتبة','كاتب'],'📚'],['مثنّى كلمة «قلم» هو ___','قلمان',['أقلام','قليم','أقلمة'],'✏️'],['النحلة تصنع ___','العسل',['الحليب','الحرير','الزبدة'],'🐝'],
+ ['نسمع بـ ___','الأذنين',['العينين','الأنف','اليدين'],'👂'],['أبرد فصول السنة هو ___','الشتاء',['الصيف','الربيع','الخريف'],'❄️'],['نركب ___ لنطير إلى مدينة بعيدة','الطائرة',['الدراجة','القارب','الحصان'],'✈️'],
+ ['الطبيب يعمل في ___','المستشفى',['المخبز','المزرعة','المصنع'],'🩺']];
+function fillblank(){quiz2(shuffle(BLANK).slice(0,8).map(([q,a,o,e])=>({show:e,prompt:q.replace('___','<mark>____</mark>'),ans:a,opts:[a,...o],txt:true,reveal:q.replace('___',a)})))}
 function renderBox(){
   const box=$('#boxView');if(!box||view!=='box')return;const list=GAMES.filter(g=>g.box&&g.ready),own=list.filter(isOpen).length;
   box.innerHTML=`<div class="boxhead"><div class="chest">🎁</div><div><h3>صندوق الكنوز</h3><div class="meta">ألعاب مميزة غير موجودة في الخريطة · معك <b>${stars} ⭐</b> · فتحت ${own} من ${list.length}</div></div></div>
@@ -1629,7 +1691,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-31';
+const APP_VERSION='2026.11.19-32';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
