@@ -732,7 +732,7 @@ const GAMES=[
  {id:'order',name:'ترتيب الأعداد',emoji:'🔢',age:'all',skill:'مقارنة الأعداد',price:3,color:'linear-gradient(135deg,#E9DCFF,#CDB5FF)',ready:true,isNew:true},
  {id:'opposites',name:'الأضداد',emoji:'↔️',age:'all',skill:'المفردات واللغة',price:3,color:'linear-gradient(135deg,#FFF1C2,#FFDC7A)',ready:true,isNew:true},
  {id:'truefalse',name:'صح أم خطأ؟',emoji:'⚡',age:'10-14',skill:'سرعة البديهة',price:3,color:'linear-gradient(135deg,#D6F5E1,#9BE8B9)',ready:true,isNew:true},
- {id:'coinrun',name:'عدّاء الكنوز',emoji:'🪙',age:'all',skill:'التاريخ والجغرافيا',box:true,cost:80,desc:'🏃 اركض واجمع العملات واقفز فوق الصناديق!',color:'linear-gradient(135deg,#FFE9A8,#FFB347)',ready:true,isNew:true},
+ {id:'coinrun',name:'عدّاء الكنوز',emoji:'🪙',age:'all',skill:'سرعة البديهة والتركيز',box:true,cost:80,desc:'🏃 اركض 60 ثانية واجمع العملات والجواهر!',color:'linear-gradient(135deg,#FFE9A8,#FFB347)',ready:true,isNew:true},
  {id:'riddles',name:'ألغاز وأحاجي',emoji:'🧩',age:'all',skill:'التفكير والذكاء',box:true,cost:80,desc:'⚔️ معركة الوحوش: كل لغز تحلّه ضربة سحرية!',color:'linear-gradient(135deg,#FFE0B5,#FFB86B)',ready:true,isNew:true},
  {id:'emojiq',name:'ألغاز الإيموجي',emoji:'😎',age:'all',skill:'الملاحظة والربط',box:true,cost:80,desc:'🎈 فرقع بالون الإجابة قبل أن يطير!',color:'linear-gradient(135deg,#FFF3B0,#FFD84D)',ready:true,isNew:true},
  {id:'whoami',name:'من أنا؟',emoji:'🕵️',age:'all',skill:'المعلومات العامة',box:true,cost:80,desc:'🎣 اصطد السمكة التي تحمل الجواب!',color:'linear-gradient(135deg,#DCD3FF,#B7A6FF)',ready:true,isNew:true},
@@ -1943,8 +1943,8 @@ function hoopsGame(items){
 function coinrun(){
   const A=arena(470),{W,H,c}=A,kid=activeKid(),eq=myEq(),kit=KITS[eq.kit]||KITS.k_basic,boots=BOOTS[eq.boots]||BOOTS.b_black,nm=kid?String(kid.name).split(' ')[0]:'بطل';
   const HZ=H*.34,K=H-HZ,LX=[-.62,0,.62],ZMAX=26,qs=shuffle(PKQ.slice()).slice(0,6);
-  let lane=1,px=0,jump=0,jv=0,v=7,dist=0,coins=0,hp=3,right=0,qi=0,objs=[],last=0,state='count',t0=0,spawnC=0,spawnX=0,gateDue=4,hurt=0,parts=[],pop=[],qShown=false,cur=null,flash=0;
-  $('#aq').innerHTML='<span class="aqe">🏃</span><span>اجمع العملات 🪙 واقفز فوق الصناديق، وادخل بوابة الجواب الصحيح!</span>';
+  const RUN=60;let runT=0,gems=0,lane=1,px=0,jump=0,jv=0,v=7,dist=0,coins=0,hp=3,right=0,qi=0,objs=[],last=0,state='count',t0=0,spawnC=0,spawnX=0,gateDue=4,hurt=0,parts=[],pop=[],qShown=false,cur=null,flash=0;
+  $('#aq').innerHTML='<span class="aqe">🏃</span><span>اجمع العملات 🪙 والجواهر 💎 واقفز فوق الصناديق! لديك 60 ثانية</span>';
   $('#aopts').innerHTML='<div class="rctl" style="margin:0;max-width:none;direction:ltr"><button class="btn" id="rnL">◀</button><button class="btn" id="rnJ">⤒ اقفز</button><button class="btn" id="rnR">▶</button></div>';
   const mv=d=>{if(state!=='run')return;lane=Math.max(0,Math.min(2,lane+d));SFX.note(420+lane*60)},jp=()=>{if(state!=='run'||jump>0)return;jv=9.5;jump=.001;SFX.note(700)};
   $('#rnL').onclick=()=>mv(-1);$('#rnR').onclick=()=>mv(1);$('#rnJ').onclick=jp;
@@ -1954,12 +1954,15 @@ function coinrun(){
   window._arc={get objs(){return objs},get lane(){return lane},get cur(){return cur},mv,jp};
   const yAt=z=>HZ+K/z,sAt=z=>1/z,xAt=(l,z)=>W/2+l*W*.46/z;
   const spawn=dt=>{spawnC-=dt*v;if(spawnC<=0){spawnC=2.2+Math.random()*1.6;const l=rnd(0,2);
-      if(Math.random()<.32&&gateDue>1.5)objs.push({k:'crate',l,z:ZMAX});else for(let n=0;n<5;n++)objs.push({k:'coin',l,z:ZMAX+n*.9,a:Math.random()*7})}
-    gateDue-=dt;if(gateDue<=0&&!cur&&qi<qs.length){const [q,ans,d1,d2]=qs[qi];cur={q,ans,opts:shuffle([ans,d1,d2])};$('#aq').innerHTML=`<span class="aqe">❓</span><span>${q}</span>`;objs=objs.filter(o=>o.z<ZMAX-6);
+      const r=Math.random();if(r<.34)objs.push({k:'crate',l,z:ZMAX});else if(r<.44)objs.push({k:'gem',l,z:ZMAX,a:0});else for(let n=0;n<5;n++)objs.push({k:'coin',l,z:ZMAX+n*.9,a:Math.random()*7})}
+    runT+=dt;if(runT>=RUN&&state==='run'){over(true);return}
+    if(false){const [q,ans,d1,d2]=qs[qi];cur={q,ans,opts:shuffle([ans,d1,d2])};$('#aq').innerHTML=`<span class="aqe">❓</span><span>${q}</span>`;objs=objs.filter(o=>o.z<ZMAX-6);
       objs.push({k:'gate',z:ZMAX+8,opts:cur.opts,ans});gateDue=99}};
   function tree(x,y,s){c.fillStyle='#6B4423';c.fillRect(x-s*.06,y-s*.7,s*.12,s*.7);c.fillStyle='#1E7A35';c.beginPath();c.arc(x,y-s*.8,s*.38,0,7);c.arc(x-s*.3,y-s*.62,s*.28,0,7);c.arc(x+s*.3,y-s*.62,s*.28,0,7);c.fill();c.fillStyle='rgba(255,255,255,.12)';c.beginPath();c.arc(x-s*.1,y-s*.92,s*.14,0,7);c.fill()}
   function coin(x,y,s,a){const w=Math.abs(Math.cos(a))*s*.5+s*.08;const g=c.createLinearGradient(x-w,0,x+w,0);g.addColorStop(0,'#B8860B');g.addColorStop(.5,'#FFE27A');g.addColorStop(1,'#C9961A');c.fillStyle=g;c.beginPath();c.ellipse(x,y-s*.6,w,s*.5,0,0,7);c.fill();c.strokeStyle='#8A6410';c.lineWidth=Math.max(1,s*.06);c.stroke();
     if(w>s*.25){c.fillStyle='#B8860B';c.font=`bold ${s*.5}px sans-serif`;c.textAlign='center';c.fillText('★',x,y-s*.42)}}
+  function gem(x,y,s,a){const b=Math.sin(a)*s*.1;c.save();c.translate(x,y-s*.75+b);c.shadowColor='#7CF7FF';c.shadowBlur=s*.6;c.fillStyle='#4DD0E1';c.beginPath();c.moveTo(0,-s*.45);c.lineTo(s*.4,-s*.12);c.lineTo(0,s*.45);c.lineTo(-s*.4,-s*.12);c.closePath();c.fill();c.shadowBlur=0;
+    c.fillStyle='#B2FFFF';c.beginPath();c.moveTo(0,-s*.45);c.lineTo(s*.4,-s*.12);c.lineTo(0,-s*.05);c.lineTo(-s*.4,-s*.12);c.fill();c.fillStyle='rgba(255,255,255,.8)';c.beginPath();c.arc(-s*.1,-s*.22,s*.05,0,7);c.fill();c.restore()}
   function crate(x,y,s){c.fillStyle='rgba(0,0,0,.25)';c.beginPath();c.ellipse(x,y,s*.55,s*.12,0,0,7);c.fill();const w=s*.9;c.fillStyle='#C98A4B';c.fillRect(x-w/2,y-w,w,w);c.strokeStyle='#7A4E22';c.lineWidth=Math.max(1,s*.07);c.strokeRect(x-w/2,y-w,w,w);
     c.beginPath();c.moveTo(x-w/2,y-w);c.lineTo(x+w/2,y);c.moveTo(x+w/2,y-w);c.lineTo(x-w/2,y);c.stroke();if(s>30){c.fillStyle='#FFE27A';c.font=`bold ${s*.35}px sans-serif`;c.textAlign='center';c.fillText('!',x,y-w*.35)}}
   function gate(o,z){const y=yAt(z),s=sAt(z)*W*.3;o.opts.forEach((t,l)=>{const x=xAt(LX[l],z),w=s*.92,h=s*.36;c.fillStyle='#6B4423';c.fillRect(x-w/2,y-s*1.25,w*.08,s*1.25);c.fillRect(x+w/2-w*.08,y-s*1.25,w*.08,s*1.25);
@@ -1971,6 +1974,7 @@ function coinrun(){
       if(jump>0){jump+=jv*dt;jv-=24*dt;if(jump<=0){jump=0;jv=0}}
       objs.forEach(o=>{if(o.done||!(o.pz>=1&&o.z<1))return;
         if(o.k==='coin'&&o.l===lane&&jump<1.2){o.done=1;coins++;SFX.note(1100+Math.random()*200);pop.push({x:xAt(LX[o.l],1),y:H-120,t:1,v:'+1'})}
+        if(o.k==='gem'&&o.l===lane&&jump<1.6){o.done=1;gems++;coins+=5;SFX.ok();flash=.3;A.burst(xAt(LX[o.l],1),H-130,24,['#7CF7FF','#B388FF','#fff'],220,4);pop.push({x:xAt(LX[o.l],1),y:H-140,t:1.2,v:'💎 +5'})}
         if(o.k==='crate'&&o.l===lane&&jump<.6){o.done=1;hp--;hurt=.6;SFX.no();A.burst(W/2,H-90,20,['#C98A4B','#7A4E22'],200,5);A.msg('📦 اصطدمت!','#FF6B6B');if(hp<=0)over()}
         if(o.k==='gate'){o.done=1;const ok=o.opts[lane]===o.ans;
           if(ok){right++;coins+=10;flash=.5;SFX.ok();A.msg('✔ صحيح! +10 🪙','#FFC72C');A.burst(W/2,H-140,40,['#FFE27A','#FFC72C','#fff'],260,5)}
@@ -1991,7 +1995,7 @@ function coinrun(){
     for(let n=0;n<14;n++){const z=ZMAX-((n*1.9+dist*.9)%ZMAX);if(z<.8)continue;const s=sAt(z)*W*.55;tree(W/2-W*.62/z-s*.2,yAt(z),s);tree(W/2+W*.62/z+s*.2,yAt(z),s)}
     // objects back-to-front
     [...objs].sort((a,b)=>b.z-a.z).forEach(o=>{if(o.z>ZMAX+9||o.done&&o.k!=='gate')return;const y=yAt(o.z),s=sAt(o.z)*W*.18;
-      if(o.k==='coin'){o.a+=dt*5;coin(xAt(LX[o.l],o.z),y,s,o.a)}else if(o.k==='crate')crate(xAt(LX[o.l],o.z),y,s*1.4);else if(o.k==='gate'&&!o.done)gate(o,o.z)});
+      if(o.k==='coin'){o.a+=dt*5;coin(xAt(LX[o.l],o.z),y,s,o.a)}else if(o.k==='gem'){o.a+=dt*3;gem(xAt(LX[o.l],o.z),y,s*1.2,o.a)}else if(o.k==='crate')crate(xAt(LX[o.l],o.z),y,s*1.4);else if(o.k==='gate'&&!o.done)gate(o,o.z)});
     // runner
     const run=(ts/1000*v*.22)%1,bob=Math.abs(Math.sin(run*Math.PI*2))*4,ry=H-14-jump*26-bob;c.globalAlpha=hurt>0&&Math.floor(ts/80)%2?0.4:1;
     c.fillStyle='rgba(0,0,0,.25)';c.beginPath();c.ellipse(W/2+px*W*.46,H-12,34-jump*2,8,0,0,7);c.fill();
@@ -2001,9 +2005,10 @@ function coinrun(){
     // coin counter
     c.fillStyle='rgba(0,0,0,.45)';A.rr(W/2-58,40,116,30,15);c.fill();c.fillStyle='#FFE27A';c.font='bold 18px "Baloo Bhaijaan 2",Tajawal,sans-serif';c.textAlign='center';c.fillText(`🪙 ${coins}`,W/2,62);
     if(state==='count'){c.fillStyle='rgba(0,0,0,.35)';c.fillRect(0,0,W,H);c.fillStyle='#fff';c.font='bold 80px "Baloo Bhaijaan 2",sans-serif';c.textAlign='center';const k=3-Math.floor((ts-t0)/800);c.fillText(k>0?k:'انطلق!',W/2,H*.45)}
-    A.stepParts(dt);A.hud(hp,3,`🏃 ${Math.round(dist*10)} م · ✔ ${right}/${qs.length}`);stat(`${Math.min(qi+1,qs.length)}/${qs.length}`,right);requestAnimationFrame(frame)}
-  function over(win){if(state==='end')return;state='end';removeEventListener('keydown',key);A.msg(win?'🏁 وصلت!':'💔 انتهت القلوب','#FFC72C');
-    later(()=>A.end(right,qs.length,`جمعت 🪙 ${coins} عملة وركضت ${Math.round(dist*10)} مترًا · أجبت صحيحًا على ${right} من ${qs.length}`),1500)}
+    A.stepParts(dt);A.hud(hp,3,`⏱ ${Math.max(0,Math.ceil(RUN-runT))} ث · 💎 ${gems}`);stat(`${Math.round(dist*10)} م`,coins);
+    c.fillStyle='rgba(0,0,0,.3)';A.rr(W*.15,H-10,W*.7,5,3);c.fill();c.fillStyle='#FFC72C';A.rr(W*.15,H-10,W*.7*Math.min(1,runT/RUN),5,3);c.fill();requestAnimationFrame(frame)}
+  function over(win){if(state==='end')return;state='end';removeEventListener('keydown',key);A.msg(win?'🏁 انتهى الوقت! أحسنت':'💔 انتهت القلوب','#FFC72C');
+    const st=coins>=170?3:coins>=110?2:coins>=50?1:0;later(()=>A.end(st,3,`جمعت 🪙 ${coins} عملة و💎 ${gems} جواهر، وركضت ${Math.round(dist*10)} مترًا · الهدف: 50 · 110 · 170 عملة`),1500)}
   requestAnimationFrame(frame)}
 
 function boxQuiz(list,mk){const ans=list.map(x=>x[1]);quiz2(shuffle(list).slice(0,8).map(([q,a])=>mk(q,a,shuffle(ans.filter(x=>x!==a)).slice(0,3))),{hearts:3})}
@@ -2692,7 +2697,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-54';
+const APP_VERSION='2026.11.19-55';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
