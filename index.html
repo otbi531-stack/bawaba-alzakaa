@@ -441,6 +441,28 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .admg{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}.admg .ae{font-size:26px}.admg small{display:block;color:var(--muted);font-size:12px}.admg .grow{flex:1;min-width:0}
 .admsec{font-weight:800;margin:12px 0 2px;color:var(--pri)}
 .adminchip{margin-top:6px;display:inline-block;background:#FFC72C;color:#3B1E6E;border-radius:10px;padding:3px 10px;font-weight:800;font-size:12px}
+.hero.mini{display:none}
+body.kidon .clouds{display:none}.clouds{transform:scaleY(.5);transform-origin:bottom;margin-top:-20px}.hero .badges{display:none}
+.hero{padding:16px 0 4px;gap:18px}.hero h1{font-size:clamp(24px,3.6vw,38px);margin-bottom:8px}.hero p{font-size:15px;margin:0 0 10px}.hero-img img{max-height:230px;object-fit:cover}
+@media(max-width:760px){.hero-wrap{display:none}}
+.strip{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--line);border-radius:18px;padding:8px 12px;margin:12px 0 4px}.strip.col{flex-direction:column;align-items:stretch;gap:6px}
+.strip .grow{flex:1}.strip small{display:block;color:var(--muted);font-size:12px}.sti{font-size:24px}
+.strow{display:flex;align-items:center;gap:8px}.stav{display:flex;gap:6px;overflow-x:auto;flex:1;padding-bottom:2px}
+.fav2{position:relative;border:0;background:none;display:flex;flex-direction:column;align-items:center;padding:0;flex-shrink:0;color:var(--ink)}.fav2 svg{width:40px;height:40px;border-radius:50%;border:3px solid transparent;display:block}
+.fav2.on svg{border-color:var(--pri)}.fav2 small{font-size:10px;max-width:46px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.fav2 i{position:absolute;top:-2px;right:-2px;background:var(--coral);color:#fff;font-style:normal;font-size:10px;border-radius:9px;min-width:16px;height:16px;display:grid;place-items:center}
+.fav2.add{font-size:16px;width:40px;height:40px;border-radius:50%;background:var(--bg);justify-content:center}.fav2.add small{position:absolute;bottom:-14px}
+.qemo{display:flex;gap:4px;flex:1}.qemo button{border:0;background:var(--bg);border-radius:12px;font-size:20px;padding:4px 0;flex:1;transition:transform .15s}.qemo button.sent{transform:scale(1.35);background:#DDF7E6}
+.stmsg{font-size:13px;background:var(--bg);border-radius:12px;padding:6px 10px;display:flex;gap:6px;align-items:center;cursor:pointer}.stmsg.new{background:#EEF5FF;font-weight:800}.stmsg .play{margin-inline-start:auto}.stmsg em{font-style:normal;color:var(--coral)}
+/* smaller boxes */
+.daily{padding:10px;border-radius:20px}.owlw{width:54px!important}.streak{min-width:54px!important;padding:4px 6px!important}.bubble2{font-size:13px!important;padding:6px 10px!important}
+.mlist{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:6px!important}.mcard{flex-direction:column;padding:6px 4px;gap:2px;text-align:center;border-radius:14px}.mcard .mi,.mcard .mi img,.mcard .mi svg{width:32px;height:32px;font-size:24px}.mcard b{font-size:12px}.mcard small{font-size:10px}.mcard .mt{align-items:center}
+.giftbar{padding:7px 10px;font-size:13px;margin-top:8px}.giftbar .gi{font-size:22px}
+.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}.card{border-radius:18px}.thumb{height:84px;font-size:42px}.cbody{padding:8px 10px 10px;gap:2px}.cbody h3{font-size:15px}.cbody .meta{font-size:11px}.cfoot{padding-top:6px}.cbtn{padding:7px 10px;font-size:13px}.price{font-size:15px}
+.tag{font-size:10px;padding:2px 7px;top:6px}.lock{width:30px;height:30px;font-size:15px;bottom:6px;left:6px}
+.boxgrid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}.boxcard{border-radius:16px;padding:10px 6px;gap:2px}.boxcard .bemo{font-size:32px}.boxcard b{font-size:14px}.boxcard small{font-size:11px;min-height:0;line-height:1.35}.boxcard .cbtn{padding:6px 8px;font-size:12px}
+.trophies{grid-template-columns:repeat(4,1fr);gap:6px}.trophy{border-radius:14px;padding:8px 4px}.trophy .i{font-size:26px}.trophy b{font-size:12px;display:block}.trophy small{font-size:10px}
+#trophies .sec-head img{width:38px!important;height:38px!important}#trophies h2{font-size:18px}#trophies .sec-head p{font-size:12px;margin:0}
+.steps{gap:8px}.step{padding:12px;border-radius:16px}.step h3{font-size:15px}.step p{font-size:13px}
 .toast{position:fixed;bottom:118px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;z-index:90;transition:transform .3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .confetti{position:fixed;top:-20px;font-size:24px;z-index:95;pointer-events:none;animation:fall 1.6s linear forwards}
@@ -477,6 +499,7 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 
 <div class="white">
 <div class="wrap">
+  <div id="frStrip"></div>
   <section id="daily" style="padding-bottom:0"><div class="daily" id="dailyBox"></div></section>
 
   <section id="games">
@@ -501,9 +524,6 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
     <div class="trophies" id="troph"></div>
   </section>
 
-  <section>
-    <div class="banner"><img src="img/toys.jpg" alt="ألعاب تعليمية"><div class="btxt"><h2>عالم من المرح والتعلّم 🎈</h2><p>كل لعبة تنمّي مهارة: التفكير، والحساب، واللغة، والعلوم، والبرمجة.</p></div></div>
-  </section>
 
   <section id="how">
     <div class="sec-head"><h2>كيف يعمل؟</h2></div>
@@ -881,7 +901,7 @@ const AV=k=>KID(KIDS[k]?k:'b1');
 
 const AVATARS=['b1','b2','b3','b4','b5','g1','g2','g3','g4','g5'];
 function activeKid(){return profile&&profile.kids.find(k=>k.id===kidId)||null}
-function sync(){owned=new Set(profile?profile.owned||[]:LS.get('bw_guest_owned',[]));const k=activeKid();stars=k?k.stars:guestStars;earned=k?(k.earned??k.stars):LS.get('bw_guest_earned',guestStars);renderHeader();render();renderDaily();if(typeof renderMap==='function')renderMap();if(typeof renderBox==='function')renderBox();if(typeof renderShop==='function'&&view==='shop')renderShop();if(typeof updMonBadge==='function')updMonBadge();if(typeof publishPlayer==='function')publishPlayer()}
+function sync(){owned=new Set(profile?profile.owned||[]:LS.get('bw_guest_owned',[]));const k=activeKid();stars=k?k.stars:guestStars;earned=k?(k.earned??k.stars):LS.get('bw_guest_earned',guestStars);renderHeader();render();renderDaily();if(typeof renderMap==='function')renderMap();if(typeof renderBox==='function')renderBox();if(typeof renderStrip==='function'){renderStrip();tidyHome()}if(typeof renderShop==='function'&&view==='shop')renderShop();if(typeof updMonBadge==='function')updMonBadge();if(typeof publishPlayer==='function')publishPlayer()}
 async function persist(){if(user&&profile){try{await B.save(user.uid,profile)}catch(e){console.warn(e);toast('⚠️ تعذر الحفظ، تحقق من الاتصال')}}}
 let lastLoss=0;
 function recordPlay(gid,s,secs){
@@ -2727,7 +2747,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-57';
+const APP_VERSION='2026.11.19-59';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
@@ -2749,7 +2769,7 @@ async function loadFriends(){
   if(!user){friends=[];return renderFriends()}
   try{const fs=await B.listFriendships(user.uid);
     friends=await Promise.all(fs.map(async f=>{const uid=f.users.find(u=>u!==user.uid);let p=null;try{p=await B.getPlayer(uid)}catch(e){}return {fid:f.id,uid,name:'صديق',avatar:'b1',earned:0,best:{},...(p||{})}}))}catch(e){console.warn(e)}
-  renderFriends();
+  renderFriends();renderStrip();
 }
 function startInbox(){if(unwatchInbox){try{unwatchInbox()}catch(e){}unwatchInbox=null}if(!user)return;let first=true;
   try{unwatchInbox=B.watchInbox(user.uid,msgs=>{
@@ -2758,7 +2778,7 @@ function startInbox(){if(unwatchInbox){try{unwatchInbox()}catch(e){}unwatchInbox
     if(first){first=false;if(fresh.length)toast(`📬 لديك ${fresh.length} ${fresh.length===1?'رسالة جديدة':'رسائل جديدة'} من أصدقائك`)}
     else fresh.forEach(m=>{const t=msgText(m);toast(`📬 ${m.fromName}: ${t.short}`);SFX.ok();if(t.say)setTimeout(()=>SFX.say(t.say),500);if(m.type==='added')loadFriends()});
     const old=Date.now()-7*864e5,oldA=Date.now()-3*864e5;msgs.filter(m=>tsOf(m)&&((m.read&&tsOf(m)<old)||(m.type==='audio'&&tsOf(m)<oldA))).forEach(m=>B.deleteMsg(m.id).catch(()=>{}));
-    if(changed){renderFriends();updFrBadge()}
+    if(changed){renderFriends();updFrBadge();renderStrip()}
   })}catch(e){console.warn(e)}}
 function updFrBadge(){const n=inbox.filter(m=>!m.read).length,b=document.querySelector('#viewtg [data-view=friends]');if(b)b.innerHTML=`👫 أصدقائي${n?` <span class="nbadge">${n}</span>`:''}`}
 function msgText(m){const g=m.game?GAMES.find(x=>x.id===m.game):null,gn=g?g.name:'';
@@ -2809,6 +2829,24 @@ function leagueCard(){const k=activeKid(),me=user&&k?{uid:user.uid,name:String(k
    ${top.length?top.map((p,i)=>`<div class="frrow ${me&&p.uid===me.uid?'me':''}"><b class="rk">${medal(i)}</b><span class="fav">${AVX(p.avatar||'b1',p.eq)}</span><b class="grow">${esc(p.name)}${me&&p.uid===me.uid?' (أنت)':''}</b><span>⭐ ${p.xp}</span></div>`).join(''):'<div class="meta">لا أحد في الدوري بعد، العب الآن وكن الأول! 🚀</div>'}
    ${myRank>=10?`<div class="frrow me"><b class="rk">${myRank+1}</b><span class="fav">${AVX(me.avatar,me.eq)}</span><b class="grow">${esc(me.name)} (أنت)</b><span>⭐ ${me.xp}</span></div>`:''}
    ${me&&!me.xp?'<div class="meta" style="margin-top:6px">اربح أول نجمة هذا الأسبوع لتدخل الدوري!</div>':''}</div>`}
+
+// ---- Friends strip at the top of the page: avatars, quick emoji messages, latest message
+let stripSel=null;const QUICK=[['hi','👋'],['bravo','👏'],['play','🎮'],['dare','🔥'],['laugh','😂'],['star','⭐']];
+function renderStrip(){try{renderStrip0()}catch(e){}}
+function renderStrip0(){const el=$('#frStrip');if(!el)return;const k=activeKid&&activeKid();
+  if(!user||!profile||!k){el.innerHTML=`<div class="strip"><span class="sti">👫</span><div class="grow"><b>العب مع أصدقائك!</b><small>رسائل وتحديات بين الأصدقاء</small></div><button class="sbtn pri" id="stLogin">سجّل الآن</button></div>`;$('#stLogin').onclick=()=>openAuth('up','أنشئ حسابًا لتضيف أصدقاءك');return}
+  if(!friends.length){el.innerHTML=`<div class="strip"><span class="sti">👫</span><div class="grow"><b>أضف أصدقاءك</b><small>كودك: <b dir="ltr">${profile.code||'...'}</b></small></div><button class="sbtn pri" id="stAdd">➕ أضف صديقًا</button></div>`;$('#stAdd').onclick=()=>setView('friends');return}
+  if(!stripSel||!friends.find(f=>f.uid===stripSel))stripSel=friends[0].uid;const sel=friends.find(f=>f.uid===stripSel);
+  const unread=inbox.filter(m=>!m.read),lastM=[...inbox].sort((a,b)=>tsOf(b)-tsOf(a))[0];
+  el.innerHTML=`<div class="strip col"><div class="strow"><span class="sti">👫</span><div class="stav">${friends.map(f=>{const n=inbox.filter(m=>!m.read&&m.from===f.uid).length;return `<button class="fav2 ${f.uid===stripSel?'on':''}" data-sf="${f.uid}" title="${esc(f.name)}">${AVX(f.avatar||'b1',f.eq)}${n?`<i>${n}</i>`:''}<small>${esc(String(f.name).split(' ')[0])}</small></button>`}).join('')}
+      <button class="fav2 add" id="stMore" title="أصدقائي">➕<small>المزيد</small></button></div></div>
+    <div class="strow"><div class="qemo">${QUICK.map(([key,e])=>`<button data-q="${key}" title="${VMAP[key][2]}">${e}</button>`).join('')}</div><small class="muted">إلى ${esc(String(sel.name).split(' ')[0])}</small></div>
+    ${lastM?`<div class="stmsg ${lastM.read?'':'new'}" id="stLast"><span>${msgText(lastM).icon}</span><b>${esc(lastM.fromName||'')}:</b> ${msgText(lastM).short}${unread.length>1?` <em>+${unread.length-1}</em>`:''}<span class="play">🔊</span></div>`:''}</div>`;
+  el.querySelectorAll('[data-sf]').forEach(b=>b.onclick=()=>{stripSel=b.dataset.sf;renderStrip()});$('#stMore').onclick=()=>setView('friends');
+  el.querySelectorAll('[data-q]').forEach(b=>b.onclick=async()=>{const f=friends.find(x=>x.uid===stripSel);if(!f)return;const v=VMAP[b.dataset.q];b.classList.add('sent');SFX.say(v[3]);
+    try{await sendTo(f,{type:'voice',key:v[0]});toast(`📨 أرسلت ${v[1]} إلى ${f.name}`)}catch(e){toast('⚠️ تعذّر الإرسال')}setTimeout(()=>b.classList.remove('sent'),600)});
+  const lm=$('#stLast');if(lm)lm.onclick=()=>{if(lastM.type==='audio')playAudio(lastM.audio);else SFX.say(msgText(lastM).say);if(!lastM.read)B.markMsg(lastM.id,{read:true}).catch(()=>{});if(lastM.type==='challenge'&&!lastM.done)acceptDare(lastM.id)}}
+function tidyHome(){const k=activeKid&&activeKid(),h=document.querySelector('.hero');document.body.classList.toggle('kidon',!!k);if(h)h.classList.toggle('mini',!!k);const how=$('#how');if(how)how.style.display=k?'none':''}
 function sendTo(f,data){const k=activeKid();return B.sendMsg({from:user.uid,to:f.uid,fromName:k?k.name:(user.name||''),fromAvatar:k?k.avatar:'b1',read:false,done:false,...data})}
 function renderFriends(){
   const box=$('#friendsView');if(!box||view!=='friends')return;
