@@ -569,7 +569,6 @@ function A(k){
 
 
 const GAMES=[
- {id:'animals',name:'هيا نتعلم الحيوانات',emoji:'🦁',svg:'lion',age:'6-9',skill:'المفردات والأصوات',price:0,color:'linear-gradient(135deg,#FFE7A3,#FFC872)',ready:true},
  {id:'letters',name:'مغامرة الحروف',emoji:'🔤',age:'6-9',skill:'القراءة والحروف',price:0,color:'linear-gradient(135deg,#C9F2D6,#8FE3AE)',ready:true},
  {id:'memory',name:'ذاكرة الحيوانات',emoji:'🐼',svg:'panda',age:'6-9',skill:'التركيز والذاكرة',price:0,color:'linear-gradient(135deg,#FFD6E8,#FFA8CB)',ready:true},
  {id:'math',name:'تحدي الرياضيات',emoji:'🚀',img:'img/abacus.png',age:'all',skill:'الحساب الذهني',price:3,color:'linear-gradient(135deg,#D6E4FF,#9DBBFF)',ready:true},
@@ -590,7 +589,7 @@ const GAMES=[
  {id:'truefalse',name:'صح أم خطأ؟',emoji:'⚡',age:'10-14',skill:'سرعة البديهة',price:3,color:'linear-gradient(135deg,#D6F5E1,#9BE8B9)',ready:true,isNew:true},
  {id:'code',name:'روبوت المتاهة',emoji:'🤖',img:'img/robot.png',age:'10-14',skill:'مبادئ البرمجة',price:3,color:'linear-gradient(135deg,#FFE0D1,#FFB38F)',ready:true},
 ];
-const NEED={animals:0,letters:0,memory:0,xo:0,islamic:0,count:0,shapes:5,order:20,opposites:35,truefalse:45,simon:10,puzzle:15,math:25,spelling:30,flags:40,capitals:50,logic:60,clock:70,science:85,code:100};
+const NEED={letters:0,memory:0,xo:0,islamic:0,count:0,shapes:5,order:20,opposites:35,truefalse:45,simon:10,puzzle:15,math:25,spelling:30,flags:40,capitals:50,logic:60,clock:70,science:85,code:100};
 const TROPHIES=[{n:5,i:'🥉',t:'نجم صاعد'},{n:15,i:'🥈',t:'بطل صغير'},{n:30,i:'🥇',t:'عبقري'},{n:60,i:'👑',t:'ملك الذكاء'}];
 
 // =====================================================================
@@ -770,7 +769,8 @@ function missionGames(){
   return pool.map(g=>g.id).sort((a,b)=>hashStr(a+seed)-hashStr(b+seed)).slice(0,3);
 }
 function daily(){let st=dState();if(st.date!==today()){st={date:today(),list:missionGames(),done:[],bonus:false,streak:st.streak||0,last:st.last||null};dSave(st)}
-  else if(st.list.length<3&&!st.bonus){const add=missionGames().filter(x=>!st.list.includes(x));if(add.length){st.list=[...st.list,...add].slice(0,3);dSave(st)}}return st}
+  else{const ok=st.list.filter(id=>GAMES.some(g=>g.id===id));if(ok.length!==st.list.length){st.list=ok;st.done=st.done.filter(id=>ok.includes(id));dSave(st)}}
+  if(st.list.length<3&&!st.bonus){const add=missionGames().filter(x=>!st.list.includes(x));if(add.length){st.list=[...st.list,...add].slice(0,3);dSave(st)}}return st}
 function streakNow(st){return (st.last===today()||st.last===dayOff(today(),-1))?(st.streak||0):0}
 function dailyMark(gid,s){
   const st=daily();if(s<1||!st.list.includes(gid)||st.done.includes(gid))return null;
@@ -1577,7 +1577,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.19-28';
+const APP_VERSION='2026.11.19-29';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
