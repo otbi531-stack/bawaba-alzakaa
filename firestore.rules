@@ -10,7 +10,16 @@ service cloud.firestore {
 
     // ملف كل مستخدم: يقرؤه ويعدّله صاحبه فقط
     match /parents/{uid} {
-      allow read, write: if signedIn() && request.auth.uid == uid;
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow write: if signedIn() && request.auth.uid == uid
+        && !exists(/databases/$(database)/documents/blocked/$(uid));
+      allow delete: if isAdmin();
+    }
+
+    // الحسابات المحذوفة من الإدارة: لا يمكنها الدخول مرة أخرى
+    match /blocked/{uid} {
+      allow get: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow write: if isAdmin();
     }
 
     // طلبات شراء النجوم: ينشئها المستخدم، ويوافق عليها المدير فقط
@@ -43,6 +52,7 @@ service cloud.firestore {
     match /players/{uid} {
       allow get: if signedIn() && (request.auth.uid == uid || isFriend(uid));
       allow write: if signedIn() && request.auth.uid == uid;
+      allow delete: if isAdmin();
     }
 
     // الصداقات: يراها ويحذفها طرفاها فقط
@@ -73,6 +83,7 @@ service cloud.firestore {
         && id == request.resource.data.week + '_' + request.auth.uid
         && request.resource.data.xp is int
         && request.resource.data.xp >= 0 && request.resource.data.xp <= 3000;
+      allow delete: if isAdmin();
     }
   }
 }
