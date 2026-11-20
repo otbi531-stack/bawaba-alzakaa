@@ -400,7 +400,9 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:14px;text-align:center}
 .chinfo{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0}.chinfo b{font-size:18px;text-shadow:0 2px 0 rgba(0,0,0,.25)}.chinfo small{font-size:13px;opacity:.95}.chcar{font-size:14px;opacity:.8}
 .chestbox .boxgrid{margin-top:8px}.chestbox .boxcard{color:#1f2937}.chestbox.locked .boxcard{filter:saturate(.55);opacity:.9}.chbuy{margin-top:10px;background:#FFC72C;color:#3b2500;font-size:17px;box-shadow:0 4px 0 #C98F00}
 .chprev{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:8px 0}.chprev span{display:flex;flex-direction:column;align-items:center;background:#F3F4F6;border-radius:12px;padding:6px 8px;font-size:24px;min-width:62px}.chprev small{font-size:10px;color:#374151}
-.admtabs{margin:0 0 12px}.memstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.memstats div{background:#fff;border-radius:16px;padding:10px 4px;text-align:center;box-shadow:0 3px 0 rgba(0,0,0,.06)}.memstats b{display:block;font-size:24px;color:#4F2BB8}.memstats small{font-size:11px;color:#6B7280}
+.admtabs{margin:0 0 12px}.memchips{margin:0 0 8px}.memchips button,.gchips button{border:2px solid #E5E7EB;background:#fff;border-radius:999px;padding:7px 12px;font:inherit;font-weight:700;font-size:13px;cursor:pointer;margin:3px}.memchips button.on,.gchips button.on{background:#FFC72C;border-color:#E09A00;color:#3b2500}
+.gchips{display:flex;flex-wrap:wrap;justify-content:center}.mbadge.des{background:#22C55E;color:#fff}.pod .sbtn{margin-top:4px;padding:4px 10px;font-size:12px}
+.giftov .gbig{font-size:64px;animation:chpop .9s ease-out}.giftov .gst{font-size:40px;font-weight:900;color:#E09A00}.gnote{background:#FFF8DC;border-radius:14px;padding:10px;font-weight:700;color:#5B3410}.memstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.memstats div{background:#fff;border-radius:16px;padding:10px 4px;text-align:center;box-shadow:0 3px 0 rgba(0,0,0,.06)}.memstats b{display:block;font-size:24px;color:#4F2BB8}.memstats small{font-size:11px;color:#6B7280}
 .memtop h3{margin:0 0 8px}.podium{display:flex;gap:6px;align-items:flex-end}.pod{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border-radius:16px;padding:8px 4px;text-align:center;min-width:0}.pod.p1{background:linear-gradient(180deg,#FFF3C4,#FFD54A);order:2;padding-top:14px}.pod.p2{background:linear-gradient(180deg,#F3F4F6,#CBD5E1);order:1}.pod.p3{background:linear-gradient(180deg,#FFE4D1,#F0A36B);order:3}
 .pod .pm{font-size:26px}.pod .pav{width:44px;height:44px;display:block}.pod .pav svg,.pod .pav img{width:100%;height:100%}.pod b{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}.pod small{font-size:10px;color:#4B5563}.pod .pp{font-size:11px;font-weight:700}
 .memsearch input{width:100%;box-sizing:border-box;border:2px solid #E5E7EB;border-radius:14px;padding:10px 12px;font:inherit;margin-bottom:8px}
@@ -847,6 +849,10 @@ const LocalBackend={
   async listMembers(){const us=LS.get('bw_users',{});return Object.entries(us).map(([email,u])=>({uid:u.uid,email,name:u.name,...LS.get('bw_p_'+u.uid,{})}))},
   async deleteMember(uid){const us=LS.get('bw_users',{});Object.keys(us).forEach(e=>{if(us[e].uid===uid)delete us[e]});LS.set('bw_users',us);LS.del('bw_p_'+uid);const b=LS.get('bw_blocked',[]);b.push(uid);LS.set('bw_blocked',b)},
   async isBlocked(uid){return LS.get('bw_blocked',[]).includes(uid)},
+  async sendGift(d){const a=LS.get('bw_gifts',[]);a.push({id:'g'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),...d,applied:false,created:Date.now()});LS.set('bw_gifts',a)},
+  async listGifts(){return LS.get('bw_gifts',[]).slice(-200)},
+  watchGifts(uid,cb){const f=()=>cb(LS.get('bw_gifts',[]).filter(g=>g.uid===uid));f();const t=setInterval(f,2000);return ()=>clearInterval(t)},
+  async markGift(id){const a=LS.get('bw_gifts',[]),g=a.find(x=>x.id===id);if(g)g.applied=true;LS.set('bw_gifts',a)},
   isVerified(){return true},async sendVerify(){},async refreshUser(){return true}
 };
 const FirebaseBackend={
@@ -889,6 +895,10 @@ const FirebaseBackend={
     await F.deleteDoc(F.doc(db,'parents',uid));try{await F.deleteDoc(F.doc(db,'players',uid))}catch(e){console.warn(e)}
     try{const l=await F.getDocs(F.query(F.collection(db,'league'),F.where('uid','==',uid)));await Promise.all(l.docs.map(d=>F.deleteDoc(d.ref)))}catch(e){console.warn(e)}},
   async isBlocked(uid){try{const d=await this.F.getDoc(this.F.doc(this.db,'blocked',uid));return d.exists()}catch(e){return false}},
+  async sendGift(d){await this.F.addDoc(this.F.collection(this.db,'gifts'),{...d,applied:false,created:this.F.serverTimestamp()})},
+  async listGifts(){const s=await this.F.getDocs(this.F.query(this.F.collection(this.db,'gifts'),this.F.limit(300)));return s.docs.map(d=>({id:d.id,...d.data()}))},
+  watchGifts(uid,cb){return this.F.onSnapshot(this.F.query(this.F.collection(this.db,'gifts'),this.F.where('uid','==',uid)),s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))),e=>console.warn(e))},
+  async markGift(id){await this.F.updateDoc(this.F.doc(this.db,'gifts',id),{applied:true})},
   isVerified(){return !!(this.auth.currentUser&&this.auth.currentUser.emailVerified)},
   async sendVerify(){await this.A.sendEmailVerification(this.auth.currentUser)},
   async refreshUser(){await this.auth.currentUser.reload();await this.auth.currentUser.getIdToken(true);return this.isVerified()}
@@ -3457,7 +3467,18 @@ const isAdmin=()=>!!(user&&ADMIN_EMAILS.includes((user.email||'').toLowerCase())
 let myReqs=[],unwatch=null;
 const tsOf=r=>r&&r.created?(r.created.toMillis?r.created.toMillis():r.created):0;
 const fmtD=t=>t?new Date(t).toLocaleString('ar-SA',{dateStyle:'medium',timeStyle:'short'}):'';
-function startWatch(){startWatch.sig='';if(unwatch){try{unwatch()}catch(e){}unwatch=null}if(!user)return;
+let unGift=null,giftBusy=false;
+function watchGifts(){if(unGift){try{unGift()}catch(e){}unGift=null}if(!user||!B.watchGifts)return;try{unGift=B.watchGifts(user.uid,applyGifts)}catch(e){console.warn(e)}}
+async function applyGifts(list){if(giftBusy||!profile)return;giftBusy=true;
+  try{for(const g of list){if(g.applied)continue;try{await B.markGift(g.id)}catch(e){console.warn(e);continue}
+    const k=(profile.kids||[]).find(x=>x.id===g.kid)||activeKid()||(profile.kids||[])[0];if(!k)continue;k.stars+=+g.stars||0;await persist();sync();
+    showGift(g,k)}}finally{giftBusy=false}}
+function showGift(g,k){const ov=document.createElement('div');ov.className='ov show giftov';
+  ov.innerHTML=`<div class="modal" style="text-align:center"><div class="gbig">🏆</div><h3>جائزة من الإدارة!</h3><div class="gst">+${g.stars} ⭐</div>
+   <div class="meta" style="font-size:15px;margin:6px 0">مبروك يا <b>${esc(k.name)}</b> 🎉</div>${g.note?`<div class="gnote">«${esc(g.note)}»</div>`:''}
+   <button class="btn full" style="margin-top:12px">🤩 شكرًا!</button></div>`;document.body.appendChild(ov);confetti();SFX.fanfare();SFX.say('مَبْروك! حَصَلْتَ عَلى جائِزَة');
+  ov.querySelector('button').onclick=()=>ov.remove()}
+function startWatch(){watchGifts();startWatch.sig='';if(unwatch){try{unwatch()}catch(e){}unwatch=null}if(!user)return;
   try{unwatch=B.watchMine(user.uid,reqs=>{const sig=JSON.stringify(reqs.map(r=>[r.id,r.status,r.applied]));if(sig===startWatch.sig)return;startWatch.sig=sig;
     {const ids=new Set(reqs.map(r=>r.id));myReqs.filter(r=>r.status==='pending'&&!ids.has(r.id)).forEach(r=>{toast(`❌ لم يتم تأكيد طلبك ${r.ref}، تأكد من التحويل وأعد المحاولة`);SFX.no()})}
     myReqs=reqs;applyApproved(reqs);if($('#dash').classList.contains('show')&&!$('#kidOv').classList.contains('show'))openDash()})}catch(e){console.warn(e)}}
@@ -3482,32 +3503,57 @@ function adminGamesHtml(){const notes=LS.get('bw_admin_notes',{}),row=g=>`<div c
    ${CHESTS.map(ch=>`<div class="admsec">${ch.emoji} ${ch.name}${ch.free?' (مجاني)':''}</div>${ch.games.map(id=>list.find(g=>g.id===id)).filter(Boolean).map(row).join('')}`).join('')}</div>`}
 function bindAdminGames(body){body.querySelectorAll('[data-agp]').forEach(b=>b.onclick=()=>{hide('adm');openGame(b.dataset.agp);toast('👑 وضع المراجعة: للعودة للوحة اضغط ⚙️ في ملفك')});
   body.querySelectorAll('[data-agn]').forEach(b=>b.onclick=()=>{const n=LS.get('bw_admin_notes',{}),g=GAMES.find(x=>x.id===b.dataset.agn),v=prompt(`ملاحظاتك على «${g.name}»:`,n[g.id]||'');if(v===null)return;if(v.trim())n[g.id]=v.trim();else delete n[g.id];LS.set('bw_admin_notes',n);openAdmin()})}
-let admTab='req',memQ='',memAll=false;
+let admTab='req',memQ='',memAll=false,memDes=false;
+function giftModal(r){const ov=document.createElement('div');ov.className='ov show';let amt=20,kid=(r.top||r.kids[0]).id;
+  ov.innerHTML=`<div class="modal"><button class="x" data-x>✕</button><h3 style="text-align:center">🎁 منح جائزة نجوم</h3>
+   <div class="meta" style="text-align:center;margin-bottom:8px">${esc(r.m.name||r.m.email||'')} · 🎮 ${r.plays} لعبة · ⭐ ${r.earned}</div>
+   ${r.kids.length>1?`<div class="meta">لمن الجائزة؟</div><div class="gchips" id="gKid">${r.kids.map(k=>`<button data-k="${k.id}" class="${k.id===kid?'on':''}">${esc(k.name)}</button>`).join('')}</div>`:`<div class="meta">اللاعب: <b>${esc(r.kids[0].name)}</b></div>`}
+   <div class="meta" style="margin-top:8px">عدد النجوم:</div><div class="gchips" id="gAmt">${[5,10,20,30,50,100].map(n=>`<button data-a="${n}" class="${n===amt?'on':''}">${n} ⭐</button>`).join('')}</div>
+   <input id="gNote" maxlength="60" placeholder="رسالة تشجيع (اختياري): مثلًا بطل الأسبوع!" style="width:100%;box-sizing:border-box;border:2px solid #E5E7EB;border-radius:12px;padding:10px;font:inherit;margin-top:10px">
+   <button class="btn full" id="gGo" style="margin-top:12px">🎁 أرسل الجائزة</button><div class="meta" style="text-align:center;margin-top:6px">تصل للاعب فورًا مع احتفال، أو عند دخوله القادم</div></div>`;
+  document.body.appendChild(ov);const q=x=>ov.querySelector(x);
+  q('[data-x]').onclick=()=>ov.remove();ov.onclick=e=>{if(e.target===ov)ov.remove()};
+  ov.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{amt=+b.dataset.a;ov.querySelectorAll('[data-a]').forEach(x=>x.classList.toggle('on',x===b))});
+  ov.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{kid=b.dataset.k;ov.querySelectorAll('[data-k]').forEach(x=>x.classList.toggle('on',x===b))});
+  q('#gGo').onclick=async()=>{const k=r.kids.find(x=>x.id===kid);q('#gGo').disabled=true;
+    try{await B.sendGift({uid:r.m.uid,kid,kidName:k?k.name:'',stars:amt,note:q('#gNote').value.trim()});ov.remove();toast(`🎁 أُرسلت ${amt} ⭐ إلى ${k?k.name:''}`);SFX.ok();renderMembers()}catch(e){console.warn(e);toast('⚠️ تعذّر الإرسال، تأكد من نشر القواعد الجديدة');q('#gGo').disabled=false}}}
 function memStats(m){const kids=m.kids||[];let plays=0,earned=0,best3=0;kids.forEach(k=>{earned+=+(k.earned??k.stars)||0;Object.values(k.stats||{}).forEach(st=>{plays+=+st.plays||0;if(st.best===3)best3++})});
-  const ch=(m.owned||[]).filter(x=>/^chest/.test(x)).length;return {kids,plays,earned,best3,ch,seen:+m.seen||0,created:+m.created||0}}
-async function renderMembers(){const box=$('#memSec');if(!box)return;let list;
+  const ch=(m.owned||[]).filter(x=>/^chest/.test(x)).length,seen=+m.seen||0,top=[...kids].sort((a,b)=>kidPlays(b)-kidPlays(a))[0];
+  return {kids,plays,earned,best3,ch,seen,created:+m.created||0,top,deserve:seen&&Date.now()-seen<7*864e5&&plays>=10&&best3>=3}}
+const kidPlays=k=>Object.values(k.stats||{}).reduce((a,s)=>a+(+s.plays||0),0);
+async function renderMembers(){const box=$('#memSec');if(!box)return;let list,gifts=[];
+  try{gifts=await B.listGifts()}catch(e){console.warn(e)}
   try{list=await B.listMembers()}catch(e){console.warn(e);box.innerHTML=`<div class="dcard"><h3>⚠️ تعذّر تحميل الأعضاء</h3><div class="meta">انشر قواعد Firestore الجديدة (فيها صلاحية قراءة الأعضاء للإدارة)، ثم حدّث الصفحة.</div></div>`;return}
   const now=Date.now(),W7=7*864e5,rows=list.map(m=>({m,...memStats(m)})).sort((a,b)=>b.plays-a.plays||b.earned-a.earned);
   const kidsN=rows.reduce((a,r)=>a+r.kids.length,0),act=rows.filter(r=>r.seen&&now-r.seen<W7).length,neu=rows.filter(r=>r.created&&now-r.created<W7).length,today0=new Date().setHours(0,0,0,0),actT=rows.filter(r=>r.seen>=today0).length,plays=rows.reduce((a,r)=>a+r.plays,0);
   const ago=t=>{if(!t)return '—';const d=Math.floor((now-t)/864e5);return t>=today0?'اليوم':d<=1?'أمس':d<30?`قبل ${d} يومًا`:fmtD(t)};
   const kn=r=>r.kids.map(k=>esc(k.name)).join('، ')||'بدون لاعب';
   const top=rows.filter(r=>r.plays>0).slice(0,3),medal=['🥇','🥈','🥉'];
-  const q=memQ.trim().toLowerCase(),flt=rows.filter(r=>!q||[r.m.name,r.m.email,...r.kids.map(k=>k.name)].some(x=>String(x||'').toLowerCase().includes(q)));
+  const gOf=uid=>gifts.filter(g=>g.uid===uid),lastG=uid=>Math.max(0,...gOf(uid).map(g=>tsOf(g)));
+  const q=memQ.trim().toLowerCase(),flt=rows.filter(r=>(!memDes||r.deserve)&&(!q||[r.m.name,r.m.email,...r.kids.map(k=>k.name)].some(x=>String(x||'').toLowerCase().includes(q))));
   const shown=memAll||q?flt:flt.slice(0,15);
   box.innerHTML=`<div class="memstats">
      <div><b>${rows.length}</b><small>👥 عضو مسجّل</small></div><div><b>${kidsN}</b><small>🧒 لاعب</small></div>
      <div><b>${actT}</b><small>🟢 نشط اليوم</small></div><div><b>${act}</b><small>📅 نشط هذا الأسبوع</small></div>
      <div><b>${neu}</b><small>🆕 جديد هذا الأسبوع</small></div><div><b>${plays}</b><small>🎮 لعبة لُعبت</small></div></div>
-   ${top.length?`<div class="dcard memtop"><h3>🏆 الأكثر مشاركة</h3><div class="podium">${top.map((r,i)=>`<div class="pod p${i+1}"><span class="pm">${medal[i]}</span><span class="pav">${r.kids[0]?AV(r.kids[0].avatar):'👤'}</span><b>${kn(r)}</b><small>${esc(r.m.name||'')}</small><span class="pp">🎮 ${r.plays} · ⭐ ${r.earned}</span></div>`).join('')}</div></div>`:''}
+   ${top.length?`<div class="dcard memtop"><h3>🏆 الأكثر مشاركة</h3><div class="podium">${top.map((r,i)=>`<div class="pod p${i+1}"><span class="pm">${medal[i]}</span><span class="pav">${r.kids[0]?AV(r.kids[0].avatar):'👤'}</span><b>${kn(r)}</b><small>${esc(r.m.name||'')}</small><span class="pp">🎮 ${r.plays} · ⭐ ${r.earned}</span><button class="sbtn pri" data-gift="${r.m.uid}">🎁 كافئ</button></div>`).join('')}</div>
+     ${top.length>1?`<button class="btn full" id="giftTop" style="margin-top:10px">🏆 كافئ الأوائل: 🥇 30 · 🥈 20 · 🥉 10 ⭐</button>`:''}</div>`:''}
+   <div class="memchips"><button class="${memDes?'on':''}" id="memDes">🌟 المستحقون للجائزة (${rows.filter(r=>r.deserve).length})</button></div>
    <div class="memsearch"><input id="memQ" placeholder="🔍 ابحث بالاسم أو البريد" value="${esc(memQ)}"></div>
    <div class="memlist">${shown.map(r=>{const rk=rows.indexOf(r)+1,me=user&&r.m.uid===user.uid,hot=rk<=3&&r.plays>0;return `<div class="memrow ${hot?'hot':''}">
-     <span class="mrk">${hot?medal[rk-1]:rk}</span><div class="grow"><b>${kn(r)}</b>${hot?'<span class="mbadge">⭐ الأكثر مشاركة</span>':''}<small dir="ltr" style="display:block;text-align:right">${esc(r.m.email||'')}</small>
-     <small>🎮 ${r.plays} · ⭐ ${r.earned} · 🎁 ${r.ch} صناديق · آخر دخول: ${ago(r.seen)}${r.created?` · سجّل ${ago(r.created)}`:''}</small></div>
-     ${me?'<span class="meta">أنت</span>':`<button class="sbtn del" data-mdel="${r.m.uid}" data-mn="${esc(r.m.name||r.m.email||'')}">🗑️</button>`}</div>`}).join('')||'<div class="meta" style="padding:10px">لا يوجد أعضاء مطابقون</div>'}</div>
+     <span class="mrk">${hot?medal[rk-1]:rk}</span><div class="grow"><b>${kn(r)}</b>${hot?'<span class="mbadge">⭐ الأكثر مشاركة</span>':''}${r.deserve?'<span class="mbadge des">🌟 مستحق</span>':''}<small dir="ltr" style="display:block;text-align:right">${esc(r.m.email||'')}</small>
+     <small>🎮 ${r.plays} · ⭐ ${r.earned} · 🎁 ${r.ch} صناديق · آخر دخول: ${ago(r.seen)}${r.created?` · سجّل ${ago(r.created)}`:''}${gOf(r.m.uid).length?` · 🎁 آخر جائزة ${ago(lastG(r.m.uid))}`:''}</small></div>
+     ${r.kids.length?`<button class="sbtn pri" data-gift="${r.m.uid}" title="منح نجوم">🎁</button>`:''}${me?'<span class="meta">أنت</span>':`<button class="sbtn del" data-mdel="${r.m.uid}" data-mn="${esc(r.m.name||r.m.email||'')}">🗑️</button>`}</div>`}).join('')||'<div class="meta" style="padding:10px">لا يوجد أعضاء مطابقون</div>'}</div>
    ${!q&&flt.length>15?`<button class="btn ghost full" id="memMore">${memAll?'▲ عرض أقل':`▼ عرض الكل (${flt.length})`}</button>`:''}
+   ${gifts.length?`<div class="dcard" style="margin-top:12px"><h3>🎁 آخر الجوائز الممنوحة</h3>${[...gifts].sort((a,b)=>tsOf(b)-tsOf(a)).slice(0,8).map(g=>`<div class="meta" style="padding:3px 0">+${g.stars} ⭐ لـ <b>${esc(g.kidName||'')}</b> · ${ago(tsOf(g))} · ${g.applied?'✅ وصلت':'⏳ تصل عند دخوله'}${g.note?` · «${esc(g.note)}»`:''}</div>`).join('')}<div class="meta" style="margin-top:6px">المجموع: <b>${gifts.reduce((a,g)=>a+(+g.stars||0),0)} ⭐</b></div></div>`:''}
+   <div class="note" style="margin-top:10px">🌟 «مستحق» = دخل خلال آخر 7 أيام، ولعب 10 ألعاب أو أكثر، وفاز بـ 3 نجوم في 3 ألعاب على الأقل.</div>
    <div class="note" style="margin-top:10px">🗑️ الحذف يمسح بيانات العضو ولاعبيه ونجومه ويمنعه من الدخول بنفس الحساب. لا يمكن التراجع عنه. سجل طلبات الشراء يبقى للمراجعة المالية.</div>`;
   const qi=$('#memQ');qi.oninput=()=>{memQ=qi.value;clearTimeout(qi._t);qi._t=setTimeout(()=>{renderMembers().then(()=>{const n=$('#memQ');n.focus();n.setSelectionRange(n.value.length,n.value.length)})},250)};
   if($('#memMore'))$('#memMore').onclick=()=>{memAll=!memAll;renderMembers()};
+  $('#memDes').onclick=()=>{memDes=!memDes;renderMembers()};
+  box.querySelectorAll('[data-gift]').forEach(b=>b.onclick=()=>{const r=rows.find(x=>x.m.uid===b.dataset.gift);if(r)giftModal(r)});
+  if($('#giftTop'))$('#giftTop').onclick=async()=>{const amt=[30,20,10],names=top.map((r,i)=>`${['🥇','🥈','🥉'][i]} ${r.top?r.top.name:''} +${amt[i]}`).join('\n');if(!confirm('منح جوائز الأوائل:\n'+names))return;
+    try{for(let i=0;i<top.length;i++){const r=top[i];if(!r.top)continue;await B.sendGift({uid:r.m.uid,kid:r.top.id,kidName:r.top.name,stars:amt[i],note:`جائزة ${['المركز الأول 🥇','المركز الثاني 🥈','المركز الثالث 🥉'][i]} في المشاركة`})}toast('🏆 أُرسلت جوائز الأوائل');SFX.fanfare();renderMembers()}catch(e){console.warn(e);toast('⚠️ تعذّر الإرسال، تأكد من نشر القواعد الجديدة')}};
   box.querySelectorAll('[data-mdel]').forEach(b=>b.onclick=async()=>{if(!confirm(`حذف العضو «${b.dataset.mn}» نهائيًا مع كل لاعبيه ونجومه، ومنعه من الدخول؟`))return;
     b.disabled=true;try{await B.deleteMember(b.dataset.mdel);toast('🗑️ تم حذف العضو');renderMembers()}catch(e){console.warn(e);toast('⚠️ تعذّر الحذف، تأكد من نشر القواعد الجديدة');b.disabled=false}});
 }
@@ -3547,7 +3593,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.20-68';
+const APP_VERSION='2026.11.21-69';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
