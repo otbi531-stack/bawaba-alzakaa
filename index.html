@@ -3000,8 +3000,12 @@ function boxDuel(){['img/k/courtyard.jpg','img/k/knight0.webp','img/k/knight1.we
   stat(`1/${FS.length}`,0);requestAnimationFrame(frame)}
 
 // 3) Desert derby: switch lanes, jump hay bales, grab golden horseshoes, draft behind rivals
+const RLEG={rider0:{w:406,h:300,cut:208,bx:150,fx:290},rider1:{w:371,h:300,cut:218,bx:125,fx:270}};RLEG.rider2=RLEG.rider3=RLEG.rider1;
+function drawGallop(c,get,n,h,ph,air){const cf=RLEG[n];if(!cf)return false;const B=get(n+'_body'),BK=get(n+'_back'),FR=get(n+'_front');if(!(B&&BK&&FR))return false;const s=h/cf.h,w=cf.w*s;
+  const leg=(img,px,a)=>{c.save();c.translate(-w/2+px*s,-h+cf.cut*s);c.rotate(a);c.drawImage(img,-px*s,-cf.cut*s,w,h);c.restore()};
+  const ab=air?.38:Math.sin(ph)*.34,af=air?-.5:Math.sin(ph+Math.PI*.85)*.36;leg(BK,cf.bx,ab);leg(FR,cf.fx,af);c.drawImage(B,-w/2,-h,w,h);return true}
 const RIMG={};const rImg=f=>{if(!RIMG[f]){const i=new Image();i.decoding='async';i.src='img/race/'+f;RIMG[f]=i}return RIMG[f]},imOk=i=>i&&i.complete&&i.naturalWidth>0;
-function boxHorseRace(){['sky.jpg','ground.jpg','arch.webp','shoe.webp','puddle.webp','intro.jpg','rider0.webp','rider1.webp','rider2.webp','rider3.webp'].forEach(rImg);let dust=[];
+function boxHorseRace(){['sky.jpg','ground.jpg','arch.webp','shoe.webp','puddle.webp','intro.jpg','rider0.webp','rider1.webp','rider2.webp','rider3.webp',...['rider0','rider1','rider2','rider3'].flatMap(n=>[n+'_body.webp',n+'_back.webp',n+'_front.webp'])].forEach(rImg);let dust=[];
   const F=lvF(),LVL=curLv,A=arena(490),{W,H,c}=A,LEN=Math.round(700+LVL*40),L3=3,TOP=H*.40,LH=(H-TOP-24)/L3,PXs=W*.3,SC=26;
   const RIV=[{n:'البرق',coat:'#F3F4F6',dark:'#9CA3AF',rider:'#B91C1C',base:14.2+F*2.4,spr:'rider3.webp'},{n:'الأدهم',coat:'#1F2937',dark:'#000',rider:'#059669',base:13.9+F*2.4,spr:'rider2.webp'},{n:'الشقراء',coat:'#D97706',dark:'#92400E',rider:'#7C3AED',base:13.6+F*2.4,spr:'rider1.webp'}];
   let me={spr:'rider0.webp',n:'أنت',coat:'#8B5A2B',dark:'#4A2C14',rider:'#1D4ED8',lane:1,ly:1,d:0,v:12,ph:0,jy:0,jv:0,fin:0,place:0,turbo:0,stum:0,me:1},riv=RIV.map((r,i)=>({...r,lane:[0,2,1][i],ly:[0,2,1][i],d:-6-i*4,v:12,ph:Math.random()*7,jy:0,jv:0,fin:0})),all=[me,...riv];
@@ -3053,7 +3057,7 @@ function boxHorseRace(){['sky.jpg','ground.jpg','arch.webp','shoe.webp','puddle.
       else{c.save();c.translate(x,y-28+Math.sin(t/200+it.d)*4);c.font='22px sans-serif';c.textAlign='center';c.fillText('🥕',0,0);c.restore()}}})});
     all.forEach(h=>rows.push({y:h.ly+.01,draw:()=>{const x=PXs+(h.d-me.d)*SC,y=TOP+(h.ly+.75)*LH;if(x<-90||x>W+90)return;const shs=1+h.jy/120;c.fillStyle=`rgba(40,20,0,${.32*shs})`;c.beginPath();c.ellipse(x+6,y+25,32*shs,6*shs,0,0,7);c.fill();
       if(state==='run'&&h.v>9&&h.jy>-2&&Math.random()<.55)dust.push({x:x-24+Math.random()*10,y:y+20,r:4+Math.random()*4,l:1,vx:-30-Math.random()*40});
-      {const SP=RIMG[h.spr];if(imOk(SP)){const sh=108,sw=sh*SP.naturalWidth/SP.naturalHeight,air=h.jy<-4,bob=air?0:-Math.abs(Math.sin(h.ph))*6,rot=air?-.2:Math.sin(h.ph*2)*.045+(h.me&&me.stum>0?Math.sin(t/40)*.12:0);c.save();c.translate(x,y+27+h.jy+bob);c.rotate(rot);if(h.me&&me.turbo>0){c.shadowColor='#FACC15';c.shadowBlur=18}c.drawImage(SP,-sw/2,-sh,sw,sh);c.restore()}else drawHorse(c,x,y+h.jy,.8,h.ph,{coat:h.coat,dark:h.dark,rider:h.rider,helm:h.me?'#FCD34D':'#fff',cape:h.me?'#FCD34D':null,lean:h.me&&me.turbo>0?.35:.1,jump:h.jy<-4?1:0,tilt:h.me&&me.stum>0?Math.sin(t/40)*.08:0,bridle:'#7C2D12'})}
+      {const SP=RIMG[h.spr];if(imOk(SP)){const sh=108,sw=sh*SP.naturalWidth/SP.naturalHeight,air=h.jy<-4,bob=air?0:-Math.abs(Math.sin(h.ph))*6,rot=air?-.2:Math.sin(h.ph*2)*.045+(h.me&&me.stum>0?Math.sin(t/40)*.12:0);c.save();c.translate(x,y+27+h.jy+bob);c.rotate(rot);if(h.me&&me.turbo>0){c.shadowColor='#FACC15';c.shadowBlur=18}if(!drawGallop(c,f=>{const i=RIMG[f+'.webp'];return imOk(i)?i:null},h.spr.replace('.webp',''),sh,h.ph*1.25,air))c.drawImage(SP,-sw/2,-sh,sw,sh);c.restore()}else drawHorse(c,x,y+h.jy,.8,h.ph,{coat:h.coat,dark:h.dark,rider:h.rider,helm:h.me?'#FCD34D':'#fff',cape:h.me?'#FCD34D':null,lean:h.me&&me.turbo>0?.35:.1,jump:h.jy<-4?1:0,tilt:h.me&&me.stum>0?Math.sin(t/40)*.08:0,bridle:'#7C2D12'})}
       if(h.me){c.fillStyle='#FCD34D';c.font='bold 12px Tajawal';c.textAlign='center';c.fillText('▼ أنت',x,y-86+h.jy);if(me.turbo>0)A.burst(x-30,y+16,1,['#FACC15','#F97316'],60,3)}else if(h.v>14&&Math.random()<.3)A.burst(x-26,y+18,1,['#E8C887'],50,2)}}));
     dust.forEach(d=>{d.l-=dt*1.4;d.r+=dt*22;d.x+=d.vx*dt;d.y-=dt*6});dust=dust.filter(d=>d.l>0);
     rows.sort((a,b)=>a.y-b.y).forEach(r=>r.draw());
@@ -3075,7 +3079,7 @@ function boxHorseRace(){['sky.jpg','ground.jpg','arch.webp','shoe.webp','puddle.
 
 // 4) Show jumping: perfect take-off zones, slow-mo over fences, combos, golden horseshoes
 const JIMG={};const jImg=f=>{if(!JIMG[f]){const i=new Image();i.decoding='async';i.src=f;JIMG[f]=i}return JIMG[f]};
-function boxShowJump(){['img/race/sky.jpg','img/jump/arena.webp','img/race/ground.jpg','img/race/shoe.webp','img/race/rider0.webp','img/race/intro.jpg'].forEach(jImg);let dust=[],land=0;
+function boxShowJump(){['img/race/sky.jpg','img/jump/arena.webp','img/race/ground.jpg','img/race/shoe.webp','img/race/rider0.webp','img/race/intro.jpg','img/race/rider0_body.webp','img/race/rider0_back.webp','img/race/rider0_front.webp'].forEach(jImg);let dust=[],land=0;
   const F=lvF(),LVL=curLv,A=arena(480),{W,H,c}=A,GY=H-70,HX=W*.27,N=7+LVL;
   let hy=0,vy=0,air=false,obs=[],coins=[],spawned=0,faults=0,clears=0,perfects=0,combo=0,score=0,sp=230,dist=0,ph=0,last=0,state='count',st={},tm=0,nextAt=330,crowd=0,pops=[],q='';
   const POOLJ=LVL<=2?['bar']:LVL<=3?['bar','high']:LVL<=4?['bar','high','double']:LVL<=6?['bar','high','double','water']:['bar','high','double','water','triple'];const types=Array.from({length:N},(_,i)=>i<2?'bar':POOLJ[(i*7+LVL)%POOLJ.length]);
@@ -3124,7 +3128,7 @@ function boxShowJump(){['img/race/sky.jpg','img/jump/arena.webp','img/race/groun
     if(land>0)land=Math.max(0,land-rdt*4);
     dust.forEach(d=>{d.l-=rdt*1.5;d.r+=rdt*24;d.x+=d.vx*rdt;d.y-=rdt*8});dust=dust.filter(d=>d.l>0);
     dust.forEach(d=>{const g2=c.createRadialGradient(d.x,d.y,0,d.x,d.y,d.r);g2.addColorStop(0,`rgba(220,185,135,${d.l*.5})`);g2.addColorStop(1,'rgba(220,185,135,0)');c.fillStyle=g2;c.fillRect(d.x-d.r,d.y-d.r,d.r*2,d.r*2)});
-    if(imOk(RD)){const rh=118,rw=rh*RD.naturalWidth/RD.naturalHeight,bob=air?0:-Math.abs(Math.sin(ph*.8))*6,rot=air?Math.max(-.32,Math.min(.28,vy/1700)):Math.sin(ph*1.6)*.04;c.save();c.translate(HX,GY+6+hy+bob);c.rotate(rot);c.scale(1+land*.06,1-land*.08);if(st.slow>0){c.shadowColor='#FFE27A';c.shadowBlur=20}c.drawImage(RD,-rw/2,-rh,rw,rh);c.restore()}
+    if(imOk(RD)){const rh=118,rw=rh*RD.naturalWidth/RD.naturalHeight,bob=air?0:-Math.abs(Math.sin(ph*.8))*6,rot=air?Math.max(-.32,Math.min(.28,vy/1700)):Math.sin(ph*1.6)*.04;c.save();c.translate(HX,GY+6+hy+bob);c.rotate(rot);c.scale(1+land*.06,1-land*.08);if(st.slow>0){c.shadowColor='#FFE27A';c.shadowBlur=20}if(!drawGallop(c,f=>{const i=JIMG['img/race/'+f+'.webp'];return imOk(i)?i:null},'rider0',rh,ph*.9,air))c.drawImage(RD,-rw/2,-rh,rw,rh);c.restore()}
     else drawHorse(c,HX,GY-34+hy,1,air?0:ph,{coat:'#5B3410',dark:'#2A1708',rider:'#065F46',helm:'#111',saddle:'#FCD34D',cape:'#FCD34D',jump:air?1:0,bridle:'#FCD34D',tilt:air?Math.max(-.25,Math.min(.25,vy/2400)):0});
     if(LVL>=9){c.fillStyle='rgba(15,20,70,.42)';c.fillRect(0,0,W,H);c.fillStyle='#FFF7D6';c.beginPath();c.arc(W*.8,60,14,0,7);c.fill();[W*.2,W*.75].forEach(lx=>{const fl=c.createRadialGradient(lx,GY-40,10,lx,GY-40,W*.5);fl.addColorStop(0,'rgba(255,245,210,.3)');fl.addColorStop(1,'rgba(255,245,210,0)');c.fillStyle=fl;c.fillRect(0,0,W,H)})}else if(LVL>=7){c.fillStyle='rgba(249,115,22,.15)';c.fillRect(0,0,W,H)}
     {const lg=c.createLinearGradient(W,0,0,H);lg.addColorStop(0,'rgba(255,200,120,.18)');lg.addColorStop(.6,'rgba(255,170,90,0)');lg.addColorStop(1,'rgba(30,15,0,.16)');c.fillStyle=lg;c.fillRect(0,0,W,H);
@@ -4053,7 +4057,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.21-81';
+const APP_VERSION='2026.11.21-82';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
