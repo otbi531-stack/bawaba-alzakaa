@@ -2915,10 +2915,10 @@ function boxDuel(){
 
 // 3) Desert derby: switch lanes, jump hay bales, grab golden horseshoes, draft behind rivals
 const RIMG={};const rImg=f=>{if(!RIMG[f]){const i=new Image();i.decoding='async';i.src='img/race/'+f;RIMG[f]=i}return RIMG[f]},imOk=i=>i&&i.complete&&i.naturalWidth>0;
-function boxHorseRace(){['sky.jpg','ground.jpg','arch.webp','shoe.webp','puddle.webp','intro.jpg'].forEach(rImg);let dust=[];
+function boxHorseRace(){['sky.jpg','ground.jpg','arch.webp','shoe.webp','puddle.webp','intro.jpg','rider0.webp','rider1.webp','rider2.webp','rider3.webp'].forEach(rImg);let dust=[];
   const A=arena(490),{W,H,c}=A,LEN=900,L3=3,TOP=H*.40,LH=(H-TOP-24)/L3,PXs=W*.3,SC=26;
-  const RIV=[{n:'البرق',coat:'#F3F4F6',dark:'#9CA3AF',rider:'#B91C1C',base:15.4},{n:'الأدهم',coat:'#1F2937',dark:'#000',rider:'#059669',base:15.1},{n:'الشقراء',coat:'#D97706',dark:'#92400E',rider:'#7C3AED',base:14.8}];
-  let me={n:'أنت',coat:'#8B5A2B',dark:'#4A2C14',rider:'#1D4ED8',lane:1,ly:1,d:0,v:12,ph:0,jy:0,jv:0,fin:0,place:0,turbo:0,stum:0,me:1},riv=RIV.map((r,i)=>({...r,lane:[0,2,1][i],ly:[0,2,1][i],d:-6-i*4,v:12,ph:Math.random()*7,jy:0,jv:0,fin:0})),all=[me,...riv];
+  const RIV=[{n:'البرق',coat:'#F3F4F6',dark:'#9CA3AF',rider:'#B91C1C',base:15.4,spr:'rider3.webp'},{n:'الأدهم',coat:'#1F2937',dark:'#000',rider:'#059669',base:15.1,spr:'rider2.webp'},{n:'الشقراء',coat:'#D97706',dark:'#92400E',rider:'#7C3AED',base:14.8,spr:'rider1.webp'}];
+  let me={spr:'rider0.webp',n:'أنت',coat:'#8B5A2B',dark:'#4A2C14',rider:'#1D4ED8',lane:1,ly:1,d:0,v:12,ph:0,jy:0,jv:0,fin:0,place:0,turbo:0,stum:0,me:1},riv=RIV.map((r,i)=>({...r,lane:[0,2,1][i],ly:[0,2,1][i],d:-6-i*4,v:12,ph:Math.random()*7,jy:0,jv:0,fin:0})),all=[me,...riv];
   let items=[],last=0,state='count',st={},tm=0,fins=0,off=0,shoes=0,jumps=0,draft=0,lines=[],gen=60;
   const genTo=d=>{while(gen<d){gen+=rnd(28,48);const lane=rnd(0,2),r=Math.random();items.push({d:gen,lane,k:r<.38?'hay':r<.58?'mud':r<.86?'shoe':'carrot'});if(Math.random()<.3)items.push({d:gen,lane:(lane+rnd(1,2))%3,k:'shoe'})}};
   const lane=dl=>{if(state!=='run')return;me.lane=Math.max(0,Math.min(2,me.lane+dl));SFX.note(500)};
@@ -2967,8 +2967,8 @@ function boxHorseRace(){['sky.jpg','ground.jpg','arch.webp','shoe.webp','puddle.
       else{c.save();c.translate(x,y-28+Math.sin(t/200+it.d)*4);c.font='22px sans-serif';c.textAlign='center';c.fillText('🥕',0,0);c.restore()}}})});
     all.forEach(h=>rows.push({y:h.ly+.01,draw:()=>{const x=PXs+(h.d-me.d)*SC,y=TOP+(h.ly+.75)*LH;if(x<-90||x>W+90)return;const shs=1+h.jy/120;c.fillStyle=`rgba(40,20,0,${.32*shs})`;c.beginPath();c.ellipse(x+6,y+25,32*shs,6*shs,0,0,7);c.fill();
       if(state==='run'&&h.v>9&&h.jy>-2&&Math.random()<.55)dust.push({x:x-24+Math.random()*10,y:y+20,r:4+Math.random()*4,l:1,vx:-30-Math.random()*40});
-      drawHorse(c,x,y+h.jy,.8,h.ph,{coat:h.coat,dark:h.dark,rider:h.rider,helm:h.me?'#FCD34D':'#fff',cape:h.me?'#FCD34D':null,lean:h.me&&me.turbo>0?.35:.1,jump:h.jy<-4?1:0,tilt:h.me&&me.stum>0?Math.sin(t/40)*.08:0,bridle:'#7C2D12'});
-      if(h.me){c.fillStyle='#FCD34D';c.font='bold 12px Tajawal';c.textAlign='center';c.fillText('▼ أنت',x,y-54+h.jy);if(me.turbo>0)A.burst(x-30,y+16,1,['#FACC15','#F97316'],60,3)}else if(h.v>14&&Math.random()<.3)A.burst(x-26,y+18,1,['#E8C887'],50,2)}}));
+      {const SP=RIMG[h.spr];if(imOk(SP)){const sh=108,sw=sh*SP.naturalWidth/SP.naturalHeight,air=h.jy<-4,bob=air?0:-Math.abs(Math.sin(h.ph))*6,rot=air?-.2:Math.sin(h.ph*2)*.045+(h.me&&me.stum>0?Math.sin(t/40)*.12:0);c.save();c.translate(x,y+27+h.jy+bob);c.rotate(rot);if(h.me&&me.turbo>0){c.shadowColor='#FACC15';c.shadowBlur=18}c.drawImage(SP,-sw/2,-sh,sw,sh);c.restore()}else drawHorse(c,x,y+h.jy,.8,h.ph,{coat:h.coat,dark:h.dark,rider:h.rider,helm:h.me?'#FCD34D':'#fff',cape:h.me?'#FCD34D':null,lean:h.me&&me.turbo>0?.35:.1,jump:h.jy<-4?1:0,tilt:h.me&&me.stum>0?Math.sin(t/40)*.08:0,bridle:'#7C2D12'})}
+      if(h.me){c.fillStyle='#FCD34D';c.font='bold 12px Tajawal';c.textAlign='center';c.fillText('▼ أنت',x,y-86+h.jy);if(me.turbo>0)A.burst(x-30,y+16,1,['#FACC15','#F97316'],60,3)}else if(h.v>14&&Math.random()<.3)A.burst(x-26,y+18,1,['#E8C887'],50,2)}}));
     dust.forEach(d=>{d.l-=dt*1.4;d.r+=dt*22;d.x+=d.vx*dt;d.y-=dt*6});dust=dust.filter(d=>d.l>0);
     rows.sort((a,b)=>a.y-b.y).forEach(r=>r.draw());
     dust.forEach(d=>{const g2=c.createRadialGradient(d.x,d.y,0,d.x,d.y,d.r);g2.addColorStop(0,`rgba(225,190,140,${d.l*.45})`);g2.addColorStop(1,'rgba(225,190,140,0)');c.fillStyle=g2;c.fillRect(d.x-d.r,d.y-d.r,d.r*2,d.r*2)});
@@ -3938,7 +3938,7 @@ async function openAdmin(){
 $('#admBack').onclick=()=>{hide('adm');history.replaceState(null,'',location.pathname)};
 $('#admRef').onclick=()=>openAdmin();
 // ---- Auto-update: reload when a newer version is published
-const APP_VERSION='2026.11.21-72';
+const APP_VERSION='2026.11.21-73';
 (async()=>{try{if(!/^https?:/.test(location.protocol))return;const r=await fetch(location.pathname+'?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/const APP_VERSION='([^']+)'/);
   if(m&&m[1]!==APP_VERSION&&sessionStorage.getItem('bw_upd')!==m[1]){sessionStorage.setItem('bw_upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}})();
 // ---- Friends: invite codes, preset voice messages, challenges, leaderboard
